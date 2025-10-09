@@ -1,0 +1,147 @@
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #c5ecff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Pokebola */
+img#izenburua{
+    width: 400px;
+    display: block;
+    margin: 150px auto 0 auto;
+}
+
+.pokeball{
+    width: 800px;
+    height: 800px;
+    border: 5px solid black;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    border-radius: 50%;/*50-era jarriz gero pokeball itxura*/
+    position: relative;
+    overflow: hidden;
+}
+
+.pokeball .top{/*Espazioa beharrezkoa top pokeballaren sema dela adierazteko*/
+    width: 100%;
+    height: 50%;
+    background: #f00000;
+    border-bottom: 10px solid #222224;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    box-shadow: inset 0 -10px 20px rgba(0, 0, 0, 0.3),inset 0 5px 10px rgba(0, 0, 0, 0.2); /* Itzala goiko aldean */
+}
+
+.pokeball .bottom{
+    width: 100%;
+    height: 50%;
+    background: #f0f0f0;
+    border-top: 10px solid #222224;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    box-shadow: inset 0 10px 20px rgba(0, 0, 0, 0.3),inset 0 -5px 10px rgba(0, 0, 0, 0.2); /* Itzala goiko aldean */
+}
+
+.pokeball .center{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100px;
+    height: 100px;
+    background: #f0f0f0;
+    border: 10px solid #222224;
+    border-radius: 50%;
+    z-index: 2;
+}
+
+/* Login kutxa */
+
+.login-box{
+    position:absolute;
+    bottom: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70%;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.login-box input{
+    padding: 8px;
+    font-size: 14px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid #222224;
+}
+
+.login-box input:hover{
+    background: #e0e0e0;
+}
+
+.login-box button{
+    padding: 16px;
+    background: #f00000;
+    color:#f0f0f0;
+    border: 2px solid #222224;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    box-shadow: 0 7px 0 #900000;
+    transition: all 0.3s ease;
+}
+
+.login-box button:hover{
+    background: #ff594d; /* Slightly lighter red on hover */
+    box-shadow: 
+        0 4px 0 #900000, /* Keep the dark shadow */
+        0 0 20px rgba(0, 240, 248, 0.7), /* Neon green inner glow */
+        0 0 30px rgba(0, 234, 255, 0.5); /* Light blue outer glow */
+    transform: translateY(-2px); /* Lift button slightly */
+}
+
+.login-box button:active {
+    box-shadow: 0 1px 0 #900000;
+    transform: translateY(3px); /* Push the button down */
+}
+
+#aldaketa{
+    color: #222224;
+    text-decoration: none;
+    border-radius: 15px;
+    border: solid 2px #222224;
+    box-shadow: 0 4px 0 #222224;
+    padding: 7px 10px;
+    font-weight: bold;
+}
+
+/* Animazioa */
+
+.pokeball.open .top {
+    transform: translateY(-400px); /* Goiko parte gorantz mugitzen da */
+}
+
+.pokeball.open .bottom {
+    transform: translateY(400px); /* Beheko partea beherantz mugitzen du */
+}
+
+.pokeball.open .center {
+    transform: translate(-50%, -50%) translateY(-400px); /* erdiko botoia gorantz mugitzen da */
+}
+
+.pokeball .top,
+.pokeball .bottom,
+.pokeball .center {
+    transition: transform 0.5s ease-in-out; /* Trantsizioa naturalagoa izateko */
+}
