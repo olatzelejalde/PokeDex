@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="eu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokeDex</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/styles.css">
+</head>
+<body>
+    <!-- Header de la Pokédex -->
+    <header class="pokedex-header">
+        <div class="pokedex-top-bar">
+            <div class="red-bar"></div>
+            <div class="white-bar">
+                <div class="menu-dots">
+                    <div class="dot red" id="btn-saioa"></div>
+                </div>
+            </div>
+        </div>
+        <h1>POKÉDEX</h1>
+        
+        <!-- Menú de Navegación -->
+        <nav class="menua">
+            <ul>
+                <li><a href="#" class="active" data-section="pokemon">POKÉMONAK</a></li>
+                <li><a href="#" data-section="taldeak">NIRE TALDEAK</a></li>
+                <li><a href="#" data-section="erabiltzailea">NIRE PROFILA</a></li>
+            </ul>
+        </nav>
+
+        <!-- Barra de Búsqueda -->
+        <div class="search-container">
+            <input type="text" id="pokemon-search" placeholder="Bilatu Pokémon...">
+            <select id="type-filter">
+                <option value="">Mota guztiak</option>
+            </select>
+            <button id="search-button">Bilatu</button>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="pokedex-main">
+        <!-- Sección Pokémon -->
+        <article id="pokemon-list" class="active">
+            <div class="pokemon-grid" id="pokemon-grid"></div>
+        </article>
+
+        <!-- Sección Taldeak -->
+        <article id="taldeak-list">
+            <div class="taldeak-container">
+                <button id="btn-talde-berria" class="pokedex-button">TALDE BERRIA SORTU</button>
+                <div id="taldeak-zerrenda" class="taldeak-grid"></div>
+            </div>
+        </article>
+
+        <!-- Sección Erabiltzailea -->
+        <article id="erabiltzailea-info">
+            <div class="profile-container">
+                <div id="erabiltzailea-datuak" class="profile-card"></div>
+                <div id="insignak-container" class="insignak-grid"></div>
+            </div>
+        </article>
+    </main>
+
+    <!-- Modales -->
+    <!-- Modal Saioa -->
+    <div id="saioa-modal" class="modal">
+        <div class="modal-content pokedex-modal">
+            <span class="close">&times;</span>
+            <h3>SAIOA HASI</h3>
+            <div class="form-group">
+                <input type="text" id="saio-izena" placeholder="Erabiltzaile izena" class="pokedex-input">
+            </div>
+            <div class="form-group">
+                <input type="password" id="saio-pasahitza" placeholder="Pasahitza" class="pokedex-input">
+            </div>
+            <button id="btn-saioa-hasi" class="pokedex-button">SAIOA HASI</button>
+            <button id="btn-erregistratu" class="pokedex-button secondary">ERREGISTRATU</button>
+        </div>
+    </div>
+
+    <!-- Modal Pokémon Xehetasunak -->
+    <div id="pokemon-modal" class="modal">
+        <div class="modal-content pokedex-modal large">
+            <span class="close">&times;</span>
+            <div id="pokemon-xehetasunak"></div>
+        </div>
+    </div>
+
+    <!-- Modal Taldea Sortu -->
+    <div id="taldea-modal" class="modal">
+        <div class="modal-content pokedex-modal">
+            <span class="close">&times;</span>
+            <h3>TALDE BERRIA SORTU</h3>
+            <div class="form-group">
+                <input type="text" id="taldea-izena" placeholder="Taldearen izena" class="pokedex-input">
+            </div>
+            <button id="btn-taldea-gorde" class="pokedex-button">GORDE</button>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/pokemon.js"></script>
+    <script src="js/taldeak.js"></script>
+    <script src="js/erabiltzailea.js"></script>
+</body>
+</html>
