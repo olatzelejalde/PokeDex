@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+import json
 
 db = SQLAlchemy()
 
@@ -40,7 +41,7 @@ class Erabiltzailea(db.Model):
     izena = db.Column(db.String(100), unique=True, nullable=False)
     pasahitza = db.Column(db.String(200), nullable=False)
     telegramKontua = db.Column(db.String(100), nullable=True)
-    insignak = db.Column(db.JSON, default=list)
+    insignak = db.Column(db.Text, default='[]')
 
     taldeak = db.relationship('Taldea', backref='erabiltzailea', lazy=True, cascade='all, delete-orphan')
 
@@ -49,13 +50,15 @@ class Erabiltzailea(db.Model):
             'id': self.id,
             'izena': self.izena,
             'telegramKontua': self.telegramKontua,
-            'insignak': self.insignak,
+            'insignak': json.loads(self.insignak) if self.insignak else [],
             'taldeKopurua': len(self.taldeak)
         }
     
     def insignakGehitu(self, insigna):
-        if insigna not in self.insignak:
-            self.insignak.append(insigna)
+        insignak_list = json.loads(self.insignak) if self.insignak else []
+        if insigna not in insignak_list:
+            insignak_list.append(insigna)
+            self.insignak = json.dumps(insignak_list)
             return True
         return False
 

@@ -5,7 +5,7 @@ echo ===============================
 echo.
 
 echo 1. Backend-a martxan jartzen...
-start cmd /k "cd backend && echo [BACKEND] Karpeta: %CD%\backend && python -c "import sys; print('Python bertsioa:', sys.version)" && venv\Scripts\activate && python app.py"
+start cmd /k "cd backend && echo [BACKEND] Karpeta: %CD%\backend && python -c "import sys; print('Python bertsioa:', sys.version)" && venv\Scripts\activate && python pokedex.py"
 
 echo.
 echo 2. Itxaron 5 segundo backend-a abiarazteko...

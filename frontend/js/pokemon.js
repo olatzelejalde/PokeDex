@@ -147,28 +147,28 @@ function erakutsiPokemonXehetasunak(pokemon) {
                 <div class="stat-bar">
                     <label>HP:</label>
                     <div class="stat-bar-outer">
-                        <div class="stat-bar-inner" style="width: ${(pokemon.hp / 255) * 100}%"></div>
+                        <div class="stat-bar-inner" style="width: ${(pokemon.hp/200)*100}%"></div>
                     </div>
                     <span style="margin-left: 10px; font-weight: bold;">${pokemon.hp}</span>
                 </div>
                 <div class="stat-bar">
                     <label>ATAKEA:</label>
                     <div class="stat-bar-outer">
-                        <div class="stat-bar-inner" style="width: ${(pokemon.atakea / 255) * 100}%"></div>
+                        <div class="stat-bar-inner" style="width: ${(pokemon.atakea/200)*100}%"></div>
                     </div>
                     <span style="margin-left: 10px; font-weight: bold;">${pokemon.atakea}</span>
                 </div>
                 <div class="stat-bar">
                     <label>DEFENTSA:</label>
                     <div class="stat-bar-outer">
-                        <div class="stat-bar-inner" style="width: ${(pokemon.defentsa / 255) * 100}%"></div>
+                        <div class="stat-bar-inner" style="width: ${(pokemon.defentsa/200)*100}%"></div>
                     </div>
                     <span style="margin-left: 10px; font-weight: bold;">${pokemon.defentsa}</span>
                 </div>
                 <div class="stat-bar">
                     <label>ABIADURA:</label>
                     <div class="stat-bar-outer">
-                        <div class="stat-bar-inner" style="width: ${(pokemon.abiadura / 255) * 100}%"></div>
+                        <div class="stat-bar-inner" style="width: ${(pokemon.abiadura/200)*100}%"></div>
                     </div>
                     <span style="margin-left: 10px; font-weight: bold;">${pokemon.abiadura}</span>
                 </div>

@@ -7,6 +7,12 @@ let motaGuztiak = [];
 
 // DOM elementuak
 document.addEventListener('DOMContentLoaded', function() {
+
+    const unekoErabiltzailea = localStorage.getItem('unekoErabiltzailea');
+    if (!unekoErabiltzailea) {
+        window.location.href = 'login.html';
+        return;
+    }
     hasieratuAplikazioa();
     konfiguratuGertaeraEntzuleak();
 });
@@ -113,7 +119,6 @@ function eguneratuNabigazioa() {
         saioaBotoia.onclick = saioaItxi;
     } else {
         saioaBotoia.textContent = 'Saioa Hasi';
-        saioaBotoia.onclick = erakutsiSaioaModala;
     }
 }
 
@@ -225,8 +230,8 @@ async function saioaHasi() {
 function saioaItxi() {
     unekoErabiltzailea = null;
     localStorage.removeItem('unekoErabiltzailea');
+    window.location.href = 'login.html';
     eguneratuNabigazioa();
-    erakutsiSaioaModala();
 }
 
 // Kargatzen/Kentzen funtzioak

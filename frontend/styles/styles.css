@@ -10,18 +10,23 @@
     /* Colores de tipos Pokémon */
     --type-fire: #FDDFDF;
     --type-grass: #DEFDE0;
-    --type-electric: #FCF7DE;
+    --type-electric: #fff3ba;
     --type-water: #DEF3FD;
-    --type-ground: #f4e7da;
+    --type-ground: #ffe6cd;
     --type-rock: #d5d5d4;
     --type-fairy: #fceaff;
-    --type-poison: #98d7a5;
-    --type-bug: #f8d5a3;
+    --type-poison: #d9b4fb;
+    --type-bug: #9da372;
     --type-dragon: #97b3e6;
-    --type-psychic: #eaeda1;
+    --type-psychic: #eda1c6;
     --type-flying: #afddf8;
-    --type-fighting: #E6E0D4;
+    --type-fighting: #ffb285;
     --type-normal: #F5F5F5;
+    --type-ice: #aee5ff;
+    --type-ghost: #867794;
+    --type-dark: #4f4f4f;
+    --type-steel: #698594;
+
 }
 
 /* Reset y estilos base */
@@ -311,6 +316,10 @@ body {
 .pokemon-card.flying { background-color: var(--type-flying); }
 .pokemon-card.fighting { background-color: var(--type-fighting); }
 .pokemon-card.normal { background-color: var(--type-normal); }
+.pokemon-card.ice { background-color: var(--type-ice); }
+.pokemon-card.ghost { background-color: var(--type-ghost); }
+.pokemon-card.dark { background-color: var(--type-dark); }
+.pokemon-card.steel { background-color: var(--type-steel); }
 
 /* Colores de badges de tipo */
 .type.fire { background-color: var(--type-fire); }
@@ -327,6 +336,10 @@ body {
 .type.flying { background-color: var(--type-flying); }
 .type.fighting { background-color: var(--type-fighting); }
 .type.normal { background-color: var(--type-normal); }
+.type.ice { background-color: var(--type-ice); }
+.type.ghost { background-color: var(--type-ghost); }
+.type.dark { background-color: var(--type-dark); }
+.type.steel { background-color: var(--type-steel); }
 
 /* Modales */
 .modal {
@@ -421,7 +434,7 @@ body {
 
 .taldeak-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
     gap: 25px;
     margin-top: 20px;
 }

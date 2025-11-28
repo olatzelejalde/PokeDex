@@ -66,17 +66,11 @@ function sortuTaldeTxartela(taldea) {
         <div class="taldea-pokemonak">
             ${(taldea.pokemonak || []).map(pokemon => `
                 <div class="pokemon-mini">
-                    <img src="${pokemon.irudia}" alt="${pokemon.izena}" 
-                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCA1MCA1MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIGZpbGw9IiNGRjdGN0YiIHN0cm9rZT0iIzIyMjIyNCIgc3Ryb2tlLXdpZHRoPSIyIiByeD0iNSIvPjx0ZXh0IHg9IjI1IiB5PSIzMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEwIiBmaWxsPSIjMjIyMjI0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7lj5bmm7g8L3RleHQ+PC9zdmc+'">
+                    <img src="${pokemon.irudia}" alt="${pokemon.izena}" >
                     <div style="font-size: 0.8em; margin-top: 5px;">${pokemon.izena}</div>
                 </div>
             `).join('')}
             
-            ${Array.from({length: 6 - (taldea.pokemonak || []).length}, (_, i) => `
-                <div class="pokemon-mini">
-                    <div class="hutsunea">+</div>
-                </div>
-            `).join('')}
         </div>
         
         <div class="taldea-actions">
