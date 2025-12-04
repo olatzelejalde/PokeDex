@@ -34,6 +34,8 @@ function konfiguratuGertaeraEntzuleak() {
             // Actualizar clase active
             document.querySelectorAll('.menua a').forEach(a => a.classList.remove('active'));
             e.target.classList.add('active');
+
+            aldatuAtala(section);
         });
     });
 
@@ -89,6 +91,9 @@ function erakutsiAtala(atalIzena) {
         kargatuErabiltzaileTaldeak();
     } else if (atalIzena === 'erabiltzailea') {
         kargatuErabiltzaileProfila();
+    }
+    else if (atalIzena === 'lagunak') {
+        kargatuLagunak();
     }
 }
 
@@ -213,7 +218,7 @@ async function saioaHasi() {
             if (document.getElementById('taldeak-list').classList.contains('active')) {
                 kargatuErabiltzaileTaldeak();
             }
-            if (document.getElementById('erabiltzailea-info').classList.contains('active')) {
+            if (document.getElementById('erabiltzailea-list').classList.contains('active')) {
                 kargatuErabiltzaileProfila();
             }
             

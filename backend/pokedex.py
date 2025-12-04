@@ -131,6 +131,8 @@ def createErabiltzailea():
             return jsonify({'error': 'Pasahitza beharrezkoa da'}), 400
         
         izena = data['izena'].strip()
+        abizena = data['abizena'].strip()
+        erabiltzaileIzena = data['erabilIzena'].strip()
         pasahitza = data['pasahitza']
         
         # Egiaztatu erabiltzailea existitzen den
@@ -141,6 +143,8 @@ def createErabiltzailea():
         # Sortu erabiltzaile berria
         erabiltzailea = Erabiltzailea(
             izena=izena,
+            abizena=abizena,
+            erabilIzena=erabiltzaileIzena,
             pasahitza=pasahitza,
             telegramKontua=data.get('telegramKontua')
         )
@@ -211,6 +215,33 @@ def getErabiltzailea(erabiltzailea_id):
         print(f"❌ Errorea erabiltzailea eskuratzean: {str(e)}")
         return jsonify({'error': 'Barneko errorea erabiltzailea eskuratzean'}), 500
 
+@app.route('/api/erabiltzaileak/<int:erabiltzailea_id>', methods=['PUT'])
+def eguneratuErabiltzaiea(erabiltzailea_id):
+    try:
+        data = request.get_json()
+
+        erabiltzailea = Erabiltzailea.query.get(erabiltzailea_id)
+
+        if 'izena' in data and data['izena']:
+            erabiltzailea.izena = data['izena'].strip()
+        if 'abizena' in data and data['abizena']:
+            erabiltzailea.abizena = data['abizena'].strip()
+        if 'erabilIzena' in data and data['erabilIzena']:
+            erabiltzailea.erabilIzena = data['erabilIzena'].strip()
+        if 'telegramKontua' in data:
+            erabiltzailea.telegramKontua = data['telegramKontua'].strip()
+        if 'pasahitza' in data and data['pasahitza']:
+            erabiltzailea.pasahitza = data['pasahitza']
+        
+        db.session.commit()
+        print(f"✅ Erabiltzailea eguneratu da: {erabiltzailea.izena} (ID: {erabiltzailea.id})")
+        return jsonify(erabiltzailea.to_dict())
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"❌ Errorea erabiltzailea eguneratzean: {str(e)}")
+        return jsonify({'error': 'Barneko errorea erabiltzailea eguneratzean'}), 500
+    
 # ==================== RUTAS DE TALDEAK ====================
 @app.route('/api/taldeak', methods=['POST'])
 def createTaldea():

@@ -6,6 +6,7 @@
     --pokedex-yellow: #ffcb05;
     --pokedex-blue: #007bff;
     --pokedex-light-blue: #c5ecff;
+    --pokedex-light-red: #ff7f7f;
 
     /* Colores de tipos Pokémon */
     --type-fire: #FDDFDF;
@@ -671,4 +672,53 @@ body {
     .menua li {
         margin: 5px 0;
     }
+}
+
+/* Ficha entrenador */
+.profile-card {
+    background-color: var(--pokedex-light-red);
+    position: relative;
+    text-align: center;
+}
+
+.profile-id {
+    background-color: var(--pokedex-black);
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+.profile-card h2 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 20px;
+    color: var(--pokedex-black);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-card p {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1em;
+    margin: 10px 0;
+    background-color: #ecf9ff7c;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: left;
+}
+
+.profile-card button {
+    position: static;
+    margin: 20px auto 0 auto;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.8em;
+}
+
+.profile-card #profile-pokeball {
+    width: 40px;
+    height: 40px;
+    vertical-align: middle;
+    margin-right: 15px;
 }

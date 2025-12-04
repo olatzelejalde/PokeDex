@@ -38,6 +38,9 @@ document.addEventListener('DOMContentLoaded', function() {
 async function handleRegistration() {
     console.log('🔍 HandleRegistration ejecutándose');
     
+    const name = document.getElementById('name').value.trim();
+    const surname = document.getElementById('surname').value.trim();
+    const telegram = document.getElementById('telegram').value.trim() || null;
     const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirm-password').value;
@@ -45,7 +48,7 @@ async function handleRegistration() {
     console.log('📝 Datos del formulario:', { username, password, confirmPassword });
 
     // Validaciones
-    if (!username || !password || !confirmPassword) {
+    if (!name || !surname || !username || !password || !confirmPassword) {
         showError('Mesedez, bete eremu guztiak');
         return;
     }
@@ -54,6 +57,12 @@ async function handleRegistration() {
         showError('Pasahitzak ez datoz bat');
         return;
     }
+
+    // Comprobar tmb que el nombre de usuario no este en uso
+    //if (await isUsernameTaken(username)) {
+    //    showError('Erabiltzaile izena dagoeneko erregistratuta dago');
+    //    return;
+    //}
 
     // Cambiar estado del botón
     const registerButton = document.getElementById('register-button');
@@ -64,9 +73,11 @@ async function handleRegistration() {
         console.log('🔗 Intentando conectar al backend...');
         
         const userData = {
-            izena: username,
+            izena: name,
+            abizena: surname,
+            erabilIzena: username,
             pasahitza: password,
-            telegramKontua: null
+            telegramKontua: telegram || null
         };
 
         console.log('📤 Enviando datos:', userData);
@@ -140,3 +151,17 @@ function showSuccess(message) {
         successElement.style.display = 'block';
     }
 }
+
+//async function isUsernameTaken(username) {
+//    try {
+//        console.log('🔍 Comprobando si el nombre de usuario está en uso:', username);
+//        const response = await fetch(`${API_BASE_URL}/erabiltzaileak/check-username?izena=${encodeURIComponent(username)}`);
+//        const data = await response.json();
+//
+//        console.log('✅ Respuesta de verificación:', data);
+//        return data.taken;
+//    } catch (error) {
+//        console.error('❌ Error comprobando nombre de usuario:', error);
+//        return false; // Asumir que no está tomado en caso de error
+//    }
+//}

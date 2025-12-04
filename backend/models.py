@@ -38,17 +38,24 @@ class Erabiltzailea(db.Model):
     __tablename__ = 'erabiltzailea'
 
     id = db.Column(db.Integer, primary_key=True)
-    izena = db.Column(db.String(100), unique=True, nullable=False)
-    pasahitza = db.Column(db.String(200), nullable=False)
+    izena = db.Column(db.String(100), nullable=False)
+    abizena = db.Column(db.String(100), nullable=False)
+    erabilIzena = db.Column(db.String(100), unique=True, nullable=False)
     telegramKontua = db.Column(db.String(100), nullable=True)
+    pasahitza = db.Column(db.String(200), nullable=False)
+    rola = db.Column(db.String(50), nullable=False, default='erabiltzailea')
     insignak = db.Column(db.Text, default='[]')
 
     taldeak = db.relationship('Taldea', backref='erabiltzailea', lazy=True, cascade='all, delete-orphan')
+    #lagunZerrenda
+    #notifikazioak = db.relationship('Notifikazioa', backref='erabiltzailea', lazy=True, cascade='all, delete-orphan')
 
     def to_dict(self):
         return {
             'id': self.id,
             'izena': self.izena,
+            'abizena': self.abizena,
+            'erabilIzena': self.erabilIzena,
             'telegramKontua': self.telegramKontua,
             'insignak': json.loads(self.insignak) if self.insignak else [],
             'taldeKopurua': len(self.taldeak)
@@ -69,8 +76,7 @@ class Taldea(db.Model):
     izena = db.Column(db.String(100), nullable=False)
     erabiltzailea_id = db.Column(db.Integer, db.ForeignKey('erabiltzailea.id'), nullable=False)
 
-    pokemonak = db.relationship('Pokemon', secondary=pokemon_taldea, lazy='subquery',
-        backref=db.backref('taldeak', lazy=True))
+    pokemonak = db.relationship('Pokemon', secondary=pokemon_taldea, lazy='subquery', backref=db.backref('taldeak', lazy=True))
 
     def to_dict(self):
         return {
@@ -80,3 +86,31 @@ class Taldea(db.Model):
             'pokemonak': [p.to_dict() for p in self.pokemonak],
             'pokemonKopurua': len(self.pokemonak)
         }
+    
+#class Notifikazioa(db.Model):
+#    __tablename__ = 'notifikazioa'
+#
+#    id = db.Column(db.Integer, primary_key=True)
+#    deskribapena = db.Column(db.String(200), nullable=False)
+#    dataOrdua = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())
+#    mota = db.relationship('NotifikazioMota', backref='notifikazioa', lazy=True)
+#    erabiltzaileIzena = db.relationship('Erabiltzailea', backref='notifikazioak', lazy=True)
+#
+#    def to_dict(self):
+#        return {
+#            'id': self.id,
+#            'deskribapena': self.deskribapena,
+#            'dataOrdua': self.dataOrdua.isoformat(),
+#            'mota': [m.to_dict() for m in self.mota],
+#            'erabiltzaileIzena': self.erabiltzaileIzena
+#        }
+#    
+#class NotifikazioMota(db.Model):
+#    __tablename__ = 'notifikazio_mota'
+#
+#    mota = db.Column(db.String(50), nullable=False, primary_key=True)
+#
+#    def to_dict(self):
+#        return {
+#            'mota': self.mota
+#        }

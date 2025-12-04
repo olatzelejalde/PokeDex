@@ -205,7 +205,7 @@ async function partekatuTaldea(taldeaId) {
                 localStorage.setItem('unekoErabiltzailea', JSON.stringify(unekoErabiltzailea));
                 
                 // Eguneratu profila bistan badago
-                if (document.getElementById('erabiltzailea-info').classList.contains('active')) {
+                if (document.getElementById('erabiltzailea-list').classList.contains('active')) {
                     kargatuErabiltzaileProfila();
                 }
             }
