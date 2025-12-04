@@ -33,12 +33,12 @@ document.addEventListener('DOMContentLoaded', function()  {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({izena: username, pasahitza: password }),
+                body: JSON.stringify({erabilIzena: username, pasahitza: password }),
             });
             const datuak = await response.json();
 
             if (response.ok) {
-                console.log('Saioa hasi da: ', datuak.izena);
+                console.log('Saioa hasi da: ', datuak.erabilIzena);
                 localStorage.setItem('unekoErabiltzailea', JSON.stringify(datuak));
 
                 const pokeball = document.querySelector('.pokeball');

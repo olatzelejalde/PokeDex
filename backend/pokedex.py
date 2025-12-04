@@ -171,24 +171,24 @@ def saioaHasi():
         if not data:
             return jsonify({'error': 'Datuak beharrezkoak dira'}), 400
             
-        if 'izena' not in data or not data['izena']:
+        if 'erabilIzena' not in data or not data['erabilIzena']:
             return jsonify({'error': 'Izena beharrezkoa da'}), 400
             
         if 'pasahitza' not in data or not data['pasahitza']:
             return jsonify({'error': 'Pasahitza beharrezkoa da'}), 400
         
-        izena = data['izena'].strip()
+        erabilIzena = data['erabilIzena'].strip()
         pasahitza = data['pasahitza']
         
         # Bilatu erabiltzailea
-        erabiltzailea = Erabiltzailea.query.filter_by(izena=izena).first()
+        erabiltzailea = Erabiltzailea.query.filter_by(erabilIzena=erabilIzena).first()
         
         if erabiltzailea:
-            print(f"🔍 Erabiltzailea aurkitu: {erabiltzailea.izena}")
+            print(f"🔍 Erabiltzailea aurkitu: {erabiltzailea.erabilIzena}")
             print(f"🔑 Pasahitza konparatzen: sartutakoa='{pasahitza}', db='{erabiltzailea.pasahitza}'")
             
             if erabiltzailea.pasahitza == pasahitza:
-                print(f"✅ Saioa hasteko: {erabiltzailea.izena}")
+                print(f"✅ Saioa hasteko: {erabiltzailea.erabilIzena}")
                 return jsonify(erabiltzailea.to_dict())
             else:
                 print("❌ Pasahitza okerra")
