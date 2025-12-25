@@ -16,23 +16,18 @@ function kargatuErabiltzaileProfila() {
 }
 
 async function aldatuDatuak() {
-    document.getElementById('erabiltzailea-list').style.display = 'none';
-    document.getElementById('erabiltzailea-edit').style.display = 'block';
+    document.getElementById(`erabiltzailea-list`).classList.remove('active');
+    document.getElementById(`erabiltzailea-edit`).classList.add('active');
     document.getElementById('erabiltzailea-edit').innerHTML = `
         <div class="profile-container">
             <div class="profile-card">
             <h2><img id="profile-pokeball" src="../static/pokeball.webp">ENTRENATZAILE FITXA <p class="profile-id">ID: ${unekoErabiltzailea.id}</p></h2>
                 <p>Erabiltzaile Izena: ${unekoErabiltzailea.erabilIzena}</p>
-                <label>Izena: </label>
-                <input id="izena-editatu" type="text" value="${unekoErabiltzailea.izena}">
-                <label>Abizena: </label>
-                <input id="abizena-editatu" type="text" value="${unekoErabiltzailea.abizena}">
-                <label>Telegram: </label>
-                <input id="telegram-editatu" type="text" value="${unekoErabiltzailea.telegramKontua || ''}">
-                <label>Pasahitza: </label>
-                <input id="pasahitza-editatu" type="password" placeholder="Sartu pasahitz berria">
-                <label>Konfirmatu Pasahitza: </label>
-                <input id="konfirmatu-pasahitza-editatu" type="password" placeholder="Konfirmatu pasahitza">
+                <label>Izena: <input id="izena-editatu" type="text" value="${unekoErabiltzailea.izena}"></label>
+                <label>Abizena: <input id="abizena-editatu" type="text" value="${unekoErabiltzailea.abizena}"></label>
+                <label>Telegram: <input id="telegram-editatu" type="text" value="${unekoErabiltzailea.telegramKontua || ''}"></label>
+                <label>Pasahitza: <input id="pasahitza-editatu" type="password" placeholder="Sartu pasahitz berria"></label>
+                <label>Konfirmatu Pasahitza: <input id="konfirmatu-pasahitza-editatu" type="password" placeholder="Konfirmatu pasahitza"></label>
                 <button class="pokedex-button" onclick="irtenEdiziotik()">Utzi aldaketak</button>
                 <button class="pokedex-button" onclick="aldaketakGorde()">Gorde aldaketak</button>
             </div>
@@ -41,8 +36,8 @@ async function aldatuDatuak() {
 }
 
 function irtenEdiziotik() {
-    document.getElementById('erabiltzailea-edit').style.display = 'none';
-    document.getElementById('erabiltzailea-list').style.display = 'block';
+    document.getElementById(`erabiltzailea-edit`).classList.remove('active');
+    document.getElementById(`erabiltzailea-list`).classList.add('active');
 }
 
 async function aldaketakGorde() {
@@ -94,7 +89,6 @@ async function aldaketakGorde() {
         alert('Zure datuak ondo eguneratu dira');
         irtenEdiziotik();
         kargatuErabiltzaileProfila();
-        alert('Zure datuak ondo eguneratu dira');
     } catch (error) {
         console.error('Errorea erabiltzailea eguneratzerakoan:', error);
         alert('Errorea erabiltzailea eguneratzerakoan. Mesedez, saiatu berriro.');

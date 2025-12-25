@@ -725,20 +725,27 @@ body {
 
 /* Edición de datos de usuario */
 #erabiltzailea-edit label {
-    display: block;
     font-family: 'Press Start 2P', cursive;
-    margin-top: 15px;
-    margin-bottom: 5px;
-    font-size: 0.8em;
+    font-size: 1em;
+    display: block;
+    margin: 10px 0;
+    background-color: #ecf9ff7c;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: left;
+    max-width: 90%;
 }
 
 #erabiltzailea-edit input {
-    width: 100%;
-    padding: 10px;
-    border: 2px solid var(--pokedex-black);
-    border-radius: 10px;
+    background-color: #ffffff00;
+    color: #5e5e5e;
+    border: none;
     font-size: 0.9em;
     font-family: 'Press Start 2P', cursive;
+}
+
+#erabiltzailea-edit input:focus {
+    outline: none;
 }
 #erabiltzailea-edit .profile-edit-container {
     width: 100%;

@@ -359,6 +359,7 @@ function itxiModalak() {
     });
 }
 
+
 function erakutsiTaldeaModala() {
     itxiModalak();
     document.getElementById('taldea-modal').style.display = 'block';
