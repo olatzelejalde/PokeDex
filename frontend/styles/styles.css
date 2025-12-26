@@ -762,7 +762,6 @@ body {
     height: 60px;
     border-radius: 50%;
     background-color: var(--pokedex-red);
-    color: var(--pokedex-white);
     border: 3px solid var(--pokedex-black);
     font-size: 30px;
     cursor: pointer;
@@ -805,4 +804,7 @@ body {
 }
 .bot-option:hover{
     background: #fff; 
+    color: var(--pokedex-black);
+    box-shadow: 0 4px 8px rgba(0,0,0,.3);
+    transform: translateY(-2px);
 }
