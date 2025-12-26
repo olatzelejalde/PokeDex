@@ -251,3 +251,11 @@ function ezkutatuKargatzen() {
 function erakutsiErrorea(mezua) {
     alert(mezua);
 }
+
+// Bot botoia
+// Acciones de los botones del panel
+document.addEventListener('DOMContentLoaded', () =>
+  document.getElementById('bot').addEventListener('click', () =>
+    document.getElementById('bot-panel').classList.toggle('hidden')
+  )
+);
