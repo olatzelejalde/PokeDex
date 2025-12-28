@@ -1,4 +1,6 @@
-// Taldeak kudeatzeko funtzioak
+//--------------------------------------------------
+// 1. Erabiltzailearen taldeak kargatzeko funtzioa
+//--------------------------------------------------
 async function kargatuErabiltzaileTaldeak() {
     if (!unekoErabiltzailea) {
         document.getElementById('taldeak-zerrenda').innerHTML = `
@@ -27,6 +29,7 @@ async function kargatuErabiltzaileTaldeak() {
     }
 }
 
+// 1.1. Taldeak erakusteko funtzioa
 function erakutsiTaldeak(taldeak) {
     const taldeakZerrenda = document.getElementById('taldeak-zerrenda');
     
@@ -49,11 +52,13 @@ function erakutsiTaldeak(taldeak) {
     taldeakZerrenda.innerHTML = '';
 
     taldeak.forEach(taldea => {
-        const taldeTxartela = sortuTaldeTxartela(taldea);
-        taldeakZerrenda.appendChild(taldeTxartela);
+        document.getElementById('taldeak-zerrenda').appendChild((
+            sortuTxartelaHutsuneekin(taldea)
+        ));
     });
 }
 
+// 1.2. Txartelen informazioa erakusteko funtzioa
 function sortuTaldeTxartela(taldea) {
     const txartela = document.createElement('div');
     txartela.className = 'taldea-card';
@@ -74,8 +79,8 @@ function sortuTaldeTxartela(taldea) {
         </div>
         
         <div class="taldea-actions">
-            <button class="pokedex-button" onclick="gehituPokemonTaldeari(${taldea.id})">
-                GEHITU POKÉMON
+            <button data-team-id="${taldea.id}" class="pokedex-button" onclick="taldeaEditatu(${taldea.id})">
+                TALDEA EDITATU
             </button>
             <button class="pokedex-button secondary" onclick="partekatuTaldea(${taldea.id})">
                 PARTEKATU
@@ -88,6 +93,88 @@ function sortuTaldeTxartela(taldea) {
     `;
 
     return txartela;
+}
+
+// 1.3. Taldea 6 pokemon baino gutxiago baditu, hutsuneak jarri
+function hutsuneakBete(taldeaCard, taldea) {
+    const actuales = (taldea.pokemonak || []).length;
+    const faltan   = 6 - actuales;
+    if (faltan <= 0) return;                       // equipo lleno
+    const contenedor = taldeaCard.querySelector('.taldea-pokemonak');
+
+    for (let i = 0; i < faltan; i++) {
+        const slot = document.createElement('div');
+        slot.className = 'pokemon-mini add-slot';
+        slot.onclick   = () => gehituPokemonTaldeari(taldea.id);
+        slot.innerHTML = `
+            <img src="../static/pokeball.webp" alt="Gehitu" style="opacity:.45">
+            <div style="font-size:0.7em;margin-top:5px">+ Gehitu</div>`;
+        contenedor.appendChild(slot);
+    }
+}
+
+// 1.4. Talde txartel osoa sortzeko funtzioa
+function sortuTxartelaHutsuneekin(taldea) {
+    const txartela = sortuTaldeTxartela(taldea);
+    hutsuneakBete(txartela, taldea);
+    return txartela;
+}
+
+//--------------------------------------------------
+// 2. Taldea editatzeko funtzioak
+//--------------------------------------------------
+let editingTaldeaId = null;
+function taldeaEditatu(taldeaId) {
+    editingTaldeaId = taldeaId;
+
+    // Botón DENTRO de la tarjeta que se está editando
+    const botoia = document.querySelector(`.btn-editatu[data-team-id="${taldeaId}"]`);
+    if (!botoia) return;
+
+    botoia.textContent = 'Gorde aldaketak';
+    botoia.onclick = () => gordeTaldeAldaketak(taldeaId);
+
+    // Resto de tu lógica (iconos de borrar, etc.)
+    document.querySelectorAll('.delete-icon').forEach(icon => icon.remove());
+
+    const container = document.querySelector(`.taldea-pokemonak[data-team-id="${taldeaId}"]`);
+    container.querySelectorAll('.pokemon-mini').forEach(card => {
+        const icon = document.createElement('span');
+        icon.className = 'delete-icon';
+        icon.innerHTML = '🗑️';
+        icon.style.cssText = `
+            position:absolute;top:2px;right:2px;cursor:pointer;
+            font-size:16px;background:rgba(255,255,255,.85);border-radius:50%;
+            width:22px;height:22px;display:flex;align-items:center;justify-content:center;`;
+        icon.onclick = () => borrarPokemonDeTaldea(taldeaId, card.dataset.pokemonId);
+        card.style.position = 'relative';
+        card.appendChild(icon);
+    });
+}
+
+// 2.1. Talde aldaketak gordetzeko funtzioa
+async function borrarPokemonDeTaldea(teamId, pokemonId) {
+    if (!confirm('Seguru zaude Pokémon hau ezabatu nahi duzula?')) return;
+
+    const res = await fetch(`${API_BASE_URL}/taldeak/${teamId}/pokemon/${pokemonId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+    });
+
+    if (!res.ok) return alert('Errorea ezabatzerakoan');
+
+    /* Actualizar vista: quitar nodo del DOM */
+    const card = document.querySelector(
+        `.taldea-pokemonak[data-team-id="${teamId}"] .pokemon-mini[data-pokemon-id="${pokemonId}"]`
+    );
+    if (card) card.remove();
+
+    /* Actualizar contador */
+    const contador = document.querySelector(
+        `.taldea-card:has(.taldea-pokemonak[data-team-id="${teamId}"]) .taldea-header span`
+    );
+    const nuevo = parseInt(contador.textContent) - 1;
+    contador.textContent = `${nuevo}/6 Pokémon`;
 }
 
 function erakutsiTaldeaModala() {
@@ -162,11 +249,6 @@ async function gehituPokemonTaldeari(taldeaId) {
 
     // Aldatu Pokémon atalera eta erakutsi taldearen informazioa
     aldatuAtala('pokemon');
-    
-    // Gorde talde ID-a sessionStorage-n
-    sessionStorage.setItem('hautatutakoTaldeaId', taldeaId);
-    
-    alert('Hautatu Pokémon bat zure taldera gehitzeko');
 }
 
 async function partekatuTaldea(taldeaId) {
