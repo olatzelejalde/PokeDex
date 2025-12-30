@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="eu">
+<head>  
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="/static/styles/auth.css" rel="stylesheet" />
+    <title>Erregistroa - PokeDex</title>
+</head>
+<body>
+    <div class="pokeball">
+        <div class="top">
+            <img src="/static/Pokedex.png" id="izenburua" />
+        </div>
+        <div class="bottom"></div>
+        <div class="center"></div>  
+    </div>
+    
+    <form class="login-box" id="register-form" action="/auth/register" method="POST">    
+        <h2>ERREGISTRATU</h2>
+        <input type="text" name="izena" id="name" placeholder="Izena" value="{{ request.form.get('izena', '') }}" required/>
+        <input type="text" name="abizena" id="surname" placeholder="Abizena" value="{{ request.form.get('abizena', '') }}" required/>
+        <input type="text" name="erabilIzena" id="username" placeholder="Erabiltzaile izena" value="{{ request.form.get('erabilIzena', '') }}" required/>
+        <input type="text" name="telegramKontua" id="telegram" placeholder="Telegram kontua (aukerakoa)" value="{{ request.form.get('telegramKontua', '') }}"/>
+        <input type="password" name="pasahitza" id="password" placeholder="Pasahitza" required/>
+        <input type="password" name="pasahitza2" id="confirm-password" placeholder="Pasahitza berretsi" required/>
+        <button type="submit" id="register-button">ERREGISTRATU</button>
+        {% if error %}
+            <p style="color:red;background:#fdd;border:1px solid red;padding:5px;">ERROR: {{ error }}</p>
+        {% endif %}
+        
+        <div class="auth-links">
+            <p><i>Kontua baduzu</i></p>
+            <a href="/login">Sartu</a>
+        </div>
+    </form>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="eu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokeDex</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles/styles.css">
+</head>
+<body>
+    <!----------------------------------------------->
+    <!--         Pokedex-aren goiburua             -->
+    <!----------------------------------------------->
+    <header class="pokedex-header">
+        <div class="pokedex-top-bar">
+            <div class="red-bar"></div>
+            <div class="white-bar">
+                <div class="menu-dots">
+                    <div class="dot red" id="btn-saioa"></div>
+                </div>
+            </div>
+        </div>
+        <h1>POKEDEX</h1>
+        
+        <!----------------------------------------------->
+        <!--         Pokedex-aren menua                -->
+        <!----------------------------------------------->
+        <nav class="menua">
+            <ul>
+                <li><a href="#" class="active" data-section="pokemon">POKEMONAK</a></li>
+                <li><a href="#" data-section="taldeak">NIRE TALDEAK</a></li>
+                <li><a href="#" data-section="insignak">NIRE INSIGNAK</a></li>
+                <li><a href="#" data-section="lagunak">NIRE LAGUNAK</a></li>
+                <li><a href="#" data-section="erabiltzailea">NIRE PROFILA</a></li>
+            </ul>
+        </nav>
+
+        <!----------------------------------------------->
+        <!--            Bilaketa barra                 -->
+        <!----------------------------------------------->
+        <div class="search-container">
+            <input type="text" id="pokemon-search" placeholder="Bilatu Pokémon...">
+            <select id="type-filter">
+                <option value="">Mota guztiak</option>
+            </select>
+            <button id="search-button">Bilatu</button>
+        </div>
+    </header>
+
+    <!----------------------------------------------->
+    <!--             Eduki nagusia                 -->
+    <!----------------------------------------------->
+    <main class="pokedex-main">
+        <!----------------------------------------------->
+        <!--          Pokeemon katalogoa               -->
+        <!----------------------------------------------->
+        <article id="pokemon-list" class="active">
+            <div class="pokemon-grid" id="pokemon-grid">
+                <!-- Pokémonak hemen agertuko dira -->
+            </div>
+        </article>
+
+        <!----------------------------------------------->
+        <!--             Taldeen menua                 -->
+        <!----------------------------------------------->
+        <article id="taldeak-list">
+            <div class="taldeak-container">
+                <button id="btn-talde-berria" class="pokedex-button">TALDE BERRIA SORTU</button>
+                <div id="taldeak-zerrenda" class="taldeak-grid">
+                    <!-- Taldeak hemen agertuko dira -->
+                </div>
+            </div>
+        </article>
+        
+        <!----------------------------------------------->
+        <!--          Insignen menua                   -->
+        <!----------------------------------------------->
+        <article id="insignak-list">
+            <div class="insignak-container">
+                <div id="insignak-zerrenda" class="insignak-grid"></div>
+            </div>
+        </article>
+
+        <!----------------------------------------------->
+        <!--           Lagunen menua                   -->
+        <!----------------------------------------------->
+        <article id="lagunak-list">
+            <div class="lagunak-container">
+                <div id="lagunak-zerrenda" class="lagunak-grid">
+                    <!-- Lagunak hemen agertuko dira -->
+                </div>
+            </div>
+        </article>
+
+        <!----------------------------------------------->
+        <!--         Erabiltzailearen menua            -->
+        <!----------------------------------------------->
+        <article id="erabiltzailea-list">
+            <div class="profile-container">
+                <div id="erabiltzailea-datuak" class="profile-card">
+                    <!-- Erabiltzailearen datuak hemen agertuko dira -->
+                </div>
+            </div>
+        </article>
+
+        <!----------------------------------------------->
+        <!--         Erabiltzailea editatu             -->
+        <!----------------------------------------------->
+        <article id="erabiltzailea-edit">
+            <div class="profile-edit-container">
+                <div id="erabiltzailea-edit-datuak" class="profile-edit-card">
+                    <!-- Erabiltzailearen edizio datuak hemen agertuko dira -->
+                </div>
+            </div>
+        </article>
+    </main>
+
+
+    <!-- Modales -->
+
+    <!-- Modal Pokémon Xehetasunak -->
+    <div id="pokemon-modal" class="modal">
+        <div class="modal-content pokedex-modal large">
+            <div id="pokemon-xehetasunak"></div>
+        </div>
+    </div>
+
+    <!-- Modal Taldea Sortu -->
+    <div id="taldea-modal" class="modal">
+        <div class="modal-content pokedex-modal">
+            <span class="close">&times;</span>
+            <h3>TALDE BERRIA SORTU</h3>
+            <div class="form-group">
+                <input type="text" id="taldea-izena" placeholder="Taldearen izena" class="pokedex-input">
+            </div>
+            <button id="btn-taldea-gorde" class="pokedex-button">GORDE</button>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+    <script src="/static/js/pokemon.js"></script>
+    <script src="/static/js/taldeak.js"></script>
+    <script src="/static/js/erabiltzailea.js"></script>
+
+    <!-- Botarentzako botoia -->
+    <button id="bot" class="bot-button">🤖</button>
+        <div id="bot-panel" class="bot-panel hidden">
+        <button class="bot-option" data-action="pokemonTop">PokeTop</button>
+        <button class="bot-option" data-action="pokemonMota">PokeMota</button>
+        <button class="bot-option" data-action="pokemonEbo">PokeEbo</button>
+        <button class="bot-option" data-action="pokemonScan">PokeScan</button>
+    </div>
+</body>
+</html>
