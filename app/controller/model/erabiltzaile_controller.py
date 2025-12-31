@@ -54,3 +54,4 @@ class ErabiltzaileController:
             [erabilIzena, pasahitza]
         )
         return dict(rows[0]) if rows else None
+        
