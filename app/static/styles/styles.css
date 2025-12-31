@@ -756,7 +756,7 @@ body {
 /* Bot botoia */
 .bot-button {
     position: fixed;
-    bottom: 25px;
+    bottom: 45px;
     left: 25px;
     width: 85px;
     height: 85px;
@@ -786,11 +786,11 @@ body {
 
 .bot-panel{
   position: fixed;
-  bottom: 25px;
+  bottom: 48px;
   left: 120px;
   display: flex;
   flex-direction: row;
-  gap: 10px;
+  gap: 15px;
   z-index: 998;
 }
 .bot-panel.hidden{ 
@@ -798,19 +798,81 @@ body {
 }
 
 .bot-option{
-  padding: 12px 20px;
-  border: 2px solid #8b0000;
-  border-radius: 25px;
-  background: var(--pokedex-light-red, #ff8a8a);
-  color: var(--pokedex-black, #222);
-  font-family: 'Press Start 2P', cursive;
-  font-size: .7em;
+  width: 80px;
+  height: 80px;
+  position: relative;
+  background: none;
+  border: none;
+  outline: none;
   cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0,0,0,.2);
-  transition: background .2s;
+  perspective: 1000px;
+  padding: 0;
+  margin: 0;
 }
-.bot-option:hover{
-    background: #fff;
-    transform: translateY(-3px);
-    box-shadow: 0 6px 10px rgba(139,0,0,0.3);
+.bot-option img,
+.bot-option span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: 0.5s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.bot-option img {
+    object-fit: contain;
+    z-index: 2;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    opacity: 1;
+    transform: translateY(0) rotateX(0);
+}
+.bot-option span {
+    color: #fff;
+    font-family: 'Press Start 2P', cursive;
+    font-weight: bold;
+    font-size: 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 1.5;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    opacity: 0;
+    transform: translateY(-50%) rotateX(90deg);
+    z-index: 1;
+}
+.bot-option:hover img {
+    opacity: 0;
+    transform: translateY(50%) rotateX(90deg);
+}
+.bot-option:hover span {
+    opacity: 1;
+    transform: translateY(0) rotateX(0);
+}
+/* PokeTop (Rojo) */
+.bot-option[data-action="pokeTop"] span {
+    background-color: #dc0a2d;
+    border: 2px solid #8b0000;
+}
+/* PokeMota  */
+.bot-option[data-action="pokeMota"] span {
+    background-color: #4dad5b;
+    border: 2px solid #2a6632;
+}
+/* PokeEbo */
+.bot-option[data-action="pokeEbo"] span {
+    background-color: #eed535;
+    color: #000;
+    border: 2px solid #a89208;
+
+}
+/* PokeScan */
+.bot-option[data-action="pokeScan"] span {
+    background-color: #2663ac;
+    border: 2px solid #1b5e7a;
 }
