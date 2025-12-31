@@ -44,10 +44,10 @@ def pokemon_blueprint(db):   # ← debe existir esta función
         """)
         return jsonify([dict(row) for row in rows])
 
-    @bp.route('/pokemon/motas', methods=['GET'])
-    def list_motas():
+    @bp.route('/pokemon/motak', methods=['GET'])
+    def list_motak():
         rows = db.select("SELECT DISTINCT mota1 as mota FROM espeziea WHERE mota1 IS NOT NULL ORDER BY mota1 ASC")
-        motas = [row['mota'] for row in rows]
-        return jsonify(motas)
+        motak = [row['mota'] for row in rows]
+        return jsonify(motak)
 
     return bp
