@@ -119,7 +119,7 @@ def create_app():
     def auth_logout():
         session.clear()
         flash('Saioa itxi da', 'success')
-        return redirect(url_for('home'))
+        return redirect(url_for('login'))
     
     
     # Registrar blueprints

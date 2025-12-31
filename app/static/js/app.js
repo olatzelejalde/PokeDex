@@ -38,6 +38,11 @@ function konfiguratuGertaeraEntzuleak() {
 
     document.getElementById('type-filter').addEventListener('change', bilatuPokemon);
 
+    // Botón cerrar sesión
+    document.getElementById('btn-saioa').addEventListener('click', () => {
+        window.location.href = '/auth/logout';
+    });
+
     // Bot
     document.getElementById('bot').addEventListener('click', () =>
         document.getElementById('bot-panel').classList.toggle('hidden')
