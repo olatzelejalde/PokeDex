@@ -177,7 +177,7 @@ body {
     flex-wrap: wrap;
 }
 
-#pokemon-search {
+#pokemon-search, #user-search {
     padding: 10px 15px;
     width: 60%;
     max-width: 400px;
@@ -197,7 +197,7 @@ body {
     color: var(--pokedex-black);
 }
 
-#search-button {
+#search-button, #search-users-button {
     padding: 10px 20px;
     background-color: var(--pokedex-yellow);
     color: var(--pokedex-black);
@@ -209,7 +209,7 @@ body {
     transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
-#search-button:hover {
+#search-button:hover, #search-users-button:hover {
     background-color: #ffdb58;
     transform: translateY(-2px);
 }
@@ -751,6 +751,74 @@ body {
     width: 100%;
     max-width: 600px;
     margin: 0 auto;
+}
+
+#erabiltzailea-edit .profile-edit-container {
+    padding: 20px;
+}
+
+/* Estilos para usuarios/amigos */
+.lagunak-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.user-card {
+    background-color: var(--pokedex-white);
+    border: 3px solid var(--pokedex-black);
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+
+.user-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.user-header {
+    margin-bottom: 15px;
+    border-bottom: 2px solid var(--pokedex-red);
+    padding-bottom: 10px;
+}
+
+.user-header h3 {
+    color: var(--pokedex-red);
+    font-size: 1.2em;
+    margin: 0 0 5px 0;
+}
+
+.user-username {
+    color: var(--pokedex-blue);
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.user-info {
+    margin-bottom: 15px;
+}
+
+.user-info p {
+    margin: 5px 0;
+    font-size: 0.9em;
+    color: var(--pokedex-black);
+}
+
+.user-info strong {
+    color: var(--pokedex-red);
+}
+
+.user-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.user-actions button {
+    flex: 1;
 }
 
 /* Bot botoia */

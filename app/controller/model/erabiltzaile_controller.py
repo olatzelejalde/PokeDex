@@ -1,18 +1,50 @@
+from app.domain.erabiltzailea import Erabiltzaile
+
+
+def _row_to_user(row) -> Erabiltzaile:
+    return Erabiltzaile(
+        id=row['id'],
+        izena=row['izena'],
+        abizena=row['abizena'],
+        erabilIzena=row['erabilIzena'],
+        telegramKontua=row['telegramKontua'],
+        rola=row['rola'],
+    )
+
+
+def _user_to_dict(u: Erabiltzaile) -> dict:
+    return {
+        'id': u.id,
+        'izena': u.izena,
+        'abizena': u.abizena,
+        'erabilIzena': u.erabilIzena,
+        'telegramKontua': u.telegramKontua,
+        'rola': u.rola,
+    }
+
+
 class ErabiltzaileController:
     def __init__(self, db):
         self.db = db
 
+    # ---- Public helpers to expose dicts to the API layer ----
+    def to_dict(self, user: Erabiltzaile) -> dict:
+        return _user_to_dict(user)
+
+    # ---- Queries ----
     def get_all(self):
-        return [dict(row) for row in self.db.select("SELECT * FROM erabiltzailea")]
+        rows = self.db.select("SELECT * FROM erabiltzailea")
+        return [_row_to_user(row) for row in rows]
 
     def get_by_id(self, uid):
         rows = self.db.select("SELECT * FROM erabiltzailea WHERE id = ?", [uid])
-        return dict(rows[0]) if rows else None
+        return _row_to_user(rows[0]) if rows else None
     
     def get_by_erabilIzena(self, erabilIzena):
         rows = self.db.select("SELECT * FROM erabiltzailea WHERE erabilIzena = ?", [erabilIzena])
-        return dict(rows[0]) if rows else None
+        return _row_to_user(rows[0]) if rows else None
 
+    # ---- Mutations ----
     def create(self, izena, abizena, erabilIzena, pasahitza, pasahitza2, telegramKontua=None):
         if not erabilIzena or len(pasahitza) < 4 or pasahitza != pasahitza2:
             raise ValueError("Datuak ez dira baliozkoak")
@@ -53,5 +85,5 @@ class ErabiltzaileController:
             "SELECT * FROM erabiltzailea WHERE erabilIzena = ? AND pasahitza = ?",
             [erabilIzena, pasahitza]
         )
-        return dict(rows[0]) if rows else None
-        
+        return _row_to_user(rows[0]) if rows else None
+    

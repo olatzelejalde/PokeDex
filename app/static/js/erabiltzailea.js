@@ -1,10 +1,11 @@
 // Erabiltzailea kudeatzeko funtzioak
 function kargatuErabiltzaileProfila() {
     // user viene desde Flask → variable global user
-    document.getElementById('erabiltzailea-list').innerHTML = `
+    if (user.rola === 'admin') {
+        document.getElementById('erabiltzailea-list').innerHTML = `
         <div class="profile-container">
             <div class="profile-card">
-                <h2><img id="profile-pokeball" src="/static/pokeball.webp">ENTRENATZAILE FITXA <p class="profile-id">ID: ${user.id}</p></h2>
+                <h2><img id="profile-pokeball" src="/static/pokeball.webp">ADMINISTRATZAILE FITXA <p class="profile-id">ID: ${user.id}</p></h2>
                 <p>Erabiltzaile Izena: ${user.erabilIzena}</p>
                 <p>Izena: ${user.izena}</p>
                 <p>Abizena: ${user.abizena}</p>
@@ -12,7 +13,21 @@ function kargatuErabiltzaileProfila() {
                 <button class="pokedex-button" onclick="aldatuDatuak()">Aldatu nire datuak</button>
             </div>
         </div>
-    `;
+        `;
+    } else {
+        document.getElementById('erabiltzailea-list').innerHTML = `
+            <div class="profile-container">
+                <div class="profile-card">
+                    <h2><img id="profile-pokeball" src="/static/pokeball.webp">ENTRENATZAILE FITXA <p class="profile-id">ID: ${user.id}</p></h2>
+                    <p>Erabiltzaile Izena: ${user.erabilIzena}</p>
+                    <p>Izena: ${user.izena}</p>
+                    <p>Abizena: ${user.abizena}</p>
+                    <p>Telegram: ${user.telegramKontua || 'Ez dago'}</p>
+                    <button class="pokedex-button" onclick="aldatuDatuak()">Aldatu nire datuak</button>
+                </div>
+            </div>
+        `;
+    }
 }
 
 async function aldatuDatuak() {

@@ -41,12 +41,17 @@
         <!----------------------------------------------->
         <!--            Bilaketa barra                 -->
         <!----------------------------------------------->
-        <div class="search-container">
+        <div class="search-container" id="search-pokemon">
             <input type="text" id="pokemon-search" placeholder="Bilatu Pokémon...">
             <select id="type-filter">
                 <option value="">Mota guztiak</option>
             </select>
             <button id="search-button">Bilatu</button>
+        </div>
+
+        <div class="search-container" id="search-lagunak" style="display: none;">
+            <input type="text" id="user-search" placeholder="Bilatu erabiltzailea...">
+            <button id="search-users-button">Bilatu</button>
         </div>
     </header>
 
@@ -144,6 +149,7 @@
     <script src="/static/js/pokemon.js"></script>
     <script src="/static/js/taldeak.js"></script>
     <script src="/static/js/erabiltzailea.js"></script>
+    <script src="/static/js/lagunak.js"></script>
 
     <!-- Botarentzako botoia -->
 <div id="bot" class="bot-button">

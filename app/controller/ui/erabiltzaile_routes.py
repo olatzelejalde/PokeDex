@@ -6,15 +6,20 @@ def erabiltzaile_blueprint(db):
     ctrl = ErabiltzaileController(db)
 
     @bp.route('/erabiltzaileak', methods=['GET'])
-    def listar():
-        return jsonify(ctrl.get_all())
+    def zerrendatu():
+        users = ctrl.get_all()
+        return jsonify([ctrl.to_dict(u) for u in users])
 
     @bp.route('/erabiltzaileak', methods=['POST'])
-    def crear():
+    def sortu():
         data = request.get_json()
+        pasahitza2 = data.get('pasahitza2', data['pasahitza'])
         try:
-            ctrl.create(data['izena'], data['abizena'], data['erabilIzena'], data['pasahitza'], data.get('telegramKontua'))
-            return jsonify({'message': 'Erabiltzailea sortua'}), 201
+            ctrl.create(
+                data['izena'], data['abizena'], data['erabilIzena'], data['pasahitza'], pasahitza2, data.get('telegramKontua')
+            )
+            u = ctrl.get_by_erabilIzena(data['erabilIzena'])
+            return jsonify(ctrl.to_dict(u)), 201
         except ValueError as e:
             return jsonify({'error': str(e)}), 400
 
@@ -23,21 +28,22 @@ def erabiltzaile_blueprint(db):
         data = request.get_json()
         u = ctrl.login(data['erabilIzena'], data['pasahitza'])
         if u:
-            session['uid'] = u['id']
-            return jsonify(u)
+            session['uid'] = u.id
+            return jsonify(ctrl.to_dict(u))
         return jsonify({'error': 'Kredentzial okerrak'}), 401
 
     @bp.route('/erabiltzaileak/<int:uid>', methods=['GET'])
-    def uno(uid):
-        return jsonify(ctrl.get_by_id(uid) or {})
+    def bat(uid):
+        u = ctrl.get_by_id(uid)
+        return jsonify(ctrl.to_dict(u) if u else {})
 
     @bp.route('/erabiltzaileak/<int:uid>', methods=['PUT'])
-    def actualizar(uid):
+    def eguneratu(uid):
         data = request.get_json()
         try:
             ctrl.update(uid, data)
             user = ctrl.get_by_id(uid)
-            return jsonify(user)
+            return jsonify(ctrl.to_dict(user))
         except ValueError as e:
             return jsonify({'error': str(e)}), 400
 
