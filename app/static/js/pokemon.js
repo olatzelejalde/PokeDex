@@ -3,6 +3,7 @@ async function kargatuPokemonDatuak() {
     try {
         const response = await fetch(`${API_BASE_URL}/pokemon`);
         pokemonGuztiak = await response.json();
+        console.log("✅ Pokémon recibidos:", pokemonGuztiak.length, pokemonGuztiak[0]);
         erakutsiPokemon(pokemonGuztiak);
     } catch (error) {
         console.error('Errorea Pokémonak kargatzean:', error);
@@ -28,7 +29,9 @@ async function kargatuMotak() {
 }
 
 function erakutsiPokemon(pokemonZerrenda) {
+    console.log("🎯 erakutsiPokemon llamado con", pokemonZerrenda.length, "pokemons");
     const grid = document.getElementById('pokemon-grid');
+    console.log("📦 Grid encontrado:", grid);
     if (pokemonZerrenda.length === 0) {
         grid.innerHTML = `
             <div class="no-results" style="grid-column: 1 / -1; text-align: center; padding: 40px;">
@@ -52,7 +55,7 @@ function sortuPokemonTxartela(pokemon) {
     txartela.addEventListener('click', () => erakutsiPokemonXehetasunak(pokemon));
     txartela.innerHTML = `
         <div class="pokemon-id">#${String(pokemon.id).padStart(3, '0')}</div>
-        <img src="${pokemon.irudia}" alt="${pokemon.izena}" class="pokemon-image"
+        <img src="/static/sprites/pokemon/${pokemon.id}.png" alt="${pokemon.izena}" class="pokemon-image"
              onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxMjAiIGZpbGw9IiNGRjdGN0YiIHN0cm9rZT0iIzIyMjIyNCIgc3Ryb2tlLXdpZHRoPSIyIiByeD0iMTAiLz48dGV4dCB4PSI2MCIgeT0iNjUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzIyMjIyNCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+5Y+W5pu4PC90ZXh0Pjwvc3ZnPg=='">
         <div class="pokemon-name">${pokemon.izena}</div>
         <div class="pokemon-types">
@@ -104,7 +107,7 @@ function erakutsiPokemonXehetasunak(pokemon) {
                 <span class="pokemon-detail-number">#${String(pokemon.id).padStart(3, '0')}</span>
             </div>
             <div class="pokemon-detail-image">
-                <img src="${pokemon.irudia}" alt="${pokemon.izena}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNGRjdGN0YiIHN0cm9rZT0iIzIyMjIyNCIgc3Ryb2tlLXdpZHRoPSIzIiByeD0iMTUiLz48dGV4dCB4PSIxMDAiIHk9IjExMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjI0IiBmaWxsPSIjMjIyMjI0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7lj5bmm7g8L3RleHQ+PC9zdmc+'">
+                <img src="/static/sprites/pokemon/${pokemon.id}.png" alt="${pokemon.izena}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNGRjdGN0YiIHN0cm9rZT0iIzIyMjIyNCIgc3Ryb2tlLXdpZHRoPSIzIiByeD0iMTUiLz48dGV4dCB4PSIxMDAiIHk9IjExMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjI0IiBmaWxsPSIjMjIyMjI0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7lj5bmm7g8L3RleHQ+PC9zdmc+'">
             </div>
             <div class="pokemon-detail-types">
                 <span class="type ${motaKlasea1}">${pokemon.mota}</span>

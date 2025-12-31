@@ -25,6 +25,29 @@ class ErabiltzaileController:
             [izena, abizena, erabilIzena, pasahitza, telegramKontua]
         )
 
+    def update(self, uid, data):
+        updates = []
+        params = []
+        if 'izena' in data:
+            updates.append('izena = ?')
+            params.append(data['izena'])
+        if 'abizena' in data:
+            updates.append('abizena = ?')
+            params.append(data['abizena'])
+        if 'telegramKontua' in data:
+            updates.append('telegramKontua = ?')
+            params.append(data['telegramKontua'])
+        if 'pasahitza' in data and data['pasahitza']:
+            updates.append('pasahitza = ?')
+            params.append(data['pasahitza'])
+        
+        if not updates:
+            raise ValueError("Ez dago aldaketarik gordetzeko")
+        
+        params.append(uid)
+        query = f"UPDATE erabiltzailea SET {', '.join(updates)} WHERE id = ?"
+        self.db.update(query, params)
+
     def login(self, erabilIzena, pasahitza):
         rows = self.db.select(
             "SELECT * FROM erabiltzailea WHERE erabilIzena = ? AND pasahitza = ?",

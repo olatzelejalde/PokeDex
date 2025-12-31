@@ -31,4 +31,14 @@ def erabiltzaile_blueprint(db):
     def uno(uid):
         return jsonify(ctrl.get_by_id(uid) or {})
 
+    @bp.route('/erabiltzaileak/<int:uid>', methods=['PUT'])
+    def actualizar(uid):
+        data = request.get_json()
+        try:
+            ctrl.update(uid, data)
+            user = ctrl.get_by_id(uid)
+            return jsonify(user)
+        except ValueError as e:
+            return jsonify({'error': str(e)}), 400
+
     return bp
