@@ -6,8 +6,8 @@ CREATE TABLE IF NOT EXISTS mota (
 
 -- 2. ESPEZIEA
 CREATE TABLE IF NOT EXISTS espeziea (
-    id INTEGER,
-    izena TEXT PRIMARY KEY,
+    id INTEGER PRIMARY KEY,
+    izena TEXT NOT NULL,
     mota1 TEXT NOT NULL,
     mota2 TEXT,
     osasuna INTEGER NOT NULL,

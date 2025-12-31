@@ -37,7 +37,7 @@ def pokemon_blueprint(db):   # ← debe existir esta función
 
     @bp.route('/pokemon', methods=['GET'])
     def list_pokemon():
-        rows = db.select_all("SELECT * FROM espeziea ORDER BY id ASC")
+        rows = db.select("SELECT * FROM espeziea ORDER BY id ASC")
         return jsonify([dict(row) for row in rows])
 
     return bp

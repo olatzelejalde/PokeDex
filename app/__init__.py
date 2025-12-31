@@ -18,37 +18,34 @@ from config import Config
 
 def init_db():
     print("Iniciando la base de datos")
-    
+
     # Verificar si la base de datos existe
     db_exists = os.path.exists(Config.DB_PATH)
-    
+
     conn = sqlite3.connect(Config.DB_PATH)
-    from app.controller.model.seed_pokeapi import seed_gen1
 
     if not db_exists:
         print("Creando base de datos y tablas...")
-        # Ejecutar schema.sql solo si la DB no existía
         try:
             with open('app/database/schema.sql', 'r', encoding='utf-8') as f:
                 conn.executescript(f.read())
             conn.commit()
-
-            from app.controller.model.seed_pokeapi import seed_gen1
-            seed_gen1(Connection())
             print("Base de datos creada exitosamente")
         except FileNotFoundError:
             print("ERROR: No se encontró schema.sql")
-    else:
-        print("La base de datos ya existe")
-        # Verificar tablas
-        cursor = conn.cursor()
-        cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
-        tables = cursor.fetchall()
-        if tables:
-            print(f"Tablas existentes: {[table[0] for table in tables]}")
-        else:
-            print("No hay tablas en la base de datos")
-    
+
+    # ↓↓↓ SIEMPRE: si la tabla espeziea está vacía, poblar ↓↓↓
+    with sqlite3.connect(Config.DB_PATH) as con:
+        con.row_factory = sqlite3.Row
+        cur = con.cursor()
+        cur.execute("SELECT COUNT(*) AS c FROM espeziea")
+        count = cur.fetchone()['c']
+        if count == 0:
+            print(">>> Tabla espeziea vacía → poblando gen 1")
+            from app.controller.model.seed_pokeapi import seed_gen1
+            seed_gen1(Connection())
+            print("✅ Gen 1 kargatuta!")
+
     conn.close()
 
 
@@ -73,7 +70,7 @@ def create_app():
         if not user:
             session.clear()
             return redirect(url_for('login'))
-        return render_template('index.html') 
+        return render_template('index.html', user=user) 
          
     @app.route('/register')
     def register():

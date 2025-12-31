@@ -33,10 +33,11 @@ def seed_gen1(db: Connection):
 
         # ---------- INSERTAR ESPECIE ----------
         db.insert("""
-            INSERT OR IGNORE INTO espeziea (izena, mota1, mota2, osasuna, atakea, defentsa,
+            INSERT OR IGNORE INTO espeziea (id, izena, mota1, mota2, osasuna, atakea, defentsa,
                                             atake_berezia, defentsa_berezia, abiadura, irudia, deskribapena)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, [
+            pokemon_data['id'],
             pokemon_data['name'].title(),
             mota_it(tipos[0]),
             mota_it(tipos[1]) if len(tipos) > 1 else None,
