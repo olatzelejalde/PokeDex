@@ -146,8 +146,9 @@
     <script src="/static/js/erabiltzailea.js"></script>
 
     <!-- Botarentzako botoia -->
-    <button id="bot" class="bot-button">🤖</button>
-        <div id="bot-panel" class="bot-panel hidden">
+<div id="bot" class="bot-button">
+        <img src="{{ url_for('static', filename='bot-image.png') }}" alt="Bot Asistente">
+    </div>        <div id="bot-panel" class="bot-panel hidden">
         <button class="bot-option" data-action="pokemonTop">PokeTop</button>
         <button class="bot-option" data-action="pokemonMota">PokeMota</button>
         <button class="bot-option" data-action="pokemonEbo">PokeEbo</button>
