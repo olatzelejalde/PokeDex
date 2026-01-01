@@ -6,7 +6,7 @@ function kargatuErabiltzaileProfila() {
         <div class="profile-container">
             <div class="profile-card">
                 <h2><img id="profile-pokeball" src="/static/pokeball.webp">ADMINISTRATZAILE FITXA <p class="profile-id">ID: ${user.id}</p></h2>
-                <p>Erabiltzaile Izena: ${user.erabilIzena}</p>
+                <p>Erabiltzaile Izena: ${user.erabiltzaileIzena}</p>
                 <p>Izena: ${user.izena}</p>
                 <p>Abizena: ${user.abizena}</p>
                 <p>Telegram: ${user.telegramKontua || 'Ez dago'}</p>
@@ -19,7 +19,7 @@ function kargatuErabiltzaileProfila() {
             <div class="profile-container">
                 <div class="profile-card">
                     <h2><img id="profile-pokeball" src="/static/pokeball.webp">ENTRENATZAILE FITXA <p class="profile-id">ID: ${user.id}</p></h2>
-                    <p>Erabiltzaile Izena: ${user.erabilIzena}</p>
+                    <p>Erabiltzaile Izena: ${user.erabiltzaileIzena}</p>
                     <p>Izena: ${user.izena}</p>
                     <p>Abizena: ${user.abizena}</p>
                     <p>Telegram: ${user.telegramKontua || 'Ez dago'}</p>
@@ -37,7 +37,7 @@ async function aldatuDatuak() {
         <div class="profile-container">
             <div class="profile-card">
                 <h2><img id="profile-pokeball" src="/static/pokeball.webp">ENTRENATZAILE FITXA <p class="profile-id">ID: ${user.id}</p></h2>
-                <p>Erabiltzaile Izena: ${user.erabilIzena}</p>
+                <p>Erabiltzaile Izena: ${user.erabiltzaileIzena}</p>
                 <label>Izena: <input id="izena-editatu" type="text" value="${user.izena}"></label>
                 <label>Abizena: <input id="abizena-editatu" type="text" value="${user.abizena}"></label>
                 <label>Telegram: <input id="telegram-editatu" type="text" value="${user.telegramKontua || ''}"></label>

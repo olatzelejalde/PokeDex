@@ -35,7 +35,7 @@ function sortuErabiltzaileTxartela(erabiltzailea) {
     txartela.innerHTML = `
         <div class="user-header">
             <h3>${erabiltzailea.izena} ${erabiltzailea.abizena}</h3>
-            <span class="user-username">@${erabiltzailea.erabilIzena}</span>
+            <span class="user-username">@${erabiltzailea.erabiltzaileIzena}</span>
         </div>
         <div class="user-info">
             <p><strong>ID:</strong> ${erabiltzailea.id}</p>
@@ -58,7 +58,7 @@ async function bilatuErabiltzaileak() {
         
         if (bilaketaTerminoa) {
             iragazitakoak = iragazitakoak.filter(u =>
-                u.erabilIzena.toLowerCase().includes(bilaketaTerminoa) ||
+                u.erabiltzaileIzena.toLowerCase().includes(bilaketaTerminoa) ||
                 u.izena.toLowerCase().includes(bilaketaTerminoa) ||
                 u.abizena.toLowerCase().includes(bilaketaTerminoa)
             );

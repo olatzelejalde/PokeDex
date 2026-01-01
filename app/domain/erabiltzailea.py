@@ -18,8 +18,9 @@ class Erabiltzailea:
     taldeZer: List["Taldea"]
     notifZer: List["Notifikazio"]
 
-    def __init__(self, izena: str, abizena: str, erabiltzaileIzena: str,
+    def __init__(self, id: int, izena: str, abizena: str, erabiltzaileIzena: str,
                  pasahitza: str, rola: str, telegramKontua: str = ""):
+        self.id = id
         self.izena = izena
         self.abizena = abizena
         self.erabiltzaileIzena = erabiltzaileIzena

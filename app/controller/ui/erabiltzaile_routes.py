@@ -16,9 +16,9 @@ def erabiltzaile_blueprint(db):
         pasahitza2 = data.get('pasahitza2', data['pasahitza'])
         try:
             ctrl.create(
-                data['izena'], data['abizena'], data['erabilIzena'], data['pasahitza'], pasahitza2, data.get('telegramKontua')
+                data['izena'], data['abizena'], data['erabiltzaileIzena'], data['pasahitza'], pasahitza2, data.get('telegramKontua')
             )
-            u = ctrl.get_by_erabilIzena(data['erabilIzena'])
+            u = ctrl.get_by_erabilIzena(data['erabiltzaileIzena'])
             return jsonify(ctrl.to_dict(u)), 201
         except ValueError as e:
             return jsonify({'error': str(e)}), 400
@@ -26,7 +26,7 @@ def erabiltzaile_blueprint(db):
     @bp.route('/erabiltzaileak/saioa', methods=['POST'])
     def saioa():
         data = request.get_json()
-        u = ctrl.login(data['erabilIzena'], data['pasahitza'])
+        u = ctrl.login(data['erabiltzaileIzena'], data['pasahitza'])
         if u:
             session['uid'] = u.id
             return jsonify(ctrl.to_dict(u))

@@ -1,23 +1,25 @@
-from app.domain.erabiltzailea import Erabiltzaile
+from app.domain.erabiltzailea import Erabiltzailea
+from app.domain.erabiltzaileKatalogoa import ErabiltzaileKatalogoa
 
 
-def _row_to_user(row) -> Erabiltzaile:
-    return Erabiltzaile(
+def _row_to_user(row) -> Erabiltzailea:
+    return Erabiltzailea(
         id=row['id'],
         izena=row['izena'],
         abizena=row['abizena'],
-        erabilIzena=row['erabilIzena'],
-        telegramKontua=row['telegramKontua'],
+        erabiltzaileIzena=row['erabilIzena'],
+        pasahitza=row['pasahitza'],
         rola=row['rola'],
+        telegramKontua=row['telegramKontua'],
     )
 
 
-def _user_to_dict(u: Erabiltzaile) -> dict:
+def _user_to_dict(u: Erabiltzailea) -> dict:
     return {
         'id': u.id,
         'izena': u.izena,
         'abizena': u.abizena,
-        'erabilIzena': u.erabilIzena,
+        'erabilIzena': u.erabiltzaileIzena,
         'telegramKontua': u.telegramKontua,
         'rola': u.rola,
     }
@@ -26,23 +28,43 @@ def _user_to_dict(u: Erabiltzaile) -> dict:
 class ErabiltzaileController:
     def __init__(self, db):
         self.db = db
+        self.katalogoa = ErabiltzaileKatalogoa()
+        self._load_katalogoa()
+
+    def _load_katalogoa(self):
+        """Kargatu guztiak erabiltzaileak katalogoan"""
+        rows = self.db.select("SELECT * FROM erabiltzailea")
+        for row in rows:
+            user = _row_to_user(row)
+            self.katalogoa.gehitu(user)
 
     # ---- Public helpers to expose dicts to the API layer ----
-    def to_dict(self, user: Erabiltzaile) -> dict:
+    def to_dict(self, user: Erabiltzailea) -> dict:
         return _user_to_dict(user)
 
     # ---- Queries ----
     def get_all(self):
-        rows = self.db.select("SELECT * FROM erabiltzailea")
-        return [_row_to_user(row) for row in rows]
+        return self.katalogoa.guztiak()
 
     def get_by_id(self, uid):
-        rows = self.db.select("SELECT * FROM erabiltzailea WHERE id = ?", [uid])
-        return _row_to_user(rows[0]) if rows else None
+        user = self.katalogoa.bilatu_by_id(uid)
+        if user is None:
+            # Saiatu datu-basean
+            rows = self.db.select("SELECT * FROM erabiltzailea WHERE id = ?", [uid])
+            if rows:
+                user = _row_to_user(rows[0])
+                self.katalogoa.gehitu(user)
+        return user
     
     def get_by_erabilIzena(self, erabilIzena):
-        rows = self.db.select("SELECT * FROM erabiltzailea WHERE erabilIzena = ?", [erabilIzena])
-        return _row_to_user(rows[0]) if rows else None
+        user = self.katalogoa.bilatu_by_erabilIzena(erabilIzena)
+        if user is None:
+            # Saiatu datu-basean
+            rows = self.db.select("SELECT * FROM erabiltzailea WHERE erabilIzena = ?", [erabilIzena])
+            if rows:
+                user = _row_to_user(rows[0])
+                self.katalogoa.gehitu(user)
+        return user
 
     # ---- Mutations ----
     def create(self, izena, abizena, erabilIzena, pasahitza, pasahitza2, telegramKontua=None):

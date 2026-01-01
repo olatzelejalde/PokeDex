@@ -70,7 +70,7 @@ def create_app():
         if not user:
             session.clear()
             return redirect(url_for('login'))
-        return render_template('index.html', user=user) 
+        return render_template('index.html', user=user_ctrl.to_dict(user)) 
          
     @app.route('/register')
     def register():
@@ -109,8 +109,8 @@ def create_app():
             request.form['pasahitza']
         )
         if user:
-            session['user_id'] = user['id']
-            session['erabilIzena'] = user['erabilIzena']
+            session['user_id'] = user.id
+            session['erabilIzena'] = user.erabiltzaileIzena
             return redirect(url_for('index'))
         print(">>> EXCEPT ValueError:", 'Kredentzial okerrak')
         return render_template('login.html', error='Kredentzial okerrak')
