@@ -64,13 +64,11 @@ function aldatuAtala(atalIzena) {
 }
 
 /* ===========================================================
-   NUEVA LÓGICA: BOTONES DEL BOT Y VENTANA MODAL
+   BOT-AREN BOTOIAK ETA PANTAILA GEHIGARRIA
    =========================================================== */
-
-// 1. Datos para rellenar la ventana según el botón
 const botData = {
     pokeTop: {
-        title: "POKE TOP",
+        title: "PokeTop",
         color: "#ffcccc",
         borderColor: "#dc0a2d",
         content: `
@@ -83,7 +81,7 @@ const botData = {
         `
     },
     pokeMota: {
-        title: "POKE MOTA",
+        title: "PokeMota",
         color: "#ccffcc",
         borderColor: "#4dad5b",
         content: `
@@ -96,7 +94,7 @@ const botData = {
         `
     },
     pokeEbo: {
-        title: "POKE EBO",
+        title: "PokeEbo",
         color: "#ffffcc",
         borderColor: "#eed535",
         content: `
@@ -107,7 +105,7 @@ const botData = {
         `
     },
     pokeScan: {
-        title: "POKE SCAN",
+        title: "PokeScan",
         color: "#cce5ff",
         borderColor: "#2663ac",
         content: `
@@ -119,61 +117,58 @@ const botData = {
     }
 };
 
-// 2. Función que activa los clicks en los botones de colores y la ventana
 function konfiguratuBotLogika() {
     const modal = document.getElementById('retro-modal');
     const botPanel = document.getElementById('bot-panel');
     const modalTitle = document.getElementById('modal-title');
     const modalBody = document.getElementById('modal-body');
     const modalBox = document.getElementById('modal-box-color');
+    const modalHeader = document.querySelector('.modal-header');
     const closeX = document.querySelector('.close-retro');
     const closeOk = document.querySelector('.retro-ok-btn');
     const options = document.querySelectorAll('.bot-option');
 
-    // Si falta algo en el HTML, paramos para no dar errores
     if (!modal) return;
 
-    // Función para abrir la ventana con datos
     const openModal = (action) => {
         const data = botData[action];
         if (!data) return;
 
-        // Rellenar info
         modalTitle.innerHTML = data.title;
         modalBody.innerHTML = data.content;
 
-        // Cambiar colores
         if(modalBox) {
             modalBox.style.backgroundColor = data.color;
             modalBox.style.borderColor = data.borderColor;
         }
+        if(closeOk) {
+            closeOk.classList.remove('pokeTop', 'pokeMota', 'pokeEbo', 'pokeScan');
+            closeOk.classList.add(action);
+        }
+        if(modalHeader) {
+            modalHeader.classList.remove('pokeTop', 'pokeMota', 'pokeEbo', 'pokeScan');
+            modalHeader.classList.add(action);
+        }
 
-        // Mostrar ventana y ocultar panel de botones
         modal.classList.remove('hidden');
         if(botPanel) botPanel.classList.add('hidden');
     };
 
-    // Función para cerrar la ventana
     const closeModal = () => {
         modal.classList.add('hidden');
     };
 
-    // Asignar click a cada botón de color (Rojo, Verde, Amarillo, Azul)
     options.forEach(option => {
         option.addEventListener('click', (e) => {
-            e.stopPropagation(); // Evitar conflictos
+            e.stopPropagation();
             const action = option.getAttribute('data-action');
             openModal(action);
         });
     });
 
-    // Cerrar con la X
     if (closeX) closeX.addEventListener('click', closeModal);
-
-    // Cerrar con el botón OK
     if (closeOk) closeOk.addEventListener('click', closeModal);
 
-    // Cerrar si clicamos fuera (en el fondo oscuro)
     modal.addEventListener('click', (e) => {
         if (e.target === modal) closeModal();
     });
