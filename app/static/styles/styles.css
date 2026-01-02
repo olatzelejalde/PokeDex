@@ -879,3 +879,100 @@ body {
     background-color: #2663ac;
     border: 2px solid #1b5e7a;
 }
+
+/* --- FONDO OSCURO (Overlay) --- */
+.retro-modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Fondo negro semitransparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+/* Ocultar ventana */
+.retro-modal.hidden {
+    display: none;
+}
+
+/* --- LA CAJA DE LA VENTANA --- */
+.modal-box {
+    background: #f0f0f0; /* Color base (se cambiará según el botón) */
+    width: 400px;        /* Ancho de la ventana */
+    border: 4px solid #333; /* Borde grueso retro */
+    border-radius: 8px;
+    box-shadow: 8px 8px 0px rgba(0,0,0,0.5); /* Sombra sólida */
+    font-family: 'Press Start 2P', cursive;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Para que nada se salga de los bordes redondeados */
+}
+
+/* --- ESTILO DE LAS TARJETAS GENERADAS POR JS --- */
+
+/* 1. La tarjeta gris (Tu clase .taldea-card) */
+.taldea-card {
+    background-color: #808080; /* Gris retro */
+    border: 2px solid #555;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    color: #fff; /* Texto blanco para que resalte en gris */
+    transition: 0.2s;
+    font-family: sans-serif;
+}
+
+.taldea-card:hover {
+    background-color: #909090; /* Gris más claro al pasar ratón */
+    border-color: #b30000;     /* Borde rojo al pasar ratón */
+}
+
+/* 2. Cabecera de la tarjeta */
+.taldea-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #666;
+    padding-bottom: 5px;
+}
+.taldea-header h3 { margin: 0; font-size: 14px; color: black; font-weight: bold;}
+.taldea-header span { font-size: 10px; color: #eee; }
+
+/* 3. Lista de Pokemons pequeños */
+.taldea-pokemonak {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.pokemon-mini {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 30px; /* Tamaño mini */
+}
+
+.pokemon-mini img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+}
+
+.pokemon-mini div { display: none; } /* Ocultamos el nombre mini para que no ocupe espacio, solo la foto */
+
+/* 4. Botones de acción (Borrar/Compartir) que trae tu código */
+.taldea-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+}
+
+.taldea-actions button {
+    font-size: 8px;
+    padding: 4px 8px;
+    cursor: pointer;
+    border: 1px solid #333;
+}
