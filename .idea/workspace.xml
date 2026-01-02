@@ -6,6 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="5027c7a4-cde5-4d20-91a5-71c2ee576678" name="Changes" comment="&quot;botia aldaketa&quot;">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/static/js/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/js/app.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/static/styles/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/styles/styles.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/index.html" afterDir="false" />
     </list>
@@ -127,7 +128,7 @@
       <workItem from="1767183533562" duration="787000" />
       <workItem from="1767195151818" duration="4267000" />
       <workItem from="1767199663249" duration="743000" />
-      <workItem from="1767290544513" duration="6996000" />
+      <workItem from="1767290544513" duration="9174000" />
     </task>
     <task id="LOCAL-00001" summary="&quot;botaren argazkia&quot;">
       <option name="closed" value="true" />

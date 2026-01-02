@@ -879,100 +879,111 @@ body {
     background-color: #2663ac;
     border: 2px solid #1b5e7a;
 }
+/* ========================================= */
+/* ARREGLO PANEL BOT (Importante)     */
+/* ========================================= */
 
-/* --- FONDO OSCURO (Overlay) --- */
-.retro-modal {
+/* Sobrescribimos la clase .hidden para asegurar que funciona */
+.bot-panel.hidden {
+    display: none !important;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* ========================================= */
+/* BOTAREN PANTAILA GEHIGARRIA            */
+/* ========================================= */
+
+.retro-modal {              /* Atzeko fondoa */
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); /* Fondo negro semitransparente */
+    background-color: rgba(0, 0, 0, 0.6);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 2000;
 }
 
-/* Ocultar ventana */
+/* Asegurar que se oculta */
 .retro-modal.hidden {
-    display: none;
+    display: none !important;
 }
 
-/* --- LA CAJA DE LA VENTANA --- */
+/* La caja de la ventana */
 .modal-box {
-    background: #f0f0f0; /* Color base (se cambiará según el botón) */
-    width: 400px;        /* Ancho de la ventana */
-    border: 4px solid #333; /* Borde grueso retro */
+    background: #f0f0f0;
+    width: 1200px;      /* Pantaila tamaina */
+    max-width: 95%;     /* Mugikorretan ez ateratzeko pantailatik */
+    border: 4px solid #333;
     border-radius: 8px;
-    box-shadow: 8px 8px 0px rgba(0,0,0,0.5); /* Sombra sólida */
+    box-shadow: 10px 10px 0px rgba(0,0,0,0.5);
     font-family: 'Press Start 2P', cursive;
     display: flex;
     flex-direction: column;
-    overflow: hidden; /* Para que nada se salga de los bordes redondeados */
+    overflow: hidden;
 }
 
-/* --- ESTILO DE LAS TARJETAS GENERADAS POR JS --- */
-
-/* 1. La tarjeta gris (Tu clase .taldea-card) */
-.taldea-card {
-    background-color: #808080; /* Gris retro */
-    border: 2px solid #555;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    color: #fff; /* Texto blanco para que resalte en gris */
-    transition: 0.2s;
-    font-family: sans-serif;
-}
-
-.taldea-card:hover {
-    background-color: #909090; /* Gris más claro al pasar ratón */
-    border-color: #b30000;     /* Borde rojo al pasar ratón */
-}
-
-/* 2. Cabecera de la tarjeta */
-.taldea-header {
+/* Cabecera (Título y X) */
+.modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #666;
-    padding-bottom: 5px;
-}
-.taldea-header h3 { margin: 0; font-size: 14px; color: black; font-weight: bold;}
-.taldea-header span { font-size: 10px; color: #eee; }
-
-/* 3. Lista de Pokemons pequeños */
-.taldea-pokemonak {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
+    padding: 10px 15px;
+    background-color: rgba(0,0,0,0.1);
+    border-bottom: 3px solid #333;
 }
 
-.pokemon-mini {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 30px; /* Tamaño mini */
+.modal-header h3 {     /* Izenburua */
+    margin: 0;
+    font-size: 16px;
 }
-
-.pokemon-mini img {
-    width: 30px;
-    height: 30px;
-    object-fit: contain;
-}
-
-.pokemon-mini div { display: none; } /* Ocultamos el nombre mini para que no ocupe espacio, solo la foto */
-
-/* 4. Botones de acción (Borrar/Compartir) que trae tu código */
-.taldea-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 5px;
-}
-
-.taldea-actions button {
-    font-size: 8px;
-    padding: 4px 8px;
+.close-retro {         /* X */
+    font-size: 24px;
+    font-weight: bold;
     cursor: pointer;
-    border: 1px solid #333;
+    line-height: 1;
+    color: #333;
+}
+.close-retro:hover { color: #d32f2f; }
+
+/* Cuerpo del contenido */
+.modal-body {
+    padding: 40px;
+    font-size: 14px;
+    color: #333;
+    line-height: 1.8;
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* OK botoia */
+.modal-footer {
+    padding: 20px;
+    display: flex;
+    justify-content: flex-end;
+    border-top: 3px solid #333;
+    background-color: rgba(0,0,0,0.05);
+}
+
+.retro-ok-btn {
+    background-color: #dc0a2d;
+    color: #fff;
+    border: 3px solid #8b0000;
+    padding: 15px 40px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 12px;
+    cursor: pointer;
+    box-shadow: 5px 5px 0 rgba(0,0,0,0.3);
+    transition: all 0.1s;
+}
+
+.retro-ok-btn:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+    background-color: #ff1a1a;
 }
