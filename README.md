@@ -1,10 +1,6 @@
 # PokeDex
-Martxan jartzeko windows-etik ejecutar.bat exekutatu.
+Martxan jartzeko
 
-cd backend
+python3 run.py
 
-pip install -r requirements.txt
-
-cd ..
-
-./ejecutar.bat
+nabigatzailean: localhost:5000
