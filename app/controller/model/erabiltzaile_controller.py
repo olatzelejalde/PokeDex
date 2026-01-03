@@ -19,8 +19,8 @@ def _user_to_dict(u: Erabiltzailea) -> dict:
         'id': u.id,
         'izena': u.izena,
         'abizena': u.abizena,
-        'erabilIzena': u.erabiltzaileIzena,
-        'telegramKontua': u.telegramKontua,
+        'erabiltzaileIzena': u.erabiltzaileIzena,
+        'telegramKontua': u.telegramKontua or '',
         'rola': u.rola,
     }
 
@@ -78,6 +78,10 @@ class ErabiltzaileController:
                VALUES (?, ?, ?, ?, ?)""",
             [izena, abizena, erabilIzena, pasahitza, telegramKontua]
         )
+        # Gehitu katalogoari
+        user = self.get_by_erabilIzena(erabilIzena)
+        if user and not self.katalogoa.bilatu_by_id(user.id):
+            self.katalogoa.gehitu(user)
 
     def update(self, uid, data):
         updates = []
@@ -101,6 +105,18 @@ class ErabiltzaileController:
         params.append(uid)
         query = f"UPDATE erabiltzailea SET {', '.join(updates)} WHERE id = ?"
         self.db.update(query, params)
+        
+        # Eguneratu katalogoan
+        user = self.katalogoa.bilatu_by_id(uid)
+        if user:
+            if 'izena' in data:
+                user.izena = data['izena']
+            if 'abizena' in data:
+                user.abizena = data['abizena']
+            if 'telegramKontua' in data:
+                user.telegramKontua = data['telegramKontua']
+            if 'pasahitza' in data and data['pasahitza']:
+                user.pasahitza = data['pasahitza']
 
     def login(self, erabilIzena, pasahitza):
         rows = self.db.select(
