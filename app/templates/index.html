@@ -24,7 +24,6 @@
             </div>
         </div>
         <h1>POKEDEX</h1>
-        
         <!----------------------------------------------->
         <!--         Pokedex-aren menua                -->
         <!----------------------------------------------->
@@ -32,7 +31,7 @@
             <ul>
                 <li><a href="#" class="active" data-section="pokemon">POKEMONAK</a></li>
                 <li><a href="#" data-section="taldeak">NIRE TALDEAK</a></li>
-                <li><a href="#" data-section="insignak">NIRE INSIGNAK</a></li>
+                <li><a href="#" data-section="insignak">NIRE INTSIGNAK</a></li>
                 <li><a href="#" data-section="lagunak">NIRE LAGUNAK</a></li>
                 <li><a href="#" data-section="erabiltzailea">NIRE PROFILA</a></li>
             </ul>
@@ -148,17 +147,51 @@
     <script src="/static/js/app.js"></script>
     <script src="/static/js/pokemon.js"></script>
     <script src="/static/js/taldeak.js"></script>
+    <script src="/static/js/intsignia.js"></script>
     <script src="/static/js/erabiltzailea.js"></script>
     <script src="/static/js/lagunak.js"></script>
 
     <!-- Botarentzako botoia -->
-<div id="bot" class="bot-button">
+    <div id="bot" class="bot-button">
         <img src="{{ url_for('static', filename='bot-image.png') }}" alt="Bot Asistente">
     </div>        <div id="bot-panel" class="bot-panel hidden">
-        <button class="bot-option" data-action="pokemonTop">PokeTop</button>
-        <button class="bot-option" data-action="pokemonMota">PokeMota</button>
-        <button class="bot-option" data-action="pokemonEbo">PokeEbo</button>
-        <button class="bot-option" data-action="pokemonScan">PokeScan</button>
+        <button class="bot-option" data-action="pokeTop">
+        <img src="{{ url_for('static', filename='poketop copia.png') }}" alt="Icono">
+        <span>PokeTop</span>
+    </button>
+
+    <button class="bot-option" data-action="pokeMota">
+        <img src="{{ url_for('static', filename='pokemota copia.png') }}" alt="Icono">
+        <span>PokeMota</span>
+    </button>
+
+    <button class="bot-option" data-action="pokeEbo">
+        <img src="{{ url_for('static', filename='pokeebo copia.png') }}" alt="Icono">
+        <span>PokeEbo</span>
+    </button>
+
+    <button class="bot-option" data-action="pokeScan">
+        <img src="{{ url_for('static', filename='pokescan copia.png') }}" alt="Icono">
+        <span>PokeScan</span>
+    </button>
     </div>
+<div id="retro-modal" class="retro-modal hidden">
+    <div class="modal-box" id="modal-box-color">
+        <div class="modal-header">
+            <span id="modal-title">IZENBURUA</span>
+            <span class="close-retro">&times;</span>
+        </div>
+
+        <div id="modal-body" class="modal-body">
+            </div>
+
+        <div class="modal-footer">
+            <button class="retro-ok-btn">OK</button>
+        </div>
+    </div>
+</div>
+
+</div>
+
 </body>
 </html>
