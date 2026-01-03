@@ -39,6 +39,12 @@ function konfiguratuGertaeraEntzuleak() {
 
     document.getElementById('type-filter').addEventListener('change', bilatuPokemon);
 
+    // Búsqueda de usuarios
+    document.getElementById('search-users-button').addEventListener('click', bilatuErabiltzaileak);
+    document.getElementById('user-search').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') bilatuErabiltzaileak();
+    });
+
     // Botón cerrar sesión
     document.getElementById('btn-saioa').addEventListener('click', () => {
         window.location.href = '/auth/logout';
@@ -56,10 +62,16 @@ function aldatuAtala(atalIzena) {
     });
     document.getElementById(`${atalIzena}-list`).classList.add('active');
 
+    // Mostrar/esconder barras de búsqueda
+    document.getElementById('search-pokemon').style.display = atalIzena === 'pokemon' ? 'flex' : 'none';
+    document.getElementById('search-lagunak').style.display = atalIzena === 'lagunak' ? 'flex' : 'none';
+
     if (atalIzena === 'taldeak') {
         kargatuErabiltzaileTaldeak();
     } else if (atalIzena === 'erabiltzailea') {
         kargatuErabiltzaileProfila();
+    } else if (atalIzena === 'lagunak') {
+        kargatuErabiltzaileLagunak();
     }
 }
 
