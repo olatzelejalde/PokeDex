@@ -2,9 +2,9 @@ import os.path
 import sqlite3
 
 from flask_cors import CORS
-from flask import Flask, render_template, redirect, request, flash, session, url_for  # Añade render_template aquí
+from flask import Flask, render_template, redirect, request, flash, session, url_for
 
-from app.controller.model.erabiltzaile_controller import ErabiltzaileController
+from app.domain.erabiltzaileKatalogoa import ErabiltzaileKatalogoa
 from app.controller.ui.bistaKontroladorea import register_all_routes
 from app.database.connection import Connection
 from config import Config
@@ -51,20 +51,28 @@ def create_app():
     # Inicializar base de datos
     init_db()
 
-    # Crear conexión a la base de datos
+    # Crear conexión y catálogo de usuarios
     db = Connection()
-    user_ctrl = ErabiltzaileController(db)
+    users_katalogo = ErabiltzaileKatalogoa(db)
+    users_katalogo.erabiltzaileak_kargatu()
 
     # RUTA PRINCIPAL - Añade esto
     @app.route('/')
     def index():
         if 'user_id' not in session:
             return redirect(url_for('login'))
-        user = user_ctrl.get_by_id(session['user_id'])
+        user = users_katalogo.bilatu_by_id(session['user_id'])
         if not user:
             session.clear()
             return redirect(url_for('login'))
-        return render_template('index.html', user=user_ctrl.to_dict(user)) 
+        return render_template('index.html', user={
+            'id': user.id,
+            'izena': user.izena,
+            'abizena': user.abizena,
+            'erabiltzaileIzena': user.erabiltzaileIzena,
+            'telegramKontua': user.telegramKontua or '',
+            'rola': user.rola,
+        })
          
     @app.route('/register')
     def register():
@@ -82,7 +90,7 @@ def create_app():
     @app.route('/auth/register', methods=['POST'])
     def auth_register():
         try:
-            user_ctrl.create(
+            users_katalogo.sortu(
                 request.form['izena'],
                 request.form['abizena'],
                 request.form['erabilIzena'],
@@ -98,7 +106,7 @@ def create_app():
         
     @app.route('/auth/login', methods=['POST'])
     def auth_login():
-        user = user_ctrl.login(
+        user = users_katalogo.login(
             request.form['erabilIzena'],
             request.form['pasahitza']
         )
@@ -117,7 +125,7 @@ def create_app():
     
     
     # Registrar todas las rutas de la API
-    register_all_routes(app, db)
+    register_all_routes(app, db, users_katalogo)
     
     # Debug: Mostrar rutas registradas
     with app.app_context():

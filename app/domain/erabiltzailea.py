@@ -31,3 +31,40 @@ class Erabiltzailea:
         self.lagunZer = []
         self.taldeZer = []
         self.notifZer = []
+
+    @staticmethod
+    def sortu(izena: str, abizena: str, erabilIzena: str, 
+                          pasahitza: str, pasahitza2: str, telegramKontua: str = None, 
+                          db=None) -> "Erabiltzailea":
+        """Datuak balidatu eta erabiltzailea sortu"""
+        if not erabilIzena or len(pasahitza) < 4 or pasahitza != pasahitza2:
+            raise ValueError("Datuak ez dira baliozkoak")
+        
+        # erabiltzaile izena jada existitzen den egiaztatu
+        if db:
+            badago = db.select("SELECT 1 FROM erabiltzailea WHERE erabilIzena = ?", [erabilIzena])
+            if badago:
+                raise ValueError("Erabiltzaile izena jada erregistratuta dago")
+            
+            # DBan erabiltzailea sortu
+            db.insert(
+                """INSERT INTO erabiltzailea (izena, abizena, erabilIzena, pasahitza, telegramKontua)
+                   VALUES (?, ?, ?, ?, ?)""",
+                [izena, abizena, erabilIzena, pasahitza, telegramKontua]
+            )
+            
+            # DBtik sortutako erabiltzailea lortu
+            rows = db.select("SELECT * FROM erabiltzailea WHERE erabilIzena = ?", [erabilIzena])
+            if rows:
+                row = rows[0]
+                return Erabiltzailea(
+                    id=row['id'],
+                    izena=row['izena'],
+                    abizena=row['abizena'],
+                    erabiltzaileIzena=row['erabilIzena'],
+                    pasahitza=row['pasahitza'],
+                    rola=row['rola'],
+                    telegramKontua=row['telegramKontua'],
+                )
+        
+        raise ValueError("Errorea erabiltzailea sortzean")

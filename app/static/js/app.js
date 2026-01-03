@@ -39,10 +39,10 @@ function konfiguratuGertaeraEntzuleak() {
 
     document.getElementById('type-filter').addEventListener('change', bilatuPokemon);
 
-    // Búsqueda de usuarios
-    document.getElementById('search-users-button').addEventListener('click', bilatuErabiltzaileak);
-    document.getElementById('user-search').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') bilatuErabiltzaileak();
+    // Búsqueda de usuarios - en tiempo real como pokemon
+    document.getElementById('user-search').addEventListener('input', function (e) {
+        clearTimeout(this.searchTimeout);
+        this.searchTimeout = setTimeout(() => bilatuErabiltzaileak(), 300);
     });
 
     // Botón cerrar sesión

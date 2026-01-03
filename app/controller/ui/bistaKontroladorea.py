@@ -1,62 +1,105 @@
 from flask import Blueprint, jsonify, request, session
 import requests
-from app.controller.model.erabiltzaile_controller import ErabiltzaileController
+from app.domain.erabiltzaileKatalogoa import ErabiltzaileKatalogoa
+from app.domain.taldeKatalogoa import TaldeKatalogoa
 from app.controller.model.mota_controller import MotaController
 from app.controller.model.intsignia_controller import IntsigniaController
 from app.controller.model.espezie_controller import EspezieController
 from app.controller.model.mugimendu_controller import MugimenduController
 from app.controller.model.taldea_controller import TaldeaController
+from app.services.telegram_service import TelegramService
 
 
-def register_all_routes(app, db):
+def register_all_routes(app, db, users_katalogo=None):
     """Registra todas las rutas de la aplicación"""
     
     # ============================================
     # ERABILTZAILEAK (Usuarios)
     # ============================================
     erabiltzaileak_bp = Blueprint('erabiltzaileak', __name__, url_prefix='/api')
-    erabiltzaile_ctrl = ErabiltzaileController(db)
+    if users_katalogo is None:
+        users_katalogo = ErabiltzaileKatalogoa(db)
+        users_katalogo.erabiltzaileak_kargatu()
+
+    def _user_to_dict(u):
+        return {
+            'id': u.id,
+            'izena': u.izena,
+            'abizena': u.abizena,
+            'erabiltzaileIzena': u.erabiltzaileIzena,
+            'telegramKontua': u.telegramKontua or '',
+            'rola': u.rola,
+        }
 
     @erabiltzaileak_bp.route('/erabiltzaileak', methods=['GET'])
     def zerrendatu():
-        users = erabiltzaile_ctrl.get_all()
-        return jsonify([erabiltzaile_ctrl.to_dict(u) for u in users])
+        users = users_katalogo.guztiak()
+        return jsonify([_user_to_dict(u) for u in users])
 
     @erabiltzaileak_bp.route('/erabiltzaileak', methods=['POST'])
     def sortu():
         data = request.get_json()
         pasahitza2 = data.get('pasahitza2', data['pasahitza'])
         try:
-            erabiltzaile_ctrl.create(
+            u = users_katalogo.sortu(
                 data['izena'], data['abizena'], data['erabiltzaileIzena'], 
                 data['pasahitza'], pasahitza2, data.get('telegramKontua')
             )
-            u = erabiltzaile_ctrl.get_by_erabilIzena(data['erabiltzaileIzena'])
-            return jsonify(erabiltzaile_ctrl.to_dict(u)), 201
+            return jsonify(_user_to_dict(u)), 201
         except ValueError as e:
             return jsonify({'error': str(e)}), 400
 
     @erabiltzaileak_bp.route('/erabiltzaileak/saioa', methods=['POST'])
     def saioa():
         data = request.get_json()
-        u = erabiltzaile_ctrl.login(data['erabiltzaileIzena'], data['pasahitza'])
+        u = users_katalogo.login(data['erabiltzaileIzena'], data['pasahitza'])
         if u:
             session['uid'] = u.id
-            return jsonify(erabiltzaile_ctrl.to_dict(u))
+            return jsonify(_user_to_dict(u))
         return jsonify({'error': 'Kredentzial okerrak'}), 401
 
     @erabiltzaileak_bp.route('/erabiltzaileak/<int:uid>', methods=['GET'])
     def bat(uid):
-        u = erabiltzaile_ctrl.get_by_id(uid)
-        return jsonify(erabiltzaile_ctrl.to_dict(u) if u else {})
+        u = users_katalogo.bilatu_by_id(uid)
+        return jsonify(_user_to_dict(u) if u else {})
 
     @erabiltzaileak_bp.route('/erabiltzaileak/<int:uid>', methods=['PUT'])
     def eguneratu(uid):
         data = request.get_json()
         try:
-            erabiltzaile_ctrl.update(uid, data)
-            user = erabiltzaile_ctrl.get_by_id(uid)
-            return jsonify(erabiltzaile_ctrl.to_dict(user))
+            user = users_katalogo.actualizar(uid, data)
+            return jsonify(_user_to_dict(user))
+        except ValueError as e:
+            return jsonify({'error': str(e)}), 400
+
+    @erabiltzaileak_bp.route('/erabiltzaileak/<int:uid>/lagunak', methods=['GET'])
+    def get_lagunak(uid):
+        lagunak = users_katalogo.obtener_lagunak(uid)
+        return jsonify([_user_to_dict(u) for u in lagunak])
+
+    @erabiltzaileak_bp.route('/erabiltzaileak/<int:uid>/lagunak/telegram', methods=['GET'])
+    def get_lagunak_telegram(uid):
+        lagunak = users_katalogo.lortu_lagunak_telegram(uid)
+        return jsonify([_user_to_dict(u) for u in lagunak])
+
+    @erabiltzaileak_bp.route('/erabiltzaileak/bilatu/<izena>', methods=['GET'])
+    def bilatu_erabiltzaileak(izena):
+        erabiltzaileak = users_katalogo.bilatu_erabiltzaileak_by_nombre(izena)
+        return jsonify([_user_to_dict(u) for u in erabiltzaileak])
+
+    @erabiltzaileak_bp.route('/erabiltzaileak/<int:uid1>/gehitu-laguna/<int:uid2>', methods=['POST'])
+    def gehitu_laguna(uid1, uid2):
+        try:
+            users_katalogo.gehitu_laguna(uid1, uid2)
+            return jsonify({'message': 'Laguna gehitu da'}), 201
+        except ValueError as e:
+            return jsonify({'error': str(e)}), 400
+
+    @erabiltzaileak_bp.route('/erabiltzaileak/<int:uid1>/kendu-laguna/<int:uid2>', methods=['DELETE'])
+    def kendu_laguna(uid1, uid2):
+        try:
+            users_katalogo.kendu_laguna(uid1, uid2)
+            return jsonify({'message': 'Laguna kendua'})
         except ValueError as e:
             return jsonify({'error': str(e)}), 400
 
@@ -157,36 +200,98 @@ def register_all_routes(app, db):
     # TALDEAK (Equipos)
     # ============================================
     taldeak_bp = Blueprint('taldeak', __name__, url_prefix='/api')
-    taldea_ctrl = TaldeaController(db)
+    taldeak_katalogo = TaldeKatalogoa(db)
+    taldeak_katalogo.kargatu_from_bd()
+    telegram_service = TelegramService()
+
+    def _taldea_to_dict(taldea):
+        return {
+            'id': taldea.id,
+            'izena': taldea.izena,
+            'erabiltzaile_id': taldea.erabiltzaile_id,
+            'pokemonak': taldeak_katalogo.get_pokemonak(taldea.id)
+        }
 
     @taldeak_bp.route('/taldeak/erabiltzailea/<int:uid>', methods=['GET'])
     def por_user_taldea(uid):
-        return jsonify(taldea_ctrl.get_by_user(uid))
+        taldeak = taldeak_katalogo.bilatu_by_erabiltzaile(uid)
+        return jsonify([_taldea_to_dict(t) for t in taldeak])
 
     @taldeak_bp.route('/taldeak/<int:tid>/pokemon', methods=['GET'])
     def pokemon_de_taldea(tid):
-        return jsonify(taldea_ctrl.get_pokemonak(tid))
+        return jsonify(taldeak_katalogo.get_pokemonak(tid))
 
     @taldeak_bp.route('/taldeak', methods=['POST'])
     def crear_taldea():
         data = request.get_json()
-        tid = taldea_ctrl.create(data['izena'], data['erabiltzaile_id'])
-        return jsonify({'id': tid}), 201
+        try:
+            taldea = taldeak_katalogo.sortu(data['izena'], data['erabiltzaile_id'])
+            return jsonify(_taldea_to_dict(taldea)), 201
+        except ValueError as e:
+            return jsonify({'error': str(e)}), 400
 
     @taldeak_bp.route('/taldeak/<int:tid>/pokemon', methods=['POST'])
     def add_pokemon_taldea(tid):
         data = request.get_json()
-        taldea_ctrl.add_pokemon(tid, data['pokemon_id'])
-        return jsonify({'message': 'Pokemon taldera gehituta'})
+        try:
+            taldeak_katalogo.gehitu_pokemon(tid, data['pokemon_id'])
+            taldea = taldeak_katalogo.bilatu_by_id(tid)
+            if not taldea:
+                return jsonify({'error': 'Taldea ez da existitzen'}), 404
+            return jsonify(_taldea_to_dict(taldea))
+        except Exception as e:
+            return jsonify({'error': str(e)}), 400
 
     @taldeak_bp.route('/taldeak/<int:tid>/pokemon/<int:pid>', methods=['DELETE'])
     def remove_pokemon_taldea(tid, pid):
-        taldea_ctrl.remove_pokemon(tid, pid)
-        return jsonify({'message': 'Pokemon taldetik kendua'})
+        try:
+            taldeak_katalogo.kendu_pokemon(tid, pid)
+            return jsonify({'message': 'Pokemon taldetik kendua'})
+        except Exception as e:
+            return jsonify({'error': str(e)}), 400
 
     @taldeak_bp.route('/taldeak/<int:tid>', methods=['DELETE'])
     def borrar_taldea(tid):
-        taldea_ctrl.delete(tid)
-        return jsonify({'message': 'Taldea ezabauta'})
+        try:
+            taldeak_katalogo.ezabatu(tid)
+            return jsonify({'message': 'Taldea ezabauta'})
+        except Exception as e:
+            return jsonify({'error': str(e)}), 400
+
+    @taldeak_bp.route('/taldeak/<int:tid>/partekatu', methods=['POST'])
+    def partekatu_taldea(tid):
+        data = request.get_json()
+        user_id = data.get('user_id')
+        lagun_id = data.get('lagun_id')
+
+        if not user_id or not lagun_id:
+            return jsonify({'error': 'Erabiltzailea eta laguna beharrezkoak dira'}), 400
+
+        taldea = taldeak_katalogo.bilatu_by_id(tid)
+        if not taldea or taldea.erabiltzaile_id != user_id:
+            return jsonify({'error': 'Taldea ez da existitzen edo ez da zurea'}), 400
+
+        user = users_katalogo.bilatu_by_id(user_id)
+        lagun = users_katalogo.bilatu_by_id(lagun_id)
+        if not user or not lagun:
+            return jsonify({'error': 'Erabiltzailea edo laguna ez da existitzen'}), 400
+        if not user.telegramKontua:
+            return jsonify({'error': 'Zure kontuak ez du telegram konturik'}), 400
+        if not lagun.telegramKontua:
+            return jsonify({'error': 'Lagunak ez du telegram konturik'}), 400
+
+        taldea_json = _taldea_to_dict(taldea)
+        taldea_json['owner'] = user.telegramKontua or user.erabiltzaileIzena
+        success = telegram_service.partekatu_taldea(
+            user.telegramKontua,
+            lagun.telegramKontua,
+            taldea_json
+        )
+
+        if success:
+            # Award badge if not already
+            intsignia_ctrl.award(user_id, 'talde bat partekatu')
+            return jsonify({'message': 'Taldea partekatu da telegram bidez'})
+        return jsonify({'error': 'Ezin izan da taldea partekatu'}), 500
 
     app.register_blueprint(taldeak_bp)
