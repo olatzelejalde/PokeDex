@@ -127,4 +127,9 @@ CREATE TABLE IF NOT EXISTS lagunak (
 );
 
 INSERT INTO erabiltzailea (izena, abizena, erabilIzena, pasahitza, telegramKontua, rola)
-VALUES ('Admin', 'User', 'admin', 'adminpass', NULL, 'admin');
+VALUES ('Admin', 'User', 'admin', 'adminpass', NULL, 'admin'),
+       ('John', 'Doe', 'johndoe', 'johndoe123', 'johndoe', 'erabiltzailea'),
+       ('Jane', 'Smith', 'janesmith', 'janesmith123', 'janesmith', 'erabiltzailea'),
+       ('Ash', 'Ketchum', 'ash', 'pikapika', NULL, 'erabiltzailea'),
+       ('Misty', 'Waterflower', 'misty', 'starmie', NULL, 'erabiltzailea'),
+       ('Brock', 'Harrison', 'brock', 'onixrock', NULL, 'erabiltzailea');
