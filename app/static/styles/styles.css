@@ -865,7 +865,7 @@ body {
 /* Bot botoia */
 .bot-button {
     position: fixed;
-    bottom: 25px;
+    bottom: 45px;
     left: 25px;
     width: 85px;
     height: 85px;
@@ -876,7 +876,6 @@ body {
     padding: 0;
     transition: transform 0.2s;
 }
-
 .bot-button img {
     width: 100%;
     height: 100%;
@@ -892,34 +891,267 @@ body {
     filter: brightness(1.1);
     border-color: #a00000
 }
-
 .bot-panel{
   position: fixed;
-  bottom: 25px;
+  bottom: 48px;
   left: 120px;
   display: flex;
   flex-direction: row;
-  gap: 10px;
+  gap: 15px;
   z-index: 998;
 }
 .bot-panel.hidden{ 
     display: none; 
 }
-
 .bot-option{
-  padding: 12px 20px;
-  border: 2px solid #8b0000;
-  border-radius: 25px;
-  background: var(--pokedex-light-red, #ff8a8a);
-  color: var(--pokedex-black, #222);
-  font-family: 'Press Start 2P', cursive;
-  font-size: .7em;
+  width: 80px;
+  height: 80px;
+  position: relative;
+  background: none;
+  border: none;
+  outline: none;
   cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0,0,0,.2);
-  transition: background .2s;
+  perspective: 1000px;
+  padding: 0;
+  margin: 0;
 }
-.bot-option:hover{
-    background: #fff;
-    transform: translateY(-3px);
-    box-shadow: 0 6px 10px rgba(139,0,0,0.3);
+.bot-option img,
+.bot-option span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: 0.5s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
+.bot-option img {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    margin: auto;
+    object-fit: contain;
+    z-index: 2;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    opacity: 1;
+    transform: translateY(0) rotateX(0);
+}
+.bot-option span {
+    color: #fff;
+    font-family: 'Press Start 2P', cursive;
+    font-weight: bold;
+    font-size: 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 1.5;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    opacity: 0;
+    transform: translateY(-50%) rotateX(90deg);
+    z-index: 1;
+}
+.bot-option:hover img {
+    opacity: 0;
+    transform: translateY(50%) rotateX(90deg);
+}
+.bot-option:hover span {
+    opacity: 1;
+    transform: translateY(0) rotateX(0);
+}
+/* PokeTop */
+.bot-option[data-action="pokeTop"] span {
+    background-color: #dc0a2d;
+    border: 2px solid #8b0000;
+}
+/* PokeMota  */
+.bot-option[data-action="pokeMota"] span {
+    background-color: #4dad5b;
+    border: 2px solid #2a6632;
+}
+/* PokeEbo */
+.bot-option[data-action="pokeEbo"] span {
+    background-color: #eed535;
+    color: #000;
+    border: 2px solid #a89208;
+
+}
+/* PokeScan */
+.bot-option[data-action="pokeScan"] span {
+    background-color: #2663ac;
+    border: 2px solid #1b5e7a;
+}
+.bot-panel.hidden {
+    display: none !important;
+    opacity: 0;
+    pointer-events: none;
+}
+/* ========================================= */
+/* BOTAREN PANTAILA GEHIGARRIA            */
+/* ========================================= */
+/* Atzeko fondoa */
+.retro-modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+.retro-modal.hidden {
+    display: none !important;
+}
+.modal-box {
+    background: #f0f0f0;
+    width: 1200px;      /* Pantaila tamaina */
+    max-width: 95%;     /* Mugikorretan ez ateratzeko pantailatik */
+    border: 4px solid #333;
+    border-radius: 8px;
+    box-shadow: 10px 10px 0px rgba(0,0,0,0.5);
+    font-family: 'Press Start 2P', cursive;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+/* Goiburua */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background-color: rgba(0,0,0,0.1);
+    border-bottom: 3px solid #333;
+}
+/* Izenburua */
+.modal-header h3 {
+    margin: 0;
+    font-size: 16px;
+}
+/* X */
+.close-retro {
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1;
+    color: #333;
+}
+.close-retro:hover {
+    color: #d32f2f;
+}
+/* Eriko zatia */
+.modal-body {
+    padding: 40px;
+    font-size: 14px;
+    color: #333;
+    line-height: 1.8;
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+/* OK botoia */
+.modal-footer {
+    padding: 20px;
+    display: flex;
+    justify-content: flex-end;
+    border-top: 3px solid #333;
+    background-color: rgba(0,0,0,0.05);
+}
+.retro-ok-btn {
+    background-color: #dc0a2d;
+    color: #fff;
+    border: 3px solid #8b0000;
+    padding: 15px 40px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 12px;
+    cursor: pointer;
+    box-shadow: 5px 5px 0 rgba(0,0,0,0.3);
+    transition: all 0.1s;
+}
+.retro-ok-btn:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+    background-color: #ff1a1a;
+}
+/* 1. PokeTop (Gorria) */
+.retro-ok-btn.pokeTop {
+    background-color: #dc0a2d;
+    border-color: #8b0000;
+    color: white;
+}
+.retro-ok-btn.pokeTop:hover {
+    background-color: #ff1a1a;
+}
+/* 2. PokeMota (BERDEA) */
+.retro-ok-btn.pokeMota {
+    background-color: #4dad5b;
+    border-color: #2a6632;
+    color: white;
+}
+.retro-ok-btn.pokeMota:hover {
+    background-color: #60d670;
+}
+/* 3. PokeEbo (HORIA) */
+.retro-ok-btn.pokeEbo {
+    background-color: #eed535;
+    border-color: #a89208;
+    color: #333;
+}
+.retro-ok-btn.pokeEbo:hover {
+    background-color: #ffeb3b;
+}
+/* 4. PokeScan (URDINA) */
+.retro-ok-btn.pokeScan {
+    background-color: #2663ac;
+    border-color: #1b5e7a;
+    color: white;
+}
+.retro-ok-btn.pokeScan:hover {
+    background-color: #3a8ee0;
+}
+/* ========================================= */
+/* GOIBURUA KOLORETSUA (GOIBURU DINAMIKOA)   */
+/* ========================================= */
+.modal-header {
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+/* 1. PokeTop (GORRIA) - Goiburua */
+.modal-header.pokeTop {
+    background-color: #dc0a2d;
+    border-bottom-color: #8b0000;
+    color: white; /* Texto y X en blanco */
+}
+.modal-header.pokeTop .close-retro { color: white; }
+
+/* 2. PokeMota (BERDEA) - Goiburua */
+.modal-header.pokeMota {
+    background-color: #4dad5b;
+    border-bottom-color: #2a6632;
+    color: white;
+}
+.modal-header.pokeMota .close-retro { color: white; }
+
+/* 3. PokeEbo (HORIA) - Goiburua */
+.modal-header.pokeEbo {
+    background-color: #eed535;
+    border-bottom-color: #a89208;
+    color: #333;
+}
+.modal-header.pokeEbo .close-retro { color: #333; }
+
+/* 4. PokeScan (URDINA) - Goiburua */
+.modal-header.pokeScan {
+    background-color: #2663ac;
+    border-bottom-color: #1b5e7a;
+    color: white;
+}
+.modal-header.pokeScan .close-retro { color: white; }
