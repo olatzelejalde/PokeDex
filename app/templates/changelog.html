@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="eu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokeDex - Changelog</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles/styles.css">
+    <style>
+        .changelog-container {
+            padding: 20px;
+            color: white; /* Estilo retroan testua zuria izan ohi da */
+            font-family: 'Roboto', sans-serif;
+        }
+        .entry {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #e3350d;
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .entry h2 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            color: #ffcb05;
+            margin-bottom: 10px;
+        }
+        .date { font-size: 0.8em; color: #aaa; }
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            color: #ffcb05;
+            text-decoration: none;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body style="background-color: #222;"> <div class="changelog-container">
+        <h1 style="font-family: 'Press Start 2P'; color: #e3350d;">CHANGELOG</h1>
+        
+        <div id="changelog-list">
+            {% for a in aldaketak %}
+            <div class="entry">
+                <h2>Bertsioa: {{ a.bertsioa }}</h2>
+                <p class="date">Data: {{ a.data }} | Egilea: {{ a.egilea }}</p>
+                <p>{{ a.deskribapena }}</p>
+            </div>
+            {% else %}
+            <p>Ez dago aldaketarik erregistratuta oraindik.</p>
+            {% endfor %}
+        </div>
+
+        <a href="/" class="back-btn">< REULDU MENURA</a>
+    </div>
+</body>
+</html>

@@ -114,6 +114,14 @@ CREATE TABLE IF NOT EXISTS notifikazioa (
     eguna_ordua TEXT DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(erabiltzaile_id) REFERENCES erabiltzailea(id)
 );
+-- 12. CHANGELOG
+CREATE TABLE IF NOT EXISTS changelog (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    bertsioa TEXT NOT NULL,
+    data TEXT NOT NULL,
+    deskribapena TEXT NOT NULL,
+    egilea TEXT NOT NULL
+);
 
 INSERT INTO erabiltzailea (izena, abizena, erabilIzena, pasahitza, telegramKontua, rola)
 VALUES ('Admin', 'User', 'admin', 'adminpass', NULL, 'admin');

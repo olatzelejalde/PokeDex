@@ -6,6 +6,7 @@ from app.controller.model.intsignia_controller import IntsigniaController
 from app.controller.model.espezie_controller import EspezieController
 from app.controller.model.mugimendu_controller import MugimenduController
 from app.controller.model.taldea_controller import TaldeaController
+from app.controller.model.changelog_controller import ChangelogController
 
 
 def register_all_routes(app, db):
@@ -190,3 +191,28 @@ def register_all_routes(app, db):
         return jsonify({'message': 'Taldea ezabauta'})
 
     app.register_blueprint(taldeak_bp)
+    # ============================================
+    # CHANGELOG
+    # ============================================
+    changelog_bp = Blueprint('changelog', __name__, url_prefix='/api')
+    changelog_ctrl = ChangelogController(db)
+
+    @changelog_bp.route('/changelog', methods=['GET'])
+    def zerrendatu_changelog():
+        return jsonify(changelog_ctrl.get_all())
+    
+    @changelog_bp.route('/changelog', methods=['POST'])
+    def sortu_changelog():
+        data = request.get_json()
+        changelog_ctrl.create(
+            data['bertsioa'],
+            data['data'],
+            data['deskribapena'],
+            data['egilea']
+        )
+        return jsonify({'message': 'Changelog sarrera sortua'}), 201
+    @app.route('/changelog')
+    def erakutsi_changelog():
+        return render_template('changelog.html', aldaketak=aldaketak)
+
+    app.register_blueprint(changelog_bp)

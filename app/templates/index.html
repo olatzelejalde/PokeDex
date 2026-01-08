@@ -9,6 +9,28 @@
     <script> 
         var user = JSON.parse('{{ user|tojson }}');
     </script>
+    <style>
+        /* --- CHANGELOG KANPAITXOA ETA PANELA --- */
+        #changelog-list {
+    padding: 20px;
+}
+
+.changelog-container {
+    background: rgba(0, 0, 0, 0.8);
+    border: 3px solid #e3350d;
+    border-radius: 15px;
+    padding: 20px;
+    color: white;
+}
+
+.changelog-entry {
+    background: #333;
+    border-left: 5px solid #ffcb05;
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 4px;
+}
+    </style>
 </head>
 <body>
     <!----------------------------------------------->
@@ -23,7 +45,11 @@
                 </div>
             </div>
         </div>
+        
         <h1>POKEDEX</h1>
+
+        <!----------------------------------------------->
+        <!--         Pokedex-aren menua                -->
         <!----------------------------------------------->
         <!--         Pokedex-aren menua                -->
         <!----------------------------------------------->
@@ -31,6 +57,7 @@
             <ul>
                 <li><a href="#" class="active" data-section="pokemon">POKEMONAK</a></li>
                 <li><a href="#" data-section="taldeak">NIRE TALDEAK</a></li>
+                <li><a href="#" data-section="changelog">CHANGELOG</a></li>
                 <li><a href="#" data-section="insignak">NIRE INTSIGNAK</a></li>
                 <li><a href="#" data-section="lagunak">NIRE LAGUNAK</a></li>
                 <li><a href="#" data-section="erabiltzailea">NIRE PROFILA</a></li>
@@ -46,6 +73,9 @@
                 <option value="">Mota guztiak</option>
             </select>
             <button id="search-button">Bilatu</button>
+
+            <div class="notification-bell" id="changelog-trigger" style="margin-left: 15px;cursor: pointer; font-size: 20px; position: relative;">
+                🔔<span class="badge">!</span>
         </div>
 
         <div class="search-container" id="search-lagunak" style="display: none;">
@@ -117,6 +147,15 @@
             <div class="profile-edit-container">
                 <div id="erabiltzailea-edit-datuak" class="profile-edit-card">
                     <!-- Erabiltzailearen edizio datuak hemen agertuko dira -->
+                </div>
+            </div>
+        <!----------------------------------------------->
+        <!--         Changelog             -->
+        <!----------------------------------------------->
+        <article id="changelog-list">
+            <div class="changelog-container">
+                <h2 style="font-family: 'Press Start 2P'; color: #ffcb05; font-size: 14px;">PROIEKTUAREN ALDAKETAK</h2>
+                <div id="changelog-append-here">
                 </div>
             </div>
         </article>
@@ -192,6 +231,29 @@
 </div>
 
 </div>
+<script>
+document.getElementById('changelog-trigger').onclick = function() {
+    // 1. Ezkutatu artikulu guztiak eta erakutsi Changelog-arena
+    document.querySelectorAll('main article').forEach(art => art.classList.remove('active'));
+    document.getElementById('changelog-list').classList.add('active');
 
+    // 2. Kendu menuko "active" klasea botoi guztiei
+    document.querySelectorAll('.menua a').forEach(a => a.classList.remove('active'));
+
+    // 3. Kargatu datuak API-tik
+    fetch('/api/changelog')
+        .then(res => res.json())
+        .then(data => {
+            const container = document.getElementById('changelog-append-here');
+            container.innerHTML = data.map(entry => `
+                <div style="background: rgba(0,0,0,0.5); border: 2px solid #e3350d; margin-top:15px; padding:15px; border-radius:8px;">
+                    <div style="color:#ffcb05; font-weight:bold; margin-bottom:5px;">v${entry.bertsioa} - ${entry.data}</div>
+                    <p style="color:white; margin:5px 0;">${entry.deskribapena}</p>
+                    <small style="color:#aaa;">Egilea: ${entry.egilea}</small>
+                </div>
+            `).join('');
+        });
+};
+    </script>
 </body>
 </html>
