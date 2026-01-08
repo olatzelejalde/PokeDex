@@ -254,3 +254,77 @@ async function sortuTaldea() {
         console.error(error);
     }
 }
+
+// Modala
+function erakutsiPartekatuModala(taldeId, lagunak) {
+    let modal = document.getElementById('taldea-partekatu-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'taldea-partekatu-modal';
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content pokedex-modal">
+                <span class="close" id="partekatu-close">&times;</span>
+                <h3>Aukeratu laguna (Telegram)</h3>
+                <div id="partekatu-lagunak-lista" class="lagunak-lista"></div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        modal.querySelector('#partekatu-close').onclick = itxiPartekatuModala;
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) itxiPartekatuModala();
+        });
+    }
+
+    const lista = modal.querySelector('#partekatu-lagunak-lista');
+    if (!lagunak || lagunak.length === 0) {
+        lista.innerHTML = `<p style="text-align:center;">Ez duzu Telegram kontua duten lagunik</p>`;
+    } else {
+        lista.innerHTML = lagunak.map(l => `
+            <button class="pokedex-button secondary" data-lagun="${l.id}">
+                ${l.erabiltzaileIzena} (${l.telegramKontua})
+            </button>
+        `).join('');
+        lista.querySelectorAll('button').forEach(btn => {
+            btn.onclick = () => bidaliTaldeaTelegram(taldeId, Number(btn.dataset.lagun));
+        });
+    }
+    modal.style.display = 'block';
+}
+
+function itxiPartekatuModala() {
+    const modal = document.getElementById('taldea-partekatu-modal');
+    if (modal) modal.style.display = 'none';
+}
+
+// Telegram bidez taldea bidali
+async function bidaliTaldeaTelegram(taldeId, lagunId) {
+    try {
+        const res = await fetch(`${API_BASE_URL}/taldeak/${taldeId}/partekatu`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: user.id, lagun_id: lagunId })
+        });
+        const data = await res.json();
+        if (res.ok) {
+            alert('Taldea Telegram bidez bidali da');
+            itxiPartekatuModala();
+        } else {
+            alert(data.error || 'Errorea taldea partekatzean');
+        }
+    } catch (error) {
+        console.error(error);
+        alert('Ezin izan da taldea partekatu');
+    }
+}
+
+async function partekatuTaldea(taldeId) {
+    try {
+        const res = await fetch(`${API_BASE_URL}/erabiltzaileak/${user.id}/lagunak/telegram`);
+        const lagunak = await res.json();
+        erakutsiPartekatuModala(taldeId, lagunak);
+    } catch (error) {
+        console.error(error);
+        alert('Ezin izan dira lagunak kargatu');
+    }
+}
