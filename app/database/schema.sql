@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS espeziea (
     abiadura INTEGER NOT NULL,
     irudia TEXT NOT NULL,
     deskribapena TEXT,
+    eboluzio_chain_id INTEGER,
     FOREIGN KEY(mota1) REFERENCES mota(izena),
     FOREIGN KEY(mota2) REFERENCES mota(izena)
 );

@@ -559,17 +559,17 @@ async function cargarPokeScanInfo(izena) {
                                 ${drawBar(stats.Defentsa, '#eed535')}
                             </div>
                             <div style="display: flex; align-items: center; font-size: 11px;">
-                                <span style="width: 60px; font-weight: bold; color: #444;">SPA</span> 
+                                <span style="width: 60px; font-weight: bold; color: #444;">ATK.B</span> 
                                 <span style="width: 45px; text-align: right; color: #1565c0;">${stats.AtakeBerezia}</span> 
                                 ${drawBar(stats.AtakeBerezia, '#3399ff')}
                             </div>
                             <div style="display: flex; align-items: center; font-size: 11px;">
-                                <span style="width: 60px; font-weight: bold; color: #444;">SPD</span> 
+                                <span style="width: 60px; font-weight: bold; color: #444;">DEF.B</span> 
                                 <span style="width: 45px; text-align: right; color: #2e7d32;">${stats.DefentsaBerezia}</span> 
                                 ${drawBar(stats.DefentsaBerezia, '#44cc44')}
                             </div>
                             <div style="display: flex; align-items: center; font-size: 11px;">
-                                <span style="width: 60px; font-weight: bold; color: #444;">SPE</span> 
+                                <span style="width: 60px; font-weight: bold; color: #444;">ABD</span> 
                                 <span style="width: 45px; text-align: right; color: #c2185b;">${stats.Abiadura}</span> 
                                 ${drawBar(stats.Abiadura, '#ff66cc')}
                             </div>
