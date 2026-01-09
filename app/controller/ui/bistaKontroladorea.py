@@ -258,12 +258,8 @@ def register_all_routes(app, db, users_katalogo=None):
         except Exception as e:
             return jsonify({'error': str(e)}), 400
 
-    @taldeak_bp.route('/taldeak/<int:tid>/partekatu', methods=['POST'])
-    def partekatu_taldea(tid):
-        data = request.get_json()
-        user_id = data.get('user_id')
-        lagun_id = data.get('lagun_id')
-
+    @taldeak_bp.route('/taldeak/<int:tid>/partekatu/<int:user_id>/<int:lagun_id>', methods=['POST'])
+    def partekatu_taldea(tid, user_id, lagun_id):
         if not user_id or not lagun_id:
             return jsonify({'error': 'Erabiltzailea eta laguna beharrezkoak dira'}), 400
 

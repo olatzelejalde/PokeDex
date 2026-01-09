@@ -87,7 +87,6 @@ async function gehituLaguna(uid2) {
             method: 'POST'
         });
         if (res.ok) {
-            alert('✅ Laguna gehitu da!');
             kargatuErabiltzaileLagunak();
         } else {
             const error = await res.json();
@@ -105,7 +104,6 @@ async function kenduLaguna(uid2) {
             method: 'DELETE'
         });
         if (res.ok) {
-            alert('✅ Laguna kendua');
             kargatuErabiltzaileLagunak();
         } else {
             alert('Errorea laguna kenduan');

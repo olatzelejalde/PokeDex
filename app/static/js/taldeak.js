@@ -73,7 +73,7 @@ function sortuTaldeTxartela(taldea) {
             `).join('')}
         </div>
         <div class="taldea-actions">
-            <button class="pokedex-button secondary" onclick="partekatuTaldea(${taldea.id})">PARTEKATU</button>
+            <button class="pokedex-button secondary" onclick="lortuLagunak(${taldea.id})">PARTEKATU</button>
             <button class="pokedex-button" style="background-color: var(--pokedex-yellow); color: black;" onclick="editatuTaldea(${taldea.id})">EDITATU</button>
             <button class="pokedex-button" style="background-color: var(--pokedex-red); color: white;" onclick="ezabatuTaldea(${taldea.id})">EZABATU</button>
         </div>
@@ -185,7 +185,7 @@ async function gehituPokemonXehetasunetatik(pokemonId) {
     itxiModalak();
 }
 
-async function partekatuTaldea(taldeId) {
+async function lortuLagunak(taldeId) {
     try {
         const res = await fetch(`${API_BASE_URL}/taldeak/${taldeId}/partekatu`);
         if (res.ok) {
@@ -294,7 +294,7 @@ function erakutsiPartekatuModala(taldeId, lagunak) {
             </div>
         `).join('');
         lista.querySelectorAll('.retro-lagun-card').forEach(card => {
-            card.onclick = () => bidaliTaldeaTelegram(taldeId, Number(card.dataset.lagun));
+            card.onclick = () => taldeaPartekatu(taldeId, Number(card.dataset.lagun));
         });
     }
     modal.classList.remove('hidden');
@@ -310,9 +310,9 @@ function itxiPartekatuModala() {
 }
 
 // Telegram bidez taldea bidali
-async function bidaliTaldeaTelegram(taldeId, lagunId) {
+async function taldeaPartekatu(taldeId, lagunId) {
     try {
-        const res = await fetch(`${API_BASE_URL}/taldeak/${taldeId}/partekatu`, {
+        const res = await fetch(`${API_BASE_URL}/taldeak/${taldeId}/partekatu/${user.id}/${lagunId}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ user_id: user.id, lagun_id: lagunId })
