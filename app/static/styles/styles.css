@@ -441,15 +441,18 @@ body {
 .user-actions button { flex: 1; }
 
 /* Compartir equipos (lagun card) */
+.lagunak-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    max-width: 500px;
+}
 .lagun-card { width: 100%; text-align: left; padding: 10px 12px; margin: 6px 0; border-radius: 10px; }
 .lagun-card__content { display: flex; align-items: center; gap: 10px; }
-.lagun-card__avatar {
-    width: 36px; height: 36px; border-radius: 50%;
-    background: rgba(255,255,255,0.1);
-    display: grid; place-items: center; font-weight: 700;
-}
 .lagun-card__text h3 { margin: 0; }
 .lagun-card__handle { color: #ccc; font-size: 0.9em; }
+
 
 /* =========================================================
    Bot flotante y panel

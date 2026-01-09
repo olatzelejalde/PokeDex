@@ -261,12 +261,16 @@ function erakutsiPartekatuModala(taldeId, lagunak) {
     if (!modal) {
         modal = document.createElement('div');
         modal.id = 'taldea-partekatu-modal';
-        modal.className = 'modal';
+        modal.className = 'retro-modal';
         modal.innerHTML = `
-            <div class="modal-content pokedex-modal">
-                <span class="close" id="partekatu-close">&times;</span>
-                <h3>Aukeratu laguna</h3>
-                <div id="partekatu-lagunak-lista" class="lagunak-lista"></div>
+            <div class="modal-box">
+                <div class="modal-header">
+                    <h3>Aukeratu laguna</h3>
+                    <span class="close-retro" id="partekatu-close">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div id="partekatu-lagunak-lista" class="lagunak-lista"></div>
+                </div>
             </div>
         `;
         document.body.appendChild(modal);
@@ -281,7 +285,7 @@ function erakutsiPartekatuModala(taldeId, lagunak) {
         lista.innerHTML = `<p style="text-align:center;">Ez duzu Telegram kontua duten lagunik</p>`;
     } else {
         lista.innerHTML = lagunak.map(l => `
-            <button class="pokedex-button secondary" data-lagun="${l.id}">
+            <button class="pokedex-button secondary lagun-card" data-lagun="${l.id}">
                 <div class="lagun-card__content">
                     <div class="lagun-card__text">
                         <h3>${l.erabiltzaileIzena}</h3>
@@ -294,12 +298,16 @@ function erakutsiPartekatuModala(taldeId, lagunak) {
             btn.onclick = () => bidaliTaldeaTelegram(taldeId, Number(btn.dataset.lagun));
         });
     }
-    modal.style.display = 'block';
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
 }
 
 function itxiPartekatuModala() {
     const modal = document.getElementById('taldea-partekatu-modal');
-    if (modal) modal.style.display = 'none';
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.style.display = 'none';
+    }
 }
 
 // Telegram bidez taldea bidali
