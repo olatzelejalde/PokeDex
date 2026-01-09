@@ -10,26 +10,26 @@
         var user = JSON.parse('{{ user|tojson }}');
     </script>
     <style>
-        /* --- CHANGELOG KANPAITXOA ETA PANELA --- */
-        #changelog-list {
-    padding: 20px;
+        /* --- CHANGELOG KANPAITXOA --- */
+    .notification-bell {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    margin-right: 15px;
 }
 
-.changelog-container {
-    background: rgba(0, 0, 0, 0.8);
-    border: 3px solid #e3350d;
-    border-radius: 15px;
-    padding: 20px;
-    color: white;
+.bell-icon {
+    fill: white; 
+    transition: transform 0.2s, 
 }
 
-.changelog-entry {
-    background: #333;
-    border-left: 5px solid #ffcb05;
-    margin-top: 15px;
-    padding: 15px;
-    border-radius: 4px;
+.notification-bell:hover .bell-icon {
+    transform: scale(1.1);
+    fill: black; /* Sagua gainetik pasatzean horira aldatuko da pixka bat nabarmentzeko */
 }
+
+
     </style>
 </head>
 <body>
@@ -57,7 +57,6 @@
             <ul>
                 <li><a href="#" class="active" data-section="pokemon">POKEMONAK</a></li>
                 <li><a href="#" data-section="taldeak">NIRE TALDEAK</a></li>
-                <li><a href="#" data-section="changelog">CHANGELOG</a></li>
                 <li><a href="#" data-section="insignak">NIRE INTSIGNAK</a></li>
                 <li><a href="#" data-section="lagunak">NIRE LAGUNAK</a></li>
                 <li><a href="#" data-section="erabiltzailea">NIRE PROFILA</a></li>
@@ -68,15 +67,19 @@
         <!--            Bilaketa barra                 -->
         <!----------------------------------------------->
         <div class="search-container" id="search-pokemon">
+            <div class="notification-bell" id="changelog-trigger">
+                <svg class="bell-icon" viewBox="0 0 24 24" width="24" height="24">
+                    <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"></path>
+                </svg>
+            </div>
+
             <input type="text" id="pokemon-search" placeholder="Bilatu Pokémon...">
             <select id="type-filter">
                 <option value="">Mota guztiak</option>
             </select>
             <button id="search-button">Bilatu</button>
 
-            <div class="notification-bell" id="changelog-trigger" style="margin-left: 15px;cursor: pointer; font-size: 20px; position: relative;">
-                🔔<span class="badge">!</span>
-        </div>
+        
 
         <div class="search-container" id="search-lagunak" style="display: none;">
             <input type="text" id="user-search" placeholder="Bilatu erabiltzailea...">

@@ -24,10 +24,26 @@ class TaldeaController:
 
     def create(self, izena, uid):
         self.db.insert("INSERT INTO taldea (izena, erabiltzaile_id) VALUES (?, ?)", [izena, uid])
-        return self.db.connection.cursor().lastrowid
+        tid= self.db.connection.cursor().lastrowid
+
+        #NOTIFIKAZIOA: Taldea sortu dela erregistratu
+        data_gaur= datetime.now().strftime("%Y-%m-%d %H:%M")
+        deskribapena= f"Talde berria sortu du: {izena}."
+        self.db.insert(
+            "INSERT INTO changelog (bertsioa, data, deskribapena, egilea) VALUES (?, ?, ?, ?)",
+            ["TALDEA", data_gaur, deskribapena, uid]
+        )
+        return tid
 
     def add_pokemon(self, tid, pid):
         self.db.insert("INSERT OR IGNORE INTO ditu (taldea_id, pokemon_id) VALUES (?, ?)", [tid, pid])
+        # NOTIFIKAZIOA: Pokemona taldera gehitu dela erregistratu
+        data_gaur= datetime.now().strftime("%Y-%m-%d %H:%M")
+        deskribapena= f"Pokemona gehitu da taldera: {pid}."
+        self.db.insert(
+            "INSERT INTO changelog (bertsioa, data, deskribapena, egilea) VALUES (?, ?, ?, ?)",
+            ["OKEMON", data_gaur, deskribapena, uid]
+        )
     def delete(self, tid):
         self.db.delete("DELETE FROM taldea WHERE id = ?", [tid])
 

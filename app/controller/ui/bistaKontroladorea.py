@@ -199,7 +199,7 @@ def register_all_routes(app, db):
 
     @changelog_bp.route('/changelog', methods=['GET'])
     def zerrendatu_changelog():
-        return jsonify(changelog_ctrl.get_all())
+        return jsonify(changelog_ctrl.lortu_aldaketa_guztiak())
     
     @changelog_bp.route('/changelog', methods=['POST'])
     def sortu_changelog():
