@@ -125,14 +125,15 @@ CREATE TABLE IF NOT EXISTS eragina (
     FOREIGN KEY(mota_defentsa) REFERENCES mota(izena)
 );
 
--- 14. JARRAITU
-CREATE TABLE IF NOT EXISTS jarraitu (
-    erabiltzaile_id_1 INTEGER NOT NULL, -- El que sigue
-    erabiltzaile_id_2 INTEGER NOT NULL, -- El seguido
-    eguna_ordua TEXT DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (erabiltzaile_id_1, erabiltzaile_id_2),
-    FOREIGN KEY(erabiltzaile_id_1) REFERENCES erabiltzailea(id),
-    FOREIGN KEY(erabiltzaile_id_2) REFERENCES erabiltzailea(id)
+-- 14. LAGUNAK
+CREATE TABLE IF NOT EXISTS lagunak (
+    erabiltzaile1_id INTEGER NOT NULL,
+    erabiltzaile2_id INTEGER NOT NULL,
+    data_ordua TEXT DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (erabiltzaile1_id, erabiltzaile2_id),
+    FOREIGN KEY(erabiltzaile1_id) REFERENCES erabiltzailea(id),
+    FOREIGN KEY(erabiltzaile2_id) REFERENCES erabiltzailea(id),
+    CHECK (erabiltzaile1_id < erabiltzaile2_id)
 );
 
 INSERT INTO erabiltzailea (izena, abizena, erabilIzena, pasahitza, telegramKontua, rola)
@@ -318,3 +319,9 @@ INSERT INTO espeziea VALUES (149, 'Dragonite', 'dragoia', 'hegaldia', 91, 134, 9
 INSERT INTO espeziea VALUES (142, 'Aerodactyl', 'harria', 'hegaldia', 80, 105, 65, 60, 75, 130, '142.png', '...', NULL);
 INSERT INTO espeziea VALUES (143, 'Snorlax', 'normala', NULL, 160, 110, 65, 65, 110, 30, '143.png', '...', NULL);
 INSERT INTO espeziea VALUES (150, 'Mewtwo', 'psikikoa', NULL, 106, 110, 90, 154, 90, 130, '150.png', '...', NULL);
+VALUES ('Admin', 'User', 'admin', 'adminpass', NULL, 'admin'),
+       ('John', 'Doe', 'johndoe', 'johndoe123', 'johndoe', 'erabiltzailea'),
+       ('Jane', 'Smith', 'janesmith', 'janesmith123', 'janesmith', 'erabiltzailea'),
+       ('Ash', 'Ketchum', 'ash', 'pikapika', NULL, 'erabiltzailea'),
+       ('Misty', 'Waterflower', 'misty', 'starmie', NULL, 'erabiltzailea'),
+       ('Brock', 'Harrison', 'brock', 'onixrock', NULL, 'erabiltzailea');

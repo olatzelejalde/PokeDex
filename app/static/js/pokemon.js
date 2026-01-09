@@ -100,6 +100,8 @@ function erakutsiPokemonXehetasunak(pokemon) {
     const xehetasunak = document.getElementById('pokemon-xehetasunak');
     const motaKlasea1 = lortuMotaKlasea(pokemon.mota);
     const motaKlasea2 = pokemon.mota2 ? lortuMotaKlasea(pokemon.mota2) : null;
+    const taldeaContext = window.taldeaGehituContext;
+    const gehituBtn = taldeaContext ? `<button class="pokedex-button" onclick="gehituPokemonXehetasunetatik(${pokemon.id})">GEHITU TALDEAN</button>` : '';
     xehetasunak.innerHTML = `
         <div class="pokemon-detail">
             <div class="pokemon-detail-header">
@@ -137,11 +139,20 @@ function erakutsiPokemonXehetasunak(pokemon) {
                 </div>
             </div>
             <div class="pokemon-detail-actions">
-                <button class="pokedex-button secondary" onclick="itxiModalak()">ITXI</button>
+                ${gehituBtn}
+                <button class="pokedex-button secondary" onclick="itxiPokemonXehetasunak()">ITXI</button>
             </div>
         </div>
     `;
     modal.style.display = 'block';
+}
+
+function itxiPokemonXehetasunak() {
+    itxiModalak();
+    if (window.taldeaGehituContext && window.taldeaGehituReturnList) {
+        window.taldeaGehituReturnList = false;
+        erakutsiPokemonAukeraketa(window.taldeaGehituContext);
+    }
 }
 
 function itxiModalak() {

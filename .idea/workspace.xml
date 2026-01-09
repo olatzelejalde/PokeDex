@@ -185,15 +185,4 @@
     <MESSAGE value="&quot;botia aldaketa&quot;" />
     <option name="LAST_COMMIT_MESSAGE" value="&quot;botia aldaketa&quot;" />
   </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/app/controller/ui/espezie_routes.py</url>
-          <line>7</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
-  </component>
 </project>
