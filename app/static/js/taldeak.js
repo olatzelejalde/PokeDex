@@ -187,7 +187,7 @@ async function gehituPokemonXehetasunetatik(pokemonId) {
 
 async function lortuLagunak(taldeId) {
     try {
-        const res = await fetch(`${API_BASE_URL}/taldeak/${taldeId}/partekatu`);
+        const res = await fetch(`${API_BASE_URL}/erabiltzaileak/${user.id}/lagunak/telegram`);
         if (res.ok) {
             const data = await res.json();
             await navigator.clipboard.writeText(data.partekatzekoURL);
