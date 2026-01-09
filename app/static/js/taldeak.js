@@ -285,17 +285,18 @@ function erakutsiPartekatuModala(taldeId, lagunak) {
         lista.innerHTML = `<p style="text-align:center;">Ez duzu Telegram kontua duten lagunik</p>`;
     } else {
         lista.innerHTML = lagunak.map(l => `
-            <button class="pokedex-button secondary lagun-card" data-lagun="${l.id}">
-                <div class="lagun-card__content">
-                    <div class="lagun-card__text">
-                        <h3>${l.erabiltzaileIzena}</h3>
-                        <span class="lagun-card__handle">@${l.telegramKontua}</span>
+            <div class="retro-lagun-card" data-lagun="${l.id}">
+                <div class="retro-lagun-header">
+                    <div class="retro-lagun-info">
+                        <div class="retro-lagun-name">${l.erabiltzaileIzena}</div>
+                        <div class="retro-lagun-handle">@${l.telegramKontua}</div>
                     </div>
                 </div>
-            </button>
+                <div class="retro-lagun-arrow">►</div>
+            </div>
         `).join('');
-        lista.querySelectorAll('button').forEach(btn => {
-            btn.onclick = () => bidaliTaldeaTelegram(taldeId, Number(btn.dataset.lagun));
+        lista.querySelectorAll('.retro-lagun-card').forEach(card => {
+            card.onclick = () => bidaliTaldeaTelegram(taldeId, Number(card.dataset.lagun));
         });
     }
     modal.classList.remove('hidden');
