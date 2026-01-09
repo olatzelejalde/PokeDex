@@ -164,7 +164,6 @@ async function gehituPokemonTaldean(taldeId, pokemonId) {
 
         if (res.ok) {
             kargatuErabiltzaileTaldeak();
-            alert('✅ Pokémona taldean gehitu da');
         } else {
             const error = await res.json();
             alert(error.error || 'Errorea Pokémona gehitzerakoan');
@@ -245,7 +244,6 @@ async function sortuTaldea() {
             const taldeBerria = await res.json();
             itxiModalak();
             kargatuErabiltzaileTaldeak();
-            alert(`✅ "${taldeBerria.izena}" taldea sortu da!`);
         } else {
             const error = await res.json();
             alert(error.error || 'Errorea taldea sortzean');
