@@ -1,6 +1,7 @@
 class TaldeaController:
-    def __init__(self, db):
+    def __init__(self, db,pokemon_ctrl):
         self.db = db
+        self.pokemon_ctrl = pokemon_ctrl
 
     def get_by_user(self, uid):
         rows = self.db.select("""
@@ -33,3 +34,6 @@ class TaldeaController:
 
     def remove_pokemon(self, tid, pid):
         self.db.delete("DELETE FROM ditu WHERE taldea_id = ? AND pokemon_id = ?", [tid, pid])
+
+    def get_mvp(self, tid):
+        return self.pokemon_ctrl.get_best_pokemon_by_group(tid)

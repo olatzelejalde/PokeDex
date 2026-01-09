@@ -2,9 +2,12 @@ import os.path
 import sqlite3
 
 from flask_cors import CORS
-from flask import Flask, render_template, redirect, request, flash, session, url_for  # Añade render_template aquí
+from flask import Flask, render_template, redirect, request, flash, session, url_for, jsonify  # Añade render_template aquí
 
 from app.controller.model.erabiltzaile_controller import ErabiltzaileController
+from app.controller.model.pokemon_controller import PokemonController
+from app.controller.model.taldea_controller import TaldeaController
+from app.controller.model.espezie_controller import EspezieController
 from app.controller.ui.erabiltzaile_routes import erabiltzaile_blueprint
 from app.controller.ui.espezie_routes import especie_blueprint
 from app.controller.ui.mota_routes import mota_blueprint
@@ -13,6 +16,8 @@ from app.controller.ui.pokemon_routes import pokemon_blueprint
 from app.controller.ui.taldea_routes import taldea_blueprint
 from app.controller.ui.intsignia_routes import intsignia_blueprint
 from app.database.connection import Connection
+
+
 from config import Config
 
 
@@ -57,9 +62,13 @@ def create_app():
     # Inicializar base de datos
     init_db()
 
+
     # Crear conexión a la base de datos
     db = Connection()
     user_ctrl = ErabiltzaileController(db)
+    poke_ctrl_model = PokemonController(db)
+    taldea_ctrl_model = TaldeaController(db, poke_ctrl_model)
+    espezie_ctrl = EspezieController(db)
 
     # RUTA PRINCIPAL - Añade esto
     @app.route('/')
@@ -120,8 +129,51 @@ def create_app():
         session.clear()
         flash('Saioa itxi da', 'success')
         return redirect(url_for('login'))
-    
-    
+
+    @app.route('/api/taldeak/list', methods=['GET'])
+    def api_taldeak_list():
+        data = poke_ctrl_model.get_users_with_pokemon()
+        return jsonify(data)
+
+    @app.route('/api/taldeak/<int:talde_id>/mvp', methods=['GET'])
+    def api_taldeak_mvp(talde_id):
+        best = poke_ctrl_model.get_best_pokemon_by_group(talde_id)
+        if best:
+            return jsonify(best)
+        return jsonify({
+            "Izena": None,
+            "PokeImage": None,
+            "Estatistikak": {k: 0 for k in ["Osasuna","Atakea","Defentsa","Atake berezia","Defentsa berezia","Abiadura"]}
+        })
+
+    @app.route('/api/espezieak/list', methods=['GET'])
+    def api_espezieak_list():
+        # Reutilizamos get_all que seguramente ya tengas
+        rows = espezie_ctrl.get_all()
+        return jsonify(rows)
+
+    @app.route('/api/espezieak/<string:izena>/info', methods=['GET'])
+    def api_espezie_info(izena):
+        # CAMBIO REALIZADO: get_effectiveness -> get_type_effectiveness
+        data = espezie_ctrl.get_type_effectiveness(izena)
+        if data:
+            return jsonify(data)
+        return jsonify({"error": "Ez da aurkitu"}), 404
+
+    @app.route('/api/espezieak/<string:izena>/ebo', methods=['GET'])
+    def api_espezie_ebo(izena):
+        data = espezie_ctrl.get_ebo_info(izena)
+        if data:
+            return jsonify(data)
+        return jsonify({"error": "Ez da aurkitu"}), 404
+
+    @app.route('/api/espezieak/<string:izena>/scan', methods=['GET'])
+    def api_espezie_scan(izena):
+        data = espezie_ctrl.get_scan_info(izena)
+        if data:
+            return jsonify(data)
+        return jsonify({"error": "Ez da aurkitu"}), 404
+
     # Registrar blueprints
     app.register_blueprint(erabiltzaile_blueprint(db))
     app.register_blueprint(especie_blueprint(db))
@@ -131,8 +183,6 @@ def create_app():
     app.register_blueprint(taldea_blueprint(db))
     app.register_blueprint(intsignia_blueprint(db))
 
-    
-    
     # Debug: Mostrar rutas registradas
     with app.app_context():
         print("\n" + "="*50)
@@ -143,3 +193,4 @@ def create_app():
         print("="*50 + "\n")
 
     return app
+

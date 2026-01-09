@@ -1,9 +1,11 @@
 from flask import Blueprint, jsonify, request, session
 from app.controller.model.taldea_controller import TaldeaController
+from app.controller.model.pokemon_controller import PokemonController
 
 def taldea_blueprint(db):
     bp = Blueprint('taldeak', __name__, url_prefix='/api')
-    ctrl = TaldeaController(db)
+    pokemon_ctrl = PokemonController(db)
+    ctrl = TaldeaController(db, pokemon_ctrl)
 
     @bp.route('/taldeak/erabiltzailea/<int:uid>', methods=['GET'])
     def por_user(uid):
@@ -11,7 +13,8 @@ def taldea_blueprint(db):
 
     @bp.route('/taldeak/<int:tid>/pokemon', methods=['GET'])
     def pokemon_de_taldea(tid):
-        return jsonify(ctrl.get_pokemonak(tid))
+        return jsonify(pokemon_ctrl.get_pokemon_by_group(tid))
+
 
     @bp.route('/taldeak', methods=['POST'])
     def crear():

@@ -1,8 +1,11 @@
 from flask import Blueprint, jsonify
 import requests
+from app.controller.model.pokemon_controller import PokemonController
 
 def pokemon_blueprint(db):   # ← debe existir esta función
     bp = Blueprint('pokemonak', __name__, url_prefix='/api')
+
+    controller = PokemonController(db)
 
     MOTA_MAP = {
         'normal': 'normala', 'fire': 'sua', 'water': 'ura',
@@ -49,5 +52,15 @@ def pokemon_blueprint(db):   # ← debe existir esta función
         rows = db.select("SELECT DISTINCT mota1 as mota FROM espeziea WHERE mota1 IS NOT NULL ORDER BY mota1 ASC")
         motak = [row['mota'] for row in rows]
         return jsonify(motak)
+
+    @bp.route('/taldeak/<int:talde_id>/mvp', methods=['GET'])
+    def get_mvp(talde_id):
+        # Llamamos a la función de tu otro archivo
+        pokemon = controller.get_best_pokemon_by_group(talde_id)
+
+        if pokemon:
+            return jsonify(pokemon)
+        else:
+            return jsonify({"error": "Ez da aurkitu"}), 404
 
     return bp
