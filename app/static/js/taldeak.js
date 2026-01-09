@@ -1,3 +1,64 @@
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Elementos
+    const btnBerria = document.getElementById('btn-talde-berria');
+    const modal = document.getElementById('taldea-modal');
+    const btnGorde = document.getElementById('btn-taldea-gorde');
+    const inputIzena = document.getElementById('taldea-izena');
+    const closeBtn = modal ? modal.querySelector('.close') : null;
+
+    // 2. Abrir Modal
+    if (btnBerria && modal) {
+        btnBerria.addEventListener('click', () => {
+            modal.style.display = 'block';
+            inputIzena.value = ''; // Limpiar input al abrir
+            inputIzena.focus();
+        });
+    }
+
+    // 3. Cerrar Modal
+    if (closeBtn) closeBtn.addEventListener('click', () => modal.style.display = 'none');
+    window.addEventListener('click', (e) => {
+        if (e.target == modal) modal.style.display = 'none';
+    });
+
+    // 4. GUARDAR (LA PARTE IMPORTANTE JSON)
+    if (btnGorde) {
+        btnGorde.addEventListener('click', async () => {
+            const izena = inputIzena.value.trim();
+            if (!izena) {
+                alert("Mesedez, idatzi izen bat.");
+                return;
+            }
+
+            try {
+                // --- CAMBIO CLAVE: ENVIAR COMO JSON ---
+                const response = await fetch('/taldea/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'  // <--- ESTO ES LO IMPORTANTE
+                    },
+                    body: JSON.stringify({ izena: izena })  // <--- EMPAQUETAMOS COMO JSON
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    modal.style.display = 'none';
+                    kargatuErabiltzaileTaldeak(); // Recargar la lista
+                    alert("Taldea sortu da!");
+                } else {
+                    alert("Errorea: " + (data.error || "Ezin izan da sortu"));
+                }
+            } catch (error) {
+                console.error("Errorea:", error);
+            }
+        });
+    }
+
+    // Cargar la lista al entrar
+    kargatuErabiltzaileTaldeak();
+});
+
 // Taldeak kudeatzeko funtzioak
 async function kargatuErabiltzaileTaldeak() {
     if (!user) {
@@ -20,16 +81,24 @@ async function kargatuErabiltzaileTaldeak() {
 
 function erakutsiTaldeak(taldeak) {
     const zona = document.getElementById('taldeak-zerrenda');
+    zona.innerHTML = '';
     if (taldeak.length === 0) {
+        zona.style.display = 'flex';
+        zona.style.justifyContent = 'center';
+        zona.style.alignItems = 'center';
+        zona.style.width = '100%';
+
         zona.innerHTML = `
-            <div class="no-taldeak" style="text-align: center; padding: 40px;">
-                <h3>Ez duzu talderik</h3>
-                <button class="pokedex-button" onclick="erakutsiTaldeaModala()">TALDE BERRIA SORTU</button>
+            <div class="no-taldeak" style="text-align: center; color: #333;">
+                <h3 style="font-size: 24px; margin-bottom: 20px;">Ez duzu talderik</h3>
+                <p>Erabili goiko botoia bat sortzeko</p> 
             </div>
         `;
         return;
     }
-    zona.innerHTML = '';
+    zona.style.display = '';
+    zona.style.justifyContent = '';
+    zona.style.alignItems = '';
     taldeak.forEach(t => zona.appendChild(sortuTaldeTxartela(t)));
 }
 

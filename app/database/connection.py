@@ -1,10 +1,7 @@
 import sqlite3
-
 from config import Config
 
-
 class Connection:
-
     def __init__(self):
         self.connection = sqlite3.connect(
             Config.DB_PATH,
