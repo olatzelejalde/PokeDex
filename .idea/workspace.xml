@@ -5,25 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5027c7a4-cde5-4d20-91a5-71c2ee576678" name="Changes" comment="&quot;botia aldaketa&quot;">
-      <change afterPath="$PROJECT_DIR$/app/static/js/bot.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/static/styles/bot.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/init_db.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controller/model/espezie_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/controller/model/espezie_controller.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controller/model/pokemon_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/controller/model/pokemon_controller.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controller/model/taldea_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/controller/model/taldea_controller.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controller/ui/espezie_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/controller/ui/espezie_routes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controller/ui/pokemon_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/controller/ui/pokemon_routes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controller/ui/taldea_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/controller/ui/taldea_routes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/database/connection.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/database/connection.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/database/schema.sql" beforeDir="false" afterPath="$PROJECT_DIR$/app/database/schema.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/js/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/js/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/js/pokemon.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/js/pokemon.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/js/taldeak.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/js/taldeak.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/styles/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/styles/styles.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/library.sqlite" beforeDir="false" afterPath="$PROJECT_DIR$/library.sqlite" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -87,7 +70,7 @@
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "ai.playground.ignore.import.keys.banner.in.settings": "true",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "ane",
+    "git-widget-placeholder": "mix",
     "ignore.virus.scanning.warn.message": "true",
     "junie.onboarding.icon.badge.shown": "true",
     "last_opened_file_path": "C:/Users/PC/Desktop/uni/ISAD/LANA/GITHUB/PokeDex/app/static",
@@ -192,16 +175,5 @@
     <MESSAGE value="&quot;botaren argazkia&quot;" />
     <MESSAGE value="&quot;botia aldaketa&quot;" />
     <option name="LAST_COMMIT_MESSAGE" value="&quot;botia aldaketa&quot;" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/app/controller/ui/espezie_routes.py</url>
-          <line>7</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>
