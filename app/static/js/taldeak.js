@@ -188,16 +188,11 @@ async function gehituPokemonXehetasunetatik(pokemonId) {
 async function lortuLagunak(taldeId) {
     try {
         const res = await fetch(`${API_BASE_URL}/erabiltzaileak/${user.id}/lagunak/telegram`);
-        if (res.ok) {
-            const data = await res.json();
-            await navigator.clipboard.writeText(data.partekatzekoURL);
-            alert('Taldearen esteka kopiatu da zure arbelean!');
-        } else {
-            const error = await res.json();
-            alert(error.error || 'Errorea taldearen esteka partekatzean');
-        }
+        const lagunak = await res.json();
+        erakutsiPartekatuModala(taldeId, lagunak);
     } catch (error) {
         console.error(error);
+        alert('Ezin izan dira lagunak kargatu');
     }
 }
 
