@@ -265,7 +265,7 @@ function erakutsiPartekatuModala(taldeId, lagunak) {
         modal.innerHTML = `
             <div class="modal-content pokedex-modal">
                 <span class="close" id="partekatu-close">&times;</span>
-                <h3>Aukeratu laguna (Telegram)</h3>
+                <h3>Aukeratu laguna</h3>
                 <div id="partekatu-lagunak-lista" class="lagunak-lista"></div>
             </div>
         `;
@@ -282,7 +282,12 @@ function erakutsiPartekatuModala(taldeId, lagunak) {
     } else {
         lista.innerHTML = lagunak.map(l => `
             <button class="pokedex-button secondary" data-lagun="${l.id}">
-                ${l.erabiltzaileIzena} (${l.telegramKontua})
+                <div class="lagun-card__content">
+                    <div class="lagun-card__text">
+                        <h3>${l.erabiltzaileIzena}</h3>
+                        <span class="lagun-card__handle">@${l.telegramKontua}</span>
+                    </div>
+                </div>
             </button>
         `).join('');
         lista.querySelectorAll('button').forEach(btn => {
