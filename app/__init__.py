@@ -8,13 +8,6 @@ from app.controller.model.erabiltzaile_controller import ErabiltzaileController
 from app.controller.model.pokemon_controller import PokemonController
 from app.controller.model.taldea_controller import TaldeaController
 from app.controller.model.espezie_controller import EspezieController
-from app.controller.ui.erabiltzaile_routes import erabiltzaile_blueprint
-from app.controller.ui.espezie_routes import especie_blueprint
-from app.controller.ui.mota_routes import mota_blueprint
-from app.controller.ui.mugimendu_routes import mugimendu_blueprint
-from app.controller.ui.pokemon_routes import pokemon_blueprint
-from app.controller.ui.taldea_routes import taldea_blueprint
-from app.controller.ui.intsignia_routes import intsignia_blueprint
 from flask import Flask, render_template, redirect, request, flash, session, url_for
 
 from app.domain.erabiltzaileKatalogoa import ErabiltzaileKatalogoa
@@ -186,17 +179,6 @@ def create_app():
         if data:
             return jsonify(data)
         return jsonify({"error": "Ez da aurkitu"}), 404
-
-    # Registrar blueprints
-    app.register_blueprint(erabiltzaile_blueprint(db))
-    app.register_blueprint(especie_blueprint(db))
-    app.register_blueprint(mota_blueprint(db))
-    app.register_blueprint(mugimendu_blueprint(db))
-    app.register_blueprint(pokemon_blueprint(db))
-    app.register_blueprint(taldea_blueprint(db))
-    app.register_blueprint(intsignia_blueprint(db))
-
-    
     
     # Registrar todas las rutas de la API
     register_all_routes(app, db, users_katalogo)

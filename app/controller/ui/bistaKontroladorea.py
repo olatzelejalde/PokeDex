@@ -7,6 +7,7 @@ from app.controller.model.intsignia_controller import IntsigniaController
 from app.controller.model.espezie_controller import EspezieController
 from app.controller.model.mugimendu_controller import MugimenduController
 from app.controller.model.taldea_controller import TaldeaController
+from app.controller.model.pokemon_controller import PokemonController
 from app.services.telegram_service import TelegramService
 
 
@@ -148,12 +149,26 @@ def register_all_routes(app, db, users_katalogo=None):
     def uno_espezie(izena):
         return jsonify(espezie_ctrl.get_by_name(izena) or {})
 
+    @espezieak_bp.route('/espezieak/<string:izena>/info', methods=['GET'])
+    def espezie_info(izena):
+        data = espezie_ctrl.get_type_effectiveness(izena)
+        return jsonify(data) if data else (jsonify({"error": "Ez da aurkitu"}), 404)
+
+    @espezieak_bp.route('/espezieak/<string:izena>/ebo', methods=['GET'])
+    def espezie_ebo(izena):
+        return jsonify(espezie_ctrl.get_ebo_info(izena))
+
+    @espezieak_bp.route('/espezieak/<string:izena>/scan', methods=['GET'])
+    def espezie_scan(izena):
+        return jsonify(espezie_ctrl.get_scan_info(izena))
+
     app.register_blueprint(espezieak_bp)
 
     # ============================================
     # POKEMONAK (Pokémon)
     # ============================================
     pokemonak_bp = Blueprint('pokemonak', __name__, url_prefix='/api')
+    pokemon_ctrl = PokemonController(db)
 
     MOTA_MAP = {
         'normal': 'normala', 'fire': 'sua', 'water': 'ura',
@@ -181,6 +196,11 @@ def register_all_routes(app, db, users_katalogo=None):
         rows = db.select("SELECT DISTINCT mota1 as mota FROM espeziea WHERE mota1 IS NOT NULL ORDER BY mota1 ASC")
         motak = [row['mota'] for row in rows]
         return jsonify(motak)
+
+    @pokemonak_bp.route('/taldeak/<int:talde_id>/mvp', methods=['GET'])
+    def get_mvp(talde_id):
+        pokemon = pokemon_ctrl.get_best_pokemon_by_group(talde_id)
+        return jsonify(pokemon) if pokemon else (jsonify({"error": "Ez da aurkitu"}), 404)
 
     app.register_blueprint(pokemonak_bp)
 
