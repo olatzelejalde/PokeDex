@@ -49,3 +49,6 @@ class TaldeaController:
 
     def remove_pokemon(self, tid, pid):
         self.db.delete("DELETE FROM ditu WHERE taldea_id = ? AND pokemon_id = ?", [tid, pid])
+
+    def get_mvp(self, tid):
+        return self.pokemon_ctrl.get_best_pokemon_by_group(tid)

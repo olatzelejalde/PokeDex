@@ -1,0 +1,465 @@
+/* Bot botoia (Botoi nagusia) */
+.bot-button {
+    position: fixed;
+    bottom: 45px;
+    left: 25px;
+    width: 85px;
+    height: 85px;
+    cursor: pointer;
+    z-index: 1001;
+    background: transparent;
+    border: none;
+    padding: 0;
+    display: block;
+    transition: transform 0.2s;
+}
+
+/* Botoi nagusiaren irudia */
+.bot-button img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: var(--pokedex-red, #dc0a2d);
+    border: 4px solid #8b0000;
+    box-shadow: 0 6px 15px rgba(220, 100, 45, 0.4);
+}
+
+/* Botoiaren gainetik igarotzean (Hover efektua) */
+.bot-button:hover {
+    transform: scale(1.1);
+    filter: brightness(1.1);
+    border-color: #a00000
+}
+
+/* Bot-en aukera panela */
+.bot-panel{
+  position: fixed;
+  bottom: 48px;
+  left: 120px;
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  z-index: 998;
+}
+
+/* Panela ezkutatzeko klasea */
+.bot-panel.hidden{
+    display: none;
+}
+
+/* Bot aukera bakoitzaren edukiontzia */
+.bot-option{
+  width: 80px;
+  height: 80px;
+  position: relative;
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  perspective: 1000px;
+  padding: 0;
+  margin: 0;
+}
+
+/* Aukeren irudiak eta testuak (span) */
+.bot-option img,
+.bot-option span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: 0.5s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Aukeren irudiaren hasierako egoera */
+.bot-option img {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    margin: auto;
+    object-fit: contain;
+    z-index: 2;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    opacity: 1;
+    transform: translateY(0) rotateX(0);
+}
+
+/* Aukeren testuaren (span) hasierako egoera (ezkutuan) */
+.bot-option span {
+    color: #fff;
+    font-family: 'Press Start 2P', cursive;
+    font-weight: bold;
+    font-size: 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 1.5;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    opacity: 0;
+    transform: translateY(-50%) rotateX(90deg);
+    z-index: 1;
+}
+
+/* Gainetik igarotzean irudia ezkutatu eta biratu */
+.bot-option:hover img {
+    opacity: 0;
+    transform: translateY(50%) rotateX(90deg);
+}
+
+/* Gainetik igarotzean testua (span) erakutsi eta biratu */
+.bot-option:hover span {
+    opacity: 1;
+    transform: translateY(0) rotateX(0);
+}
+
+/* PokeTop aukeraren kolorea */
+.bot-option[data-action="pokeTop"] span {
+    background-color: #dc0a2d;
+    border: 2px solid #8b0000;
+}
+
+/* PokeMota aukeraren kolorea */
+.bot-option[data-action="pokeMota"] span {
+    background-color: #4dad5b;
+    border: 2px solid #2a6632;
+}
+
+/* PokeEbo aukeraren kolorea */
+.bot-option[data-action="pokeEbo"] span {
+    background-color: #eed535;
+    color: #000;
+    border: 2px solid #a89208;
+}
+
+/* PokeScan aukeraren kolorea */
+.bot-option[data-action="pokeScan"] span {
+    background-color: #2663ac;
+    border: 2px solid #1b5e7a;
+}
+
+/* Panela ezkutatzeko indartzea */
+.bot-panel.hidden {
+    display: none !important;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* ========================================= */
+/* BOTAREN PANTAILA GEHIGARRIA (MODALA)      */
+/* ========================================= */
+
+/* Modala atzeko fondoa (overlay) */
+.retro-modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+/* Modala ezkutatuta dagoenean */
+.retro-modal.hidden {
+    display: none !important;
+}
+
+/* Modalaren kaxa nagusia */
+.modal-box {
+    background: #f0f0f0;
+    width: 1200px;      /* Pantaila tamaina */
+    max-width: 95%;     /* Mugikorretan pantailatik ez ateratzeko */
+    border: 4px solid #333;
+    border-radius: 8px;
+    box-shadow: 10px 10px 0px rgba(0,0,0,0.5);
+    font-family: 'Press Start 2P', cursive;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Modalaren goiburua (Header) */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background-color: rgba(0,0,0,0.1);
+    border-bottom: 3px solid #333;
+}
+
+/* Modalaren izenburua */
+.modal-header h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+/* Ixteko ikonoa (X) */
+.close-retro {
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1;
+    color: #333;
+}
+
+/* X-ren gainetik igarotzean */
+.close-retro:hover {
+    color: #d32f2f;
+}
+
+/* Modalaren edukia (Body) */
+.modal-body {
+    padding: 40px;
+    font-size: 14px;
+    color: #333;
+    line-height: 1.8;
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* Beheko zatia (Footer) */
+.modal-footer {
+    padding: 20px;
+    display: flex;
+    justify-content: flex-end;
+    border-top: 3px solid #333;
+    background-color: rgba(0,0,0,0.05);
+}
+
+/* OK botoiaren estilo retroa */
+.retro-ok-btn {
+    background-color: #dc0a2d;
+    color: #fff;
+    border: 3px solid #8b0000;
+    padding: 15px 40px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 12px;
+    cursor: pointer;
+    box-shadow: 5px 5px 0 rgba(0,0,0,0.3);
+    transition: all 0.1s;
+}
+
+/* OK botoiaren hover efektua */
+.retro-ok-btn:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+    background-color: #ff1a1a;
+}
+
+/* 1. PokeTop estiloak (Gorria) */
+.retro-ok-btn.pokeTop {
+    background-color: #dc0a2d;
+    border-color: #8b0000;
+    color: white;
+}
+.retro-ok-btn.pokeTop:hover {
+    background-color: #ff1a1a;
+}
+
+/* 2. PokeMota estiloak (Berdea) */
+.retro-ok-btn.pokeMota {
+    background-color: #4dad5b;
+    border-color: #2a6632;
+    color: white;
+}
+.retro-ok-btn.pokeMota:hover {
+    background-color: #60d670;
+}
+
+/* 3. PokeEbo estiloak (Horia) */
+.retro-ok-btn.pokeEbo {
+    background-color: #eed535;
+    border-color: #a89208;
+    color: #333;
+}
+.retro-ok-btn.pokeEbo:hover {
+    background-color: #ffeb3b;
+}
+
+/* 4. PokeScan estiloak (Urdina) */
+.retro-ok-btn.pokeScan {
+    background-color: #2663ac;
+    border-color: #1b5e7a;
+    color: white;
+}
+.retro-ok-btn.pokeScan:hover {
+    background-color: #3a8ee0;
+}
+
+/* ========================================= */
+/* GOIBURU DINAMIKOA (KOLOREAK)              */
+/* ========================================= */
+
+.modal-header {
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+/* PokeTop Goiburua */
+.modal-header.pokeTop {
+    background-color: #dc0a2d;
+    border-bottom-color: #8b0000;
+    color: white;
+}
+.modal-header.pokeTop .close-retro { color: white; }
+
+/* PokeMota Goiburua */
+.modal-header.pokeMota {
+    background-color: #4dad5b;
+    border-bottom-color: #2a6632;
+    color: white;
+}
+.modal-header.pokeMota .close-retro { color: white; }
+
+/* PokeEbo Goiburua */
+.modal-header.pokeEbo {
+    background-color: #eed535;
+    border-bottom-color: #a89208;
+    color: #333;
+}
+.modal-header.pokeEbo .close-retro { color: #333; }
+
+/* PokeScan Goiburua */
+.modal-header.pokeScan {
+    background-color: #2663ac;
+    border-bottom-color: #1b5e7a;
+    color: white;
+}
+.modal-header.pokeScan .close-retro { color: white; }
+
+/* ========================================= */
+/* TALDE TXARTELEN DISEINUA (POKETOP)        */
+/* ========================================= */
+
+.selection-container {
+    text-align: center;
+    padding: 10px;
+    font-family: 'Verdana', sans-serif;
+    width: 100%;
+}
+
+/* Txartelen sareta (Grid) */
+.trainers-grid {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+/* Entrenatzaile bakoitzaren txartela */
+.trainer-card {
+    width: 180px;      /* Zabalera egokituta 3 pokemon sartzeko */
+    height: 140px;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    border: 3px solid white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+    padding: 10px;
+    background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+}
+
+.trainer-card:hover {
+    transform: translateY(-5px) scale(1.05);
+    z-index: 10;
+    border-color: #ffe082;
+}
+
+/* Taldearen izena (Txartelaren goialdean) */
+.team-name {
+    color: white;
+    font-size: 14px;
+    font-weight: 900;
+    text-transform: uppercase;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+    margin-bottom: 8px;
+    background: rgba(0,0,0,0.2);
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+/* 6 Pokemonentzako mini-sareta */
+.mini-poke-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 zutabe */
+    gap: 4px;
+    width: 100%;
+    justify-items: center;
+}
+
+/* Pokemon irudi txikiak */
+.mini-poke-img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    background: rgba(255,255,255,0.4);
+    border-radius: 50%;
+    padding: 2px;
+}
+
+/* ========================================= */
+/* EBOLUZIOAREN EDUKIONTZIA (POKEEBO)        */
+/* ========================================= */
+
+.ebo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 30px;
+    background-color: #fdf6c4; /* Irudiaren kolore horixka */
+    border: 3px solid #f2c94c;
+    border-radius: 8px;
+    font-family: 'Press Start 2P', cursive;
+}
+
+/* Eboluzio txartel bakoitza */
+.ebo-card {
+    text-align: center;
+    transition: transform 0.2s;
+}
+
+/* Eboluzio irudiaren estiloa */
+.ebo-card img {
+    width: 100px;
+    height: 100px;
+    image-rendering: pixelated; /* Retro estiloa mantentzeko */
+}
+
+/* Hautatutako pokemonaren izena gorriz nabarmendu */
+.ebo-card.selected .ebo-name {
+    color: #e63946;
+    font-weight: bold;
+}
+
+/* Pokemonaren izenaren estiloa eboluzioan */
+.ebo-name {
+    margin-top: 10px;
+    font-size: 10px;
+    color: #8b4513;
+    text-transform: uppercase;
+}
+
+/* Eboluzioaren gezia */
+.ebo-arrow {
+    font-size: 24px;
+    color: #f2994a;
+    margin-bottom: 20px; /* Zentratzeko egokitzapena */
+}

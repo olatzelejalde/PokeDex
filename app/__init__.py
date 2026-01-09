@@ -117,6 +117,7 @@ def create_app():
     
     
     # Registrar todas las rutas de la API
+    from app.controller.ui.bistaKontroladorea import register_all_routes
     register_all_routes(app, db)
     
     # Debug: Mostrar rutas registradas

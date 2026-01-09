@@ -5,8 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5027c7a4-cde5-4d20-91a5-71c2ee576678" name="Changes" comment="&quot;botia aldaketa&quot;">
+      <change afterPath="$PROJECT_DIR$/app/static/js/bot.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/static/styles/bot.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/js/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/js/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controller/model/espezie_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/controller/model/espezie_controller.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controller/model/pokemon_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/controller/model/pokemon_controller.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controller/model/taldea_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/controller/model/taldea_controller.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controller/ui/bistaKontroladorea.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/controller/ui/bistaKontroladorea.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/database/schema.sql" beforeDir="false" afterPath="$PROJECT_DIR$/app/database/schema.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/static/styles/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/styles/styles.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/index.html" afterDir="false" />
     </list>
@@ -14,6 +21,15 @@
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+        <option value="JavaScript File" />
+        <option value="CSS File" />
+      </list>
+    </option>
   </component>
   <component name="FlaskConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform)); sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo, NoAppException&#10;for module in [&quot;main.py&quot;, &quot;wsgi.py&quot;, &quot;app.py&quot;]:&#10;    try: locals().update(ScriptInfo(app_import_path=module, create_app=None).load_app().make_shell_context()); print(&quot;\nFlask App: %s&quot; % app.import_name); break&#10;    except NoAppException: pass">
     <envs>
@@ -63,10 +79,11 @@
     &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
     &quot;ai.playground.ignore.import.keys.banner.in.settings&quot;: &quot;true&quot;,
     &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;ane&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/PC/Desktop/uni/ISAD/LANA/GITHUB/PokeDex/app/static&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -129,6 +146,17 @@
       <workItem from="1767195151818" duration="4267000" />
       <workItem from="1767199663249" duration="743000" />
       <workItem from="1767290544513" duration="11713000" />
+      <workItem from="1767544763112" duration="13894000" />
+      <workItem from="1767803199814" duration="7806000" />
+      <workItem from="1767886983689" duration="11285000" />
+      <workItem from="1767898566378" duration="4572000" />
+      <workItem from="1767903282496" duration="809000" />
+      <workItem from="1767904163991" duration="4450000" />
+      <workItem from="1767909645291" duration="4807000" />
+      <workItem from="1767914501556" duration="3686000" />
+      <workItem from="1767947846476" duration="353000" />
+      <workItem from="1767958581293" duration="187000" />
+      <workItem from="1767966096278" duration="5050000" />
     </task>
     <task id="LOCAL-00001" summary="&quot;botaren argazkia&quot;">
       <option name="closed" value="true" />
@@ -156,5 +184,16 @@
     <MESSAGE value="&quot;botaren argazkia&quot;" />
     <MESSAGE value="&quot;botia aldaketa&quot;" />
     <option name="LAST_COMMIT_MESSAGE" value="&quot;botia aldaketa&quot;" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/app/controller/ui/espezie_routes.py</url>
+          <line>7</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
