@@ -46,6 +46,14 @@ class ErabiltzaileKatalogoa:
         for row in rows:
             user = self._row_to_user(row)
             self.gehitu(user)
+
+        lagunak_rows = self.db.select("SELECT * FROM lagunak")
+        for row in lagunak_rows:
+            user1 = self.bilatu_by_id(row['erabiltzaile1_id'])
+            user2 = self.bilatu_by_id(row['erabiltzaile2_id'])
+            if user1 and user2:
+                user1.gehitu_laguna(user2)
+                user2.gehitu_laguna(user1)
     
     def sortu(self, izena: str, abizena: str, erabilIzena: str, 
               pasahitza: str, pasahitza2: str, telegramKontua: str = None) -> Erabiltzailea:
@@ -101,37 +109,15 @@ class ErabiltzaileKatalogoa:
         return None
     
     # ---- Métodos de amigos ----
-    
-    def obtener_lagunak(self, uid: int) -> List[Erabiltzailea]:
-        """Obtiene los amigos de un usuario"""
-        if not self.db:
+    def lortu_lagunak(self, uid: int, telegram_du: bool) -> List[Erabiltzailea]:
+        user = self.bilatu_by_id(uid)
+        if not user:
             return []
         
-        rows = self.db.select(
-            """SELECT e.* FROM erabiltzailea e
-               JOIN lagunak l ON (
-                   (l.erabiltzaile1_id = e.id AND l.erabiltzaile2_id = ?) OR
-                   (l.erabiltzaile2_id = e.id AND l.erabiltzaile1_id = ?)
-               )""",
-            [uid, uid]
-        )
-        return [self._row_to_user(row) for row in rows]
-
-    def lortu_lagunak_telegram(self, uid: int) -> List[Erabiltzailea]:
-        """Devuelve solo los lagunak que tengan telegram kontua"""
-        if not self.db:
-            return []
-
-        rows = self.db.select(
-            """SELECT e.* FROM erabiltzailea e
-               JOIN lagunak l ON (
-                   (l.erabiltzaile1_id = e.id AND l.erabiltzaile2_id = ?) OR
-                   (l.erabiltzaile2_id = e.id AND l.erabiltzaile1_id = ?)
-               )
-               WHERE e.telegramKontua IS NOT NULL AND e.telegramKontua <> ''""",
-            [uid, uid]
-        )
-        return [self._row_to_user(row) for row in rows]
+        lagunak = user.lagunZer.copy()
+        if telegram_du:
+            lagunak = [u for u in lagunak if u.telegramKontua]
+        return lagunak
     
     def gehitu_laguna(self, uid1: int, uid2: int) -> None:
         """Añade una amistad entre dos usuarios"""

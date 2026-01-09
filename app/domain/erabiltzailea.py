@@ -65,6 +65,9 @@ class Erabiltzailea:
                     pasahitza=row['pasahitza'],
                     rola=row['rola'],
                     telegramKontua=row['telegramKontua'],
-                )
-        
+                )  
         raise ValueError("Errorea erabiltzailea sortzean")
+    
+    def gehitu_laguna(self, laguna: "Erabiltzailea") -> None:
+        if laguna not in self.lagunZer:
+            self.lagunZer.append(laguna)

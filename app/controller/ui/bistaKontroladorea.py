@@ -74,12 +74,12 @@ def register_all_routes(app, db, users_katalogo=None):
 
     @erabiltzaileak_bp.route('/erabiltzaileak/<int:uid>/lagunak', methods=['GET'])
     def get_lagunak(uid):
-        lagunak = users_katalogo.obtener_lagunak(uid)
+        lagunak = users_katalogo.lortu_lagunak(uid, telegram_du=False)
         return jsonify([_user_to_dict(u) for u in lagunak])
 
     @erabiltzaileak_bp.route('/erabiltzaileak/<int:uid>/lagunak/telegram', methods=['GET'])
     def get_lagunak_telegram(uid):
-        lagunak = users_katalogo.lortu_lagunak_telegram(uid)
+        lagunak = users_katalogo.lortu_lagunak(uid, telegram_du=True)
         return jsonify([_user_to_dict(u) for u in lagunak])
 
     @erabiltzaileak_bp.route('/erabiltzaileak/bilatu/<izena>', methods=['GET'])
