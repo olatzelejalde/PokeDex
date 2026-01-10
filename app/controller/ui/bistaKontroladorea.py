@@ -79,19 +79,20 @@ def register_all_routes(app, db):
     # ============================================
     # INTSIGNIAK (Insignias)
     # ============================================
-    intsigniak_bp = Blueprint('intsigniak', __name__, url_prefix='/api')
-    intsignia_ctrl = IntsigniaController(db)
+    bp = Blueprint('intsigniak', __name__, url_prefix='/api')
+    ctrl = IntsigniaController(db)
 
-    @intsigniak_bp.route('/erabiltzaileak/<int:uid>/intsigniak', methods=['GET'])
-    def por_user_intsignia(uid):
-        return jsonify(intsignia_ctrl.get_by_user(uid))
+    @bp.route('/erabiltzaileak/<int:uid>/intsigniak', methods=['GET'])
+    def por_user(uid):
+        badges=ctrl.get_all_badges_for_user(uid)
+        return jsonify(badges)
 
-    @intsigniak_bp.route('/erabiltzaileak/<int:uid>/intsigniak/<izena>', methods=['POST'])
+    @bp.route('/erabiltzaileak/<int:uid>/intsigniak/<izena>', methods=['POST'])
     def award(uid, izena):
-        intsignia_ctrl.award(uid, izena)
+        ctrl.award_badge(uid, izena)
         return jsonify({'message': 'Intsignia eman da'})
 
-    app.register_blueprint(intsigniak_bp)
+    app.register_blueprint(bp)
 
     # ============================================
     # ESPEZIEAK (Especies)
