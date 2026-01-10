@@ -60,7 +60,7 @@ function aldatuAtala(atalIzena) {
     } else if (atalIzena === 'erabiltzailea') {
         kargatuErabiltzaileProfila();
     } else if (atalIzena === 'intsigniak'){ //OLATZ
-        intsigniakKargatu(user.id);
+        intsigniakKargatu(erabiltzaileId);
     }
 }
 
