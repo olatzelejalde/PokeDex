@@ -59,5 +59,27 @@ function aldatuAtala(atalIzena) {
         kargatuErabiltzaileTaldeak();
     } else if (atalIzena === 'erabiltzailea') {
         kargatuErabiltzaileProfila();
+    } else if (atalIzena === 'intsigniak'){ //OLATZ
+        intsigniakKargatu(user.id);
+    }
+}
+
+// Backend-etik intsignien karga OLATZ
+async function intsigniakKargatu(erabiltzaileId) {
+    try {
+        // Erabiltzailearen intsigniak lortzen ditugu API-tik
+        const res = await fetch(`${API_BASE_URL}/erabiltzaileak/${erabiltzaileId}/intsigniak`);
+        const intsigniak = await res.json();
+
+        // Hemen erabakiko da intsignia lortu den edo ez. jarraipena >= helburua bada, lortua izango da
+        intsigniak.forEach(ins => {
+            ins.lortua = ins.jarraipena >= ins.helburua;
+        });
+
+        // Grid-ean intsigniak renderizatzen ditugu
+        renderIntsigniak(intsigniak);
+    } catch (err) {
+        // Erroreak kontrolatzen ditugu eta kontsolan erakusten dira
+        console.error("Errorea egon da intsigniak kargatzerakoan:", err);
     }
 }
