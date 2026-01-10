@@ -7,10 +7,12 @@ from app.domain.notifikazio import Notifikazio
 
 @dataclass
 class Erabiltzailea:
+    id: int
     izena: str
     abizena: str
     erabiltzaileIzena: str
     telegramKontua: str
+    chat_id: Optional[int]
     pasahitza: str
     rola: str
     intsigniaZer: List["Intsignia"]
@@ -19,12 +21,13 @@ class Erabiltzailea:
     notifZer: List["Notifikazio"]
 
     def __init__(self, id: int, izena: str, abizena: str, erabiltzaileIzena: str,
-                 pasahitza: str, rola: str, telegramKontua: str = ""):
+                 pasahitza: str, rola: str, telegramKontua: str = "", chat_id: Optional[int] = None):
         self.id = id
         self.izena = izena
         self.abizena = abizena
         self.erabiltzaileIzena = erabiltzaileIzena
         self.telegramKontua = telegramKontua
+        self.chat_id = chat_id
         self.pasahitza = pasahitza
         self.rola = rola
         self.intsigniaZer = []
@@ -33,8 +36,8 @@ class Erabiltzailea:
         self.notifZer = []
 
     @staticmethod
-    def sortu(izena: str, abizena: str, erabilIzena: str, 
-                          pasahitza: str, pasahitza2: str, telegramKontua: str = None, 
+    def sortu( izena: str, abizena: str, erabilIzena: str, 
+                          pasahitza: str, pasahitza2: str, telegramKontua: str = None,
                           db=None) -> "Erabiltzailea":
         """Datuak balidatu eta erabiltzailea sortu"""
         if not erabilIzena or len(pasahitza) < 4 or pasahitza != pasahitza2:
@@ -65,9 +68,14 @@ class Erabiltzailea:
                     pasahitza=row['pasahitza'],
                     rola=row['rola'],
                     telegramKontua=row['telegramKontua'],
+                    chat_id=row['chat_id']
                 )  
         raise ValueError("Errorea erabiltzailea sortzean")
     
     def gehitu_laguna(self, laguna: "Erabiltzailea") -> None:
         if laguna not in self.lagunZer:
             self.lagunZer.append(laguna)
+
+    def kendu_laguna(self, laguna: "Erabiltzailea") -> None:
+        if laguna in self.lagunZer:
+            self.lagunZer.remove(laguna)

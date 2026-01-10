@@ -128,6 +128,11 @@ class ErabiltzaileKatalogoa:
         if uid1 > uid2:
             uid1, uid2 = uid2, uid1
         
+        user = self.bilatu_by_id(uid1)
+        lagun = self.bilatu_by_id(uid2)
+        user.gehitu_laguna(lagun, db=self.db)
+        lagun.gehitu_laguna(user, db=self.db)
+
         if self.db:
             # Verificar que no sean ya amigos
             rows = self.db.select(
@@ -147,6 +152,11 @@ class ErabiltzaileKatalogoa:
         if uid1 > uid2:
             uid1, uid2 = uid2, uid1
         
+        user = self.bilatu_by_id(uid1)
+        lagun = self.bilatu_by_id(uid2)
+        user.kendu_laguna(lagun, db=self.db)
+        lagun.kendu_laguna(user, db=self.db)
+
         if self.db:
             self.db.delete(
                 "DELETE FROM lagunak WHERE erabiltzaile1_id = ? AND erabiltzaile2_id = ?",
@@ -172,5 +182,6 @@ class ErabiltzaileKatalogoa:
             pasahitza=row['pasahitza'],
             rola=row['rola'],
             telegramKontua=row['telegramKontua'],
+            chat_id=row['chat_id']
         )
 
