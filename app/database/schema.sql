@@ -57,6 +57,7 @@ CREATE TABLE IF NOT EXISTS erabiltzailea (
     erabilIzena TEXT UNIQUE NOT NULL,
     pasahitza TEXT NOT NULL,
     telegramKontua TEXT,
+    chat_id INTEGER,
     rola TEXT DEFAULT 'erabiltzailea'
 );
 

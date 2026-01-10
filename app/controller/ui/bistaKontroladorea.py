@@ -1,6 +1,9 @@
 from flask import Blueprint, jsonify, request, session
-import requests
 import logging
+import os
+import threading
+import time
+import requests
 from app.domain.erabiltzaileKatalogoa import ErabiltzaileKatalogoa
 from app.domain.taldeKatalogoa import TaldeKatalogoa
 from app.controller.model.mota_controller import MotaController
@@ -11,16 +14,35 @@ from app.controller.model.taldea_controller import TaldeaController
 from app.services.telegram_service import TelegramService
 
 
-def register_all_routes(app, db, users_katalogo=None):
+def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
     """Registra todas las rutas de la aplicación"""
     
     # ============================================
     # ERABILTZAILEAK (Usuarios)
     # ============================================
+    telegram_service = TelegramService()
     erabiltzaileak_bp = Blueprint('erabiltzaileak', __name__, url_prefix='/api')
+
     if users_katalogo is None:
         users_katalogo = ErabiltzaileKatalogoa(db)
         users_katalogo.erabiltzaileak_kargatu()
+
+    if taldeak_katalogo is None:
+        taldeak_katalogo = TaldeKatalogoa(db)
+        taldeak_katalogo.kargatu_from_bd()
+
+    # --- TELEGRAM POLLING (LOCAL) ---
+    if os.getenv("TELEGRAM_USE_POLLING") == "1" and os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+        def _on_start(chat_id: int, telegram_username: str | None, payload: str | None) -> bool:
+            # payload = erabilIzena opcional (/start <erabilIzena>)
+            u = users_katalogo.lotu_telegram_chat_id(
+                chat_id=chat_id,
+                telegram_username=telegram_username,
+                erabilIzena=payload,
+            )
+            return u is not None
+
+        telegram_service.start_polling(_on_start)
 
     def _user_to_dict(u):
         return {
@@ -104,7 +126,77 @@ def register_all_routes(app, db, users_katalogo=None):
         except ValueError as e:
             return jsonify({'error': str(e)}), 400
 
+    @erabiltzaileak_bp.route('/erabiltzaileak/activateTelegram/<int:uid>', methods=['POST'])
+    def activate_telegram(uid):
+        """
+        Guarda telegramKontua del usuario; el chat_id se guarda cuando el usuario hace /start al bot.
+        """
+        data = request.get_json(silent=True) or {}
+        telegram_kontua = data.get('telegramKontua')
+
+        if not telegram_kontua:
+            return jsonify({'error': 'telegramKontua beharrezkoa da'}), 400
+
+        try:
+            user = users_katalogo.actualizar(uid, {'telegramKontua': telegram_kontua})
+            return jsonify({
+                'message': 'OK. Orain Telegram bot-ean idatzi: /start',
+                'user': _user_to_dict(user),
+            }), 200
+        except ValueError as e:
+            return jsonify({'error': str(e)}), 400
+
     app.register_blueprint(erabiltzaileak_bp)
+
+    # ============================================
+    # TELEGRAM WEBHOOK
+    # ============================================
+    telegram_bp = Blueprint('telegram', __name__, url_prefix='/telegram')
+
+    @telegram_bp.route('/webhook', methods=['POST'])
+    def telegram_webhook():
+        update = request.get_json(silent=True) or {}
+
+        msg = update.get('message') or update.get('edited_message')
+        if not msg:
+            return jsonify({'ok': True})
+
+        text = (msg.get('text') or '').strip()
+        if not text.startswith('/start'):
+            return jsonify({'ok': True})
+
+        chat = msg.get('chat') or {}
+        from_ = msg.get('from') or {}
+        chat_id = chat.get('id')
+        telegram_username = from_.get('username')  # puede ser None si el usuario no tiene username
+
+        # /start <erabilIzena> (deep-link opcional)
+        parts = text.split(maxsplit=1)
+        erabilIzena = parts[1].strip() if len(parts) > 1 else None
+
+        if not chat_id:
+            return jsonify({'ok': True})
+
+        user = users_katalogo.lotu_telegram_chat_id(
+            chat_id=int(chat_id),
+            telegram_username=telegram_username,
+            erabilIzena=erabilIzena
+        )
+
+        if user:
+            telegram_service.send_message(
+                chat_id=int(chat_id),
+                text="Chat-a lotuta geratu da. Orain zure lagunek taldeak bidali ahal dizkizute."
+            )
+        else:
+            telegram_service.send_message(
+                chat_id=int(chat_id),
+                text="Ezin izan da kontua lotu. Ziurtatu web-aplikazioan zure Telegram erabiltzailea gordeta dagoela, edo erabili: /start <zure_erabilIzena>"
+            )
+
+        return jsonify({'ok': True})
+
+    app.register_blueprint(telegram_bp)
 
     # ============================================
     # MOTAK (Tipos)
@@ -201,9 +293,6 @@ def register_all_routes(app, db, users_katalogo=None):
     # TALDEAK (Equipos)
     # ============================================
     taldeak_bp = Blueprint('taldeak', __name__, url_prefix='/api')
-    taldeak_katalogo = TaldeKatalogoa(db)
-    taldeak_katalogo.kargatu_from_bd()
-    telegram_service = TelegramService()
 
     def _taldea_to_dict(taldea):
         return {
@@ -257,56 +346,30 @@ def register_all_routes(app, db, users_katalogo=None):
             taldeak_katalogo.ezabatu(tid)
             return jsonify({'message': 'Taldea ezabauta'})
         except Exception as e:
-            return jsonify({'error': str(e)}), 400
-
+            return jsonify({'error': str(e)}), 4000
+    
+    
     @taldeak_bp.route('/taldeak/<int:tid>/partekatu/<int:user_id>/<int:lagun_id>', methods=['POST'])
     def partekatu_taldea(tid, user_id, lagun_id):
-        """Comparte un equipo con un amigo por Telegram"""
-        if not user_id or not lagun_id:
-            return jsonify({'error': 'Erabiltzailea eta laguna beharrezkoak dira'}), 400
+        user = users_katalogo.bilatu_by_id(user_id)
+        lagun = users_katalogo.bilatu_by_id(lagun_id)
+        taldea = taldeak_katalogo.bilatu_by_id(tid)
+        if not user or not lagun or not taldea:
+            return jsonify({'error': 'Erabiltzaile edo taldea ez da existitzen'}), 404
 
-        try:
-            # Obtener datos
-            taldea_data = TaldeKatalogoa.get_by_id(tid)
-            user = ErabiltzaileKatalogoa.get_by_id(user_id)
-            lagun = ErabiltzaileKatalogoa.get_by_id(lagun_id)
-            
-            if not taldea_data or not user or not lagun:
-                return jsonify({'error': 'Datos no encontrados'}), 404
-            
-            if not user.telegramKontua:
-                return jsonify({'error': 'Erabiltzaileak ez du telegramKontua ezarrita'}), 400
-            
-            if not lagun.chat_id:
-                return jsonify({
-                    'error': f'@{lagun.telegramKontua} erabiltzaileak bot-arekin /start egin behar du lehenik'
-                }), 400
+        if not lagun.chat_id:
+            return jsonify({'error': 'Lagunak ez du /start egin Telegram bot-ean (chat_id falta da)'}), 400
 
-            # Preparar datos del equipo
-            taldea_json = {
-                'id': taldea_data['id'],
-                'izena': taldea_data['izena'],
-                'owner': user.telegramKontua or user.erabiltzaileIzena,
-                'pokemonak': pokemon_ctrl.get_pokemon_by_group(tid)
-            }
+        partekatu = telegram_service.partekatu_taldea(
+            lagun.chat_id,
+            user.erabiltzaileIzena,
+            taldea.izena
+        )
+        if not partekatu:
+            return jsonify({'error': 'Ezin izan da taldea Telegram bidez bidali'}), 502
 
-            # Enviar por Telegram
-            from app.services.telegram_service import TelegramService
-            telegram_service = TelegramService()
-            
-            success = telegram_service.partekatu_taldea(
-                taldea_json,
-                from_username=user.telegramKontua,
-                to_username=lagun.telegramKontua
-            )
-
-            if success:
-                return jsonify({'message': 'Taldea Telegram bidez partekatu da ✅'})
-            else:
-                return jsonify({'error': 'Errorea Telegram bidez bidaltzean'}), 502
-
-        except Exception as e:
-            logger.exception(f"Error: {e}")
-            return jsonify({'error': str(e)}), 500
+        return jsonify({'message': 'Taldea partekatu da'}), 200
 
     app.register_blueprint(taldeak_bp)
+
+

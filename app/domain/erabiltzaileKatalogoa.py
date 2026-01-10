@@ -90,6 +90,10 @@ class ErabiltzaileKatalogoa:
             updates.append('pasahitza = ?')
             params.append(data['pasahitza'])
             user.pasahitza = data['pasahitza']
+        if 'chat_id' in data:
+            updates.append('chat_id = ?')
+            params.append(data['chat_id'])
+            user.chat_id = data['chat_id']
         
         if not updates:
             raise ValueError("Ez dago aldaketarik gordetzeko")
@@ -116,7 +120,7 @@ class ErabiltzaileKatalogoa:
         
         lagunak = user.lagunZer.copy()
         if telegram_du:
-            lagunak = [u for u in lagunak if u.telegramKontua]
+            lagunak = [u for u in lagunak if u.telegramKontua and u.chat_id]
         return lagunak
     
     def gehitu_laguna(self, uid1: int, uid2: int) -> None:
@@ -124,17 +128,18 @@ class ErabiltzaileKatalogoa:
         if uid1 == uid2:
             raise ValueError("Ezin duzu zeure buruari laguna egin")
         
-        # Asegurar que uid1 < uid2 para mantener consistencia
         if uid1 > uid2:
             uid1, uid2 = uid2, uid1
         
         user = self.bilatu_by_id(uid1)
         lagun = self.bilatu_by_id(uid2)
-        user.gehitu_laguna(lagun, db=self.db)
-        lagun.gehitu_laguna(user, db=self.db)
+        if not user or not lagun:
+            raise ValueError("Erabiltzailea ez da existitzen")
+
+        user.gehitu_laguna(lagun)
+        lagun.gehitu_laguna(user)
 
         if self.db:
-            # Verificar que no sean ya amigos
             rows = self.db.select(
                 "SELECT 1 FROM lagunak WHERE erabiltzaile1_id = ? AND erabiltzaile2_id = ?",
                 [uid1, uid2]
@@ -154,8 +159,11 @@ class ErabiltzaileKatalogoa:
         
         user = self.bilatu_by_id(uid1)
         lagun = self.bilatu_by_id(uid2)
-        user.kendu_laguna(lagun, db=self.db)
-        lagun.kendu_laguna(user, db=self.db)
+        if not user or not lagun:
+            raise ValueError("Erabiltzailea ez da existitzen")
+
+        user.kendu_laguna(lagun)
+        lagun.kendu_laguna(user)
 
         if self.db:
             self.db.delete(
@@ -171,6 +179,54 @@ class ErabiltzaileKatalogoa:
                izena.lower() in u.izena.lower()
         ]
     
+    def lotu_telegram_chat_id(self, chat_id: int, telegram_username: Optional[str] = None, erabilIzena: Optional[str] = None) -> Optional[Erabiltzailea]:
+        """
+        Vincula chat_id cuando el usuario hace /start en el bot.
+        - Si viene /start <erabilIzena>, vincula por erabilIzena (recomendado).
+        - Si no, intenta vincular por telegram_username contra telegramKontua.
+        """
+        if not self.db:
+            return None
+
+        row = None
+
+        if erabilIzena:
+            if telegram_username:
+                self.db.update(
+                    "UPDATE erabiltzailea SET telegramKontua = ?, chat_id = ? WHERE erabilIzena = ?",
+                    [telegram_username, chat_id, erabilIzena],
+                )
+            else:
+                self.db.update(
+                    "UPDATE erabiltzailea SET chat_id = ? WHERE erabilIzena = ?",
+                    [chat_id, erabilIzena],
+                )
+            rows = self.db.select("SELECT * FROM erabiltzailea WHERE erabilIzena = ?", [erabilIzena])
+            row = rows[0] if rows else None
+
+        elif telegram_username:
+            self.db.update(
+                "UPDATE erabiltzailea SET chat_id = ? WHERE telegramKontua = ?",
+                [chat_id, telegram_username],
+            )
+            rows = self.db.select("SELECT * FROM erabiltzailea WHERE telegramKontua = ?", [telegram_username])
+            row = rows[0] if rows else None
+
+        if not row:
+            return None
+
+        updated = self._row_to_user(row)
+
+        # sincroniza memoria (si ya estaba cargado)
+        existing = self.bilatu_by_id(updated.id)
+        if existing:
+            existing.telegramKontua = updated.telegramKontua
+            existing.chat_id = updated.chat_id
+            return existing
+
+        self.gehitu(updated)
+        return updated
+
     @staticmethod
     def _row_to_user(row) -> Erabiltzailea:
         """Convierte una fila de BD a objeto Erabiltzailea"""
