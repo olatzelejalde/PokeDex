@@ -60,22 +60,22 @@ CREATE TABLE IF NOT EXISTS erabiltzailea (
     rola TEXT DEFAULT 'erabiltzailea'
 );
 
--- 7. INTSIGNIA
+-- 7. INTSIGNIA: Plataforman lortu daitezkeen intsigniak
 CREATE TABLE IF NOT EXISTS intsignia (
-    izena TEXT PRIMARY KEY,
-    deskribapena TEXT NOT NULL,
-    helburua TEXT NOT NULL
+    izena TEXT PRIMARY KEY,        -- Intsigniaren izena
+    deskripzioa TEXT NOT NULL,     -- Intsigniaren azalpena, hover-eko tooltip edo informazio moduan erabiliko da
+    helburua INTEGER NOT NULL      -- Intsignia lortzeko behar den ekintzen kopurua
 );
 
--- 8. ERABILTZAILEAK INTSIGNIAK
+-- 8. ERABILTZAILEAK INTSIGNIAK: Erabiltzaile bakoitzak duen jarraipena
 CREATE TABLE IF NOT EXISTS erabiltzaileak_intsigniak (
-    erabiltzaile_id INTEGER NOT NULL,
-    intsignia_izena TEXT NOT NULL,
-    jarraipena INTEGER DEFAULT 0,
-    eguna_ordua TEXT DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (erabiltzaile_id, intsignia_izena),
-    FOREIGN KEY(erabiltzaile_id) REFERENCES erabiltzailea(id),
-    FOREIGN KEY(intsignia_izena) REFERENCES intsignia(izena)
+    erabiltzaile_id INTEGER NOT NULL,       -- Erabiltzailearen ID, erabiltzailea taulatik dator
+    intsignia_izena TEXT NOT NULL,         -- Intsigniaren izena, intsignia taulatik dator
+    jarraipena INTEGER DEFAULT 0,          -- Zenbat ekintza burutu ditu erabiltzaileak intsignia lortzeko
+    eguna_ordua TEXT DEFAULT CURRENT_TIMESTAMP, -- Azken aldiz eguneratutako data/ordua
+    PRIMARY KEY (erabiltzaile_id, intsignia_izena), -- Erabiltzaile bakoitzak intsignia bakoitza bakarrik izan dezake
+    FOREIGN KEY(erabiltzaile_id) REFERENCES erabiltzailea(id),  -- Lotura erabiltzailea taularekin
+    FOREIGN KEY(intsignia_izena) REFERENCES intsignia(izena)    -- Lotura intsignia taularekin
 );
 
 -- 9. TALDEA
@@ -324,3 +324,16 @@ INSERT INTO espeziea VALUES (149, 'Dragonite', 'dragoia', 'hegaldia', 91, 134, 9
 INSERT INTO espeziea VALUES (142, 'Aerodactyl', 'harria', 'hegaldia', 80, 105, 65, 60, 75, 130, '142.png', '...', NULL);
 INSERT INTO espeziea VALUES (143, 'Snorlax', 'normala', NULL, 160, 110, 65, 65, 110, 30, '143.png', '...', NULL);
 INSERT INTO espeziea VALUES (150, 'Mewtwo', 'psikikoa', NULL, 106, 110, 90, 154, 90, 130, '150.png', '...', NULL);
+
+--intsignia guztiak hasieratik gordeta
+INSERT INTO intsignia (izena, deskripzioa, helburua) VALUES
+('Erabiltzaile bezala erregistratu', 'Plataforman erregistratu zara erabiltzaile bezala, eta hemendik aurrera funtzio guztiak erabiltzeko aukera duzu.', 1),
+('Lagun eskaera bidali', 'Beste erabiltzaile bati lagun eskaera bidali diozu, zure sare soziala zabaltzen hasteko.', 1),
+('6 lagun lortu', 'Guztira 6 lagun lortu dituzu, 6 erabiltzailek zure eskaerak onartu dituzte.', 6),
+('Admin bihurtu', 'Administratzaile rola eskuratu duzu, eta orain kudeaketa eta kontrol funtzio bereziak dituzu eskuragarri.', 1),
+('5 talde sortu', '5 talde desberdin sortu dituzu, Pokémonen konbinazio eta estrategiak antolatzeko.', 5),
+('Talde bat editatu', 'Sortutako taldeetako bat editatu duzu, bere kideak edo ezarpenak aldatu dituzu.', 1),
+('Talde bat ezabatu', 'Lehendik zeneukan talde bat ezabatu duzu.', 1),
+('Mota bateko 4 Pokémon lortu', 'Pokémon mota baten 4 pokemon lortu dituzu.', 4),
+('Talde bat partekatu', 'Zure taldeetako bat beste erabiltzaileekin partekatu duzu, zure estrategia erakusteko.', 1),
+('Espezie informazioa 20 aldiz kontsultatu', 'Pokémon espezieen informazioa 20 aldiz kontsultatu duzu, datuak eta xehetasunak ikertzeko.', 20);
