@@ -4,14 +4,14 @@ class IntsigniaController:
 
     def get_all_badges_for_user(self, uid):
         """
-        Itzultzen ditu erabiltzaileak dituen insignia guztiak,
-        eta 'lortua' eremua du bakoitzarentzat.
+        Devuelve todas las insignias y, para cada una, su progreso y si ya fue obtenida.
         """
         query = """
             SELECT 
                 i.izena, 
                 i.deskripzioa, 
                 i.helburua,
+                COALESCE(ei.jarraipena, 0) as jarraipena,
                 CASE WHEN ei.intsignia_izena IS NOT NULL THEN 1 ELSE 0 END as lortua
             FROM intsignia i
             LEFT JOIN erabiltzaileak_intsigniak ei 
@@ -22,12 +22,12 @@ class IntsigniaController:
 
     def award_badge(self, uid, badge_name):
         """
-        Insignia ematen dio erabiltzaileari, baina bakarrik jada lortuta ez badauka.
+        Otorga una insignia al usuario solo si no la tiene ya.
         """
         return self.db.insert(
             """
-            INSERT OR IGNORE INTO erabiltzaileak_intsigniak (erabiltzaile_id, intsignia_izena, lortua)
-            VALUES (?, ?, 1)
+            INSERT OR IGNORE INTO erabiltzaileak_intsigniak (erabiltzaile_id, intsignia_izena, jarraipena)
+            VALUES (?, ?, ?)
             """,
-            [uid, badge_name]
+            [uid, badge_name, 0]  
         )
