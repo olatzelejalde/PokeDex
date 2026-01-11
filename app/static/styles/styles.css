@@ -285,8 +285,69 @@ body {
 }
 .taldea-actions { display: flex; gap: 10px; justify-content: center; margin-top: 15px; }
 
+/* Selector de Pokémon (modal grid) */
+.pokemon-aukeraketa-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 14px;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding: 10px 2px 4px;
+}
+.pokemon-choice-card {
+    background: linear-gradient(145deg, #fdfdfd, #f2f2f2);
+    border: 2px solid var(--pokedex-black);
+    border-radius: 12px;
+    text-align: center;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+    cursor: pointer;
+}
+.pokemon-choice-card:hover { transform: translateY(-3px); box-shadow: 0 8px 14px rgba(0,0,0,0.2); border-color: var(--pokedex-red); }
+.pokemon-choice-id {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.55rem;
+    color: var(--pokedex-red);
+    margin-bottom: 6px;
+}
+.pokemon-choice-card img { width: 70px; height: 70px; }
+.pokemon-choice-name { margin-top: 6px; font-weight: 700; color: var(--pokedex-black); }
+.pokemon-choice-types { display: flex; gap: 6px; justify-content: center; margin-top: 6px; }
 
-/*#######################intsigniak */
+/* =========================================================
+   Perfil e insignias
+   ========================================================= */
+.profile-card {
+    background-color: var(--pokedex-white);
+    border: 3px solid var(--pokedex-black);
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+.profile-card { background-color: var(--pokedex-light-red); position: relative; text-align: center; }
+.profile-id { background-color: var(--pokedex-black); padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9em; }
+.profile-card h2 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 20px;
+    color: var(--pokedex-black);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.profile-card p {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1em;
+    margin: 10px 0;
+    background-color: #ecf9ff7c;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: left;
+}
+.profile-card button { position: static; margin: 20px auto 0 auto; font-family: 'Press Start 2P', cursive; font-size: 0.8em; }
+.profile-card #profile-pokeball { width: 40px; height: 40px; vertical-align: middle; margin-right: 15px; }
 
 .intsigniak-grid { 
     display: grid;
@@ -405,76 +466,6 @@ body {
     background: #060007;
     transform: scale(1.05);
 }
-
-/*#######################intsigniak bukatu*/
-
-/* Detalles de Pokémon */
-.pokemon-detail-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    border-bottom: 3px solid var(--pokedex-black);
-    padding-bottom: 15px;
-}
-
-.pokemon-detail-header h2 {
-    font-family: 'Press Start 2P', cursive;
-    font-size: 0.55rem;
-    color: var(--pokedex-red);
-    margin-bottom: 6px;
-}
-.pokemon-choice-card img { width: 70px; height: 70px; }
-.pokemon-choice-name { margin-top: 6px; font-weight: 700; color: var(--pokedex-black); }
-.pokemon-choice-types { display: flex; gap: 6px; justify-content: center; margin-top: 6px; }
-
-/* =========================================================
-   Perfil e insignias
-   ========================================================= */
-.profile-card {
-    background-color: var(--pokedex-white);
-    border: 3px solid var(--pokedex-black);
-    border-radius: 15px;
-    padding: 30px;
-    margin-bottom: 20px;
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-}
-.profile-card { background-color: var(--pokedex-light-red); position: relative; text-align: center; }
-.profile-id { background-color: var(--pokedex-black); padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9em; }
-.profile-card h2 {
-    font-family: 'Press Start 2P', cursive;
-    font-size: 20px;
-    color: var(--pokedex-black);
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-.profile-card p {
-    font-family: 'Press Start 2P', cursive;
-    font-size: 1em;
-    margin: 10px 0;
-    background-color: #ecf9ff7c;
-    padding: 10px;
-    border-radius: 10px;
-    text-align: left;
-}
-.profile-card button { position: static; margin: 20px auto 0 auto; font-family: 'Press Start 2P', cursive; font-size: 0.8em; }
-.profile-card #profile-pokeball { width: 40px; height: 40px; vertical-align: middle; margin-right: 15px; }
-
-.intsigniak-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 20px; padding: 10px; }
-.intsignia { text-align: center; position: relative; cursor: pointer; transition: transform 0.2s; }
-.intsignia:hover { transform: scale(1.05); }
-.icon-wrapper { width: 80px; height: 80px; margin: 0 auto 10px; }
-.icon-wrapper img { width: 100%; height: 100%; object-fit: contain; }
-.intsignia-name { font-size: 0.9rem; font-weight: bold; color: #333; }
-.tooltip {
-    visibility: hidden; width: 180px; background-color: #333; color: #fff;
-    text-align: center; border-radius: 6px; padding: 5px;
-    position: absolute; z-index: 1; bottom: 105%; left: 50%;
-    transform: translateX(-50%); opacity: 0; transition: opacity 0.3s; font-size: 0.8rem;
-}
-.intsignia:hover .tooltip { visibility: visible; opacity: 1; }
 
 /* Detalle de Pokémon */
 .pokemon-detail-header {
@@ -623,6 +614,133 @@ body {
     0%, 49% { opacity: 1; }
     50%, 100% { opacity: 0; }
 }
+
+
+/* =========================================================
+   Bot flotante y panel
+   ========================================================= */
+.bot-button {
+    position: fixed;
+    bottom: 45px;
+    left: 25px;
+    width: 85px; height: 85px;
+    cursor: pointer;
+    z-index: 1001;
+    background: transparent;
+    border: none;
+    padding: 0;
+    transition: transform 0.2s;
+}
+.bot-button img {
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: var(--pokedex-red, #dc0a2d);
+    border: 4px solid #8b0000;
+    box-shadow: 0 6px 15px rgba(220, 100, 45, 0.4);
+}
+.bot-button:hover { transform: scale(1.1); filter: brightness(1.1); border-color: #a00000; }
+
+.bot-panel {
+    position: fixed;
+    bottom: 48px;
+    left: 120px;
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    z-index: 998;
+}
+.bot-panel.hidden { display: none !important; opacity: 0; pointer-events: none; }
+
+.bot-option {
+    width: 80px; height: 80px;
+    position: relative;
+    background: none; border: none; outline: none;
+    cursor: pointer; perspective: 1000px; padding: 0; margin: 0;
+}
+.bot-option img,
+.bot-option span {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    transition: 0.5s;
+    display: flex; align-items: center; justify-content: center;
+}
+.bot-option img {
+    right: 0; bottom: 0; margin: auto; object-fit: contain;
+    z-index: 2; background: transparent; border: none; box-shadow: none; border-radius: 0;
+    opacity: 1; transform: translateY(0) rotateX(0);
+}
+.bot-option span {
+    color: #fff; font-family: 'Press Start 2P', cursive; font-weight: bold; font-size: 8px;
+    letter-spacing: 1px; text-transform: uppercase; text-align: center; line-height: 1.5;
+    border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    opacity: 0; transform: translateY(-50%) rotateX(90deg); z-index: 1;
+}
+.bot-option:hover img { opacity: 0; transform: translateY(50%) rotateX(90deg); }
+.bot-option:hover span { opacity: 1; transform: translateY(0) rotateX(0); }
+
+.bot-option[data-action="pokeTop"] span { background-color: #dc0a2d; border: 2px solid #8b0000; }
+.bot-option[data-action="pokeMota"] span { background-color: #4dad5b; border: 2px solid #2a6632; }
+.bot-option[data-action="pokeEbo"] span { background-color: #eed535; color: #000; border: 2px solid #a89208; }
+.bot-option[data-action="pokeScan"] span { background-color: #2663ac; border: 2px solid #1b5e7a; }
+
+/* =========================================================
+   Modal retro / pantalla extra
+   ========================================================= */
+.retro-modal {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 2000;
+}
+.retro-modal.hidden { display: none !important; }
+.modal-box {
+    background: #f0f0f0;
+    width: 1200px; max-width: 95%;
+    border: 4px solid #333; border-radius: 8px;
+    box-shadow: 10px 10px 0px rgba(0,0,0,0.5);
+    font-family: 'Press Start 2P', cursive;
+    display: flex; flex-direction: column; overflow: hidden;
+}
+.modal-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 15px;
+    background-color: rgba(0,0,0,0.1);
+    border-bottom: 3px solid #333;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+.modal-header h3 { margin: 0; font-size: 16px; }
+.close-retro { font-size: 24px; font-weight: bold; cursor: pointer; line-height: 1; color: #333; }
+.close-retro:hover { color: #d32f2f; }
+.modal-body {
+    padding: 40px; font-size: 14px; color: #333; line-height: 1.8;
+    min-height: 600px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+}
+.modal-footer { padding: 20px; display: flex; justify-content: flex-end; border-top: 3px solid #333; background-color: rgba(0,0,0,0.05); }
+.retro-ok-btn {
+    background-color: #dc0a2d; color: #fff; border: 3px solid #8b0000;
+    padding: 15px 40px; font-family: 'Press Start 2P', cursive; font-size: 12px;
+    cursor: pointer; box-shadow: 5px 5px 0 rgba(0,0,0,0.3); transition: all 0.1s;
+}
+.retro-ok-btn:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 rgba(0,0,0,0.3); background-color: #ff1a1a; }
+.retro-ok-btn.pokeTop { background-color: #dc0a2d; border-color: #8b0000; color: white; }
+.retro-ok-btn.pokeTop:hover { background-color: #ff1a1a; }
+.retro-ok-btn.pokeMota { background-color: #4dad5b; border-color: #2a6632; color: white; }
+.retro-ok-btn.pokeMota:hover { background-color: #60d670; }
+.retro-ok-btn.pokeEbo { background-color: #eed535; border-color: #a89208; color: #333; }
+.retro-ok-btn.pokeEbo:hover { background-color: #ffeb3b; }
+.retro-ok-btn.pokeScan { background-color: #2663ac; border-color: #1b5e7a; color: white; }
+.retro-ok-btn.pokeScan:hover { background-color: #3a8ee0; }
+
+/* Goiburua coloreado por acción */
+.modal-header.pokeTop { background-color: #dc0a2d; border-bottom-color: #8b0000; color: white; }
+.modal-header.pokeTop .close-retro { color: white; }
+.modal-header.pokeMota { background-color: #4dad5b; border-bottom-color: #2a6632; color: white; }
+.modal-header.pokeMota .close-retro { color: white; }
+.modal-header.pokeEbo { background-color: #eed535; border-bottom-color: #a89208; color: #333; }
+.modal-header.pokeEbo .close-retro { color: #333; }
+.modal-header.pokeScan { background-color: #2663ac; border-bottom-color: #1b5e7a; color: white; }
+.modal-header.pokeScan .close-retro { color: white; }
 
 /* =========================================================
    Animaciones
