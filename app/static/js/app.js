@@ -72,6 +72,9 @@ function aldatuAtala(atalIzena) {
         kargatuErabiltzaileProfila();
     } else if (atalIzena === 'lagunak') {
         kargatuErabiltzaileLagunak();
+
+    } else if(atalIzena === 'intsigniak'){ //OLATZ
+        intsigniakKargatu(erabiltzaileId);
     }
 }
 

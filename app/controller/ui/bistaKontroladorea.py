@@ -204,7 +204,7 @@ def register_all_routes(app, db):
     @changelog_bp.route('/changelog', methods=['POST'])
     def sortu_changelog():
         data = request.get_json()
-        changelog_ctrl.create(
+        changelog_ctrl.gehitu_aldaketa(
             data['bertsioa'],
             data['data'],
             data['deskribapena'],

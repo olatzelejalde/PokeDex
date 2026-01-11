@@ -11,7 +11,7 @@
     </script>
     <style>
         /* --- CHANGELOG KANPAITXOA --- */
-    .notification-bell {
+.notification-bell {
     display: flex;
     align-items: center;
     cursor: pointer;
@@ -28,8 +28,54 @@
     transform: scale(1.1);
     fill: black; /* Sagua gainetik pasatzean horira aldatuko da pixka bat nabarmentzeko */
 }
+main article {
+    display: none;
+}
 
+main article.active {
+    display: block !important;
+}
 
+/* Notifikazioen diseinu berria */
+/* Notifikazioen diseinu berria */
+.notif-txartela {
+    background: white; /* Fondo blanco para que resalte */
+    border: 3px solid #000000; /* Amarillo Pokémon */
+    border-radius: 8px;
+    margin-bottom: 10px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    color: #333; /* Texto oscuro para leer bien */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.notif-ikonoa {
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.notif-ikonoa svg {
+    fill: #e3350d; /* Rojo Pokémon para el icono */
+}
+
+.notif-testua {
+    display: flex;
+    flex-direction: column; /* Texto en vertical para mejor lectura */
+    gap: 5px;
+    font-family: 'Roboto', sans-serif;
+}
+
+.notif-data {
+    color: #666;
+    font-size: 0.85em;
+    font-weight: bold;
+}
+
+.notif-desk {
+    font-size: 1em;
+    line-height: 1.4;
+}
     </style>
 </head>
 <body>
@@ -78,13 +124,13 @@
                 <option value="">Mota guztiak</option>
             </select>
             <button id="search-button">Bilatu</button>
-
-        
+        </div> 
 
         <div class="search-container" id="search-lagunak" style="display: none;">
             <input type="text" id="user-search" placeholder="Bilatu erabiltzailea...">
             <button id="search-users-button">Bilatu</button>
-        </div>
+        </div> 
+    </header>
     </header>
 
     <!----------------------------------------------->
@@ -142,7 +188,6 @@
                 </div>
             </div>
         </article>
-
         <!----------------------------------------------->
         <!--         Erabiltzailea editatu             -->
         <!----------------------------------------------->
@@ -152,17 +197,33 @@
                     <!-- Erabiltzailearen edizio datuak hemen agertuko dira -->
                 </div>
             </div>
+        </article>
+
         <!----------------------------------------------->
         <!--         Changelog             -->
         <!----------------------------------------------->
-        <article id="changelog-list">
+        <article id="changelog-list" style="width: 100%; max-width: 800px; margin: 0 auto; padding: 20px;">
             <div class="changelog-container">
-                <h2 style="font-family: 'Press Start 2P'; color: #ffcb05; font-size: 14px;">PROIEKTUAREN ALDAKETAK</h2>
+                <h2 style="font-family: 'Press Start 2P'; color: black; font-size: 14px;">NOTIFIKAZIOAK</h2>
+                <div id="changelog-filters" style="margin: 20px 0; display: flex; gap: 10px; flex-wrap: wrap;">
+                    <input type="text" id="filter-text" placeholder="Bilatu notifikazioa..." onkeyup="filtratuNotifikazioak()"
+                           style="flex: 2; padding: 10px; border-radius: 4px; border: 2px solid black; background: white; color: black;">
+                
+                    <select id="filter-type" onchange="filtratuNotifikazioak()"
+                            style="flex: 1; padding: 10px; border-radius: 4px; border: 2px solid black; background: white; color: black;">
+                        <option value="">Mota guztiak</option>
+                        <option value="TALDEA">Taldeak</option>
+                        <option value="POKEMON">Pokemonak</option>
+                    </select>
+
+                    <input type="date" id="filter-date" onchange="filtratuNotifikazioak()" 
+                        style="flex: 1; padding: 10px; border-radius: 4px; border: 2px solid black; background: white; color: black;">
+                </div>
                 <div id="changelog-append-here">
                 </div>
             </div>
         </article>
-    </main>
+    </main> 
 
 
     <!-- Modales -->
@@ -235,28 +296,123 @@
 
 </div>
 <script>
-document.getElementById('changelog-trigger').onclick = function() {
-    // 1. Ezkutatu artikulu guztiak eta erakutsi Changelog-arena
-    document.querySelectorAll('main article').forEach(art => art.classList.remove('active'));
-    document.getElementById('changelog-list').classList.add('active');
+window.addEventListener('load', function() {
+        const kanpaia = document.getElementById('changelog-trigger');
+        
+        if (kanpaia) {
+            kanpaia.onclick = function(e) {
+                e.preventDefault(); 
+                console.log("KLIK EGIN DA!"); // Honek esango digu botoiak funtzionatzen duen
 
-    // 2. Kendu menuko "active" klasea botoi guztiei
-    document.querySelectorAll('.menua a').forEach(a => a.classList.remove('active'));
+                // 1. Ezkutatu Pokedexa (id-a 'pokedex-view' edo 'pokemon-list-container' izan ohi da)
+                // Zure HTMLaren arabera, artikulu guztiak ezkutatuko ditugu:
+                document.querySelectorAll('main article').forEach(art => {
+                    art.style.display = 'none';
+                    art.classList.remove('active');
+                });
 
-    // 3. Kargatu datuak API-tik
-    fetch('/api/changelog')
-        .then(res => res.json())
-        .then(data => {
-            const container = document.getElementById('changelog-append-here');
-            container.innerHTML = data.map(entry => `
-                <div style="background: rgba(0,0,0,0.5); border: 2px solid #e3350d; margin-top:15px; padding:15px; border-radius:8px;">
-                    <div style="color:#ffcb05; font-weight:bold; margin-bottom:5px;">v${entry.bertsioa} - ${entry.data}</div>
-                    <p style="color:white; margin:5px 0;">${entry.deskribapena}</p>
-                    <small style="color:#aaa;">Egilea: ${entry.egilea}</small>
-                </div>
-            `).join('');
+                // 2. Bilatzailea ezkutatu (id="search-pokemon")
+                const bilatzailea = document.getElementById('search-pokemon');
+                if (bilatzailea) bilatzailea.style.display = 'none';
+
+                // 3. Erakutsi notifikazioen atala
+                const atala = document.getElementById('changelog-list');
+                if (atala) {
+                    atala.style.display = 'block'; // O 'block !important' si usas mi solución anterior
+                    atala.classList.add('active');
+                }
+
+                // 4. Eskatu datuak APIari
+                fetch('/api/changelog')
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log("Datuak jaso dira:", data);
+                        const container = document.getElementById("changelog-append-here");
+
+    
+                        if (container) {
+                        // Datuak badaude, txartel zurietan erakutsi
+                            container.innerHTML = data.map(d => `
+                            <div class="notif-txartela">
+                                <div class="notif-ikonoa">
+                                    <svg viewBox="0 0 24 24" width="24" height="24">
+                                        <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"></path>
+                                    </svg>
+                                </div>
+                                <div class="notif-testua">
+                                    <span class="notif-data"><strong>${d.data}</strong></span>
+                                    <span class="notif-desk"><strong>${d.bertsioa}:</strong> ${d.deskribapena}</span>
+                                </div>
+                            </div>
+        `).join('');
+    }
+})
+        .catch(err => {
+    console.error('Errorea:', err);
+    const container = document.getElementById("changelog-append-here");
+    if (container) {
+        container.innerHTML = `<p style="color: red; font-family: 'Press Start 2P'; font-size: 10px;">
+            ERROREA: Ezin izan dira notifikazioak kargatu.</p>`;
+    }
+});
+            };
+        }
+    });
+    function filtratuNotifikazioak() {
+    const testua = document.getElementById('filter-text').value.toLowerCase();
+    const mota = document.getElementById('filter-type').value;
+    const data = document.getElementById('filter-date').value;
+
+    const notifikazioak = document.querySelectorAll('.notif-txartela');
+
+    notifikazioak.forEach(notifikazio => {
+        const desk = notifikazio.querySelector('.notif-desk')?.innerText.toLowerCase() || '';
+        const dataText = notifikazio.querySelector('.notif-data')?.innerText || '';
+
+        const motaText = desk.toUpperCase(); // POKEMON / TALDEA barruan doa
+
+        const testuaLortua = desk.includes(testua);
+        const motaLortua = mota === "" || motaText.includes(mota);
+        const dataLortua = data === "" || dataText.includes(data);
+
+        notifikazio.style.display =
+            testuaLortua && motaLortua && dataLortua ? 'flex' : 'none';
+    });
+}
+</script>
+<script>
+// Este código "vigila" los clics en el menú para cerrar el changelog
+document.addEventListener('click', function(e) {
+    if (e.target.closest('.menua a')) {
+        const changelog = document.getElementById('changelog-list');
+        const searchBar = document.getElementById('search-pokemon');
+        
+        if (changelog) {
+            changelog.style.display = 'none';
+            changelog.classList.remove('active');
+        }
+        
+        // Si vuelves a Pokémon, asegúrate de que el buscador aparezca
+        if (e.target.getAttribute('data-section') === 'pokemon') {
+            if (searchBar) searchBar.style.display = 'flex';
+        }
+    }
+});
+document.getElementById('btn-taldea-gorde').addEventListener('click', function() {
+    const izena = document.getElementById('taldea-izena').value;
+    if (izena) {
+        // Enviamos la notificación a TU sistema de changelog
+        fetch('/api/changelog', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                bertsioa: 'TALDEA',
+                deskribapena: `Talde berria sortu da: ${izena}`,
+                data: new Date().toISOString().split('T')[0]
+            })
         });
-};
-    </script>
+    }
+});
+</script>
 </body>
 </html>

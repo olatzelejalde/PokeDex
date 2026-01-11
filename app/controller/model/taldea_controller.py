@@ -42,7 +42,7 @@ class TaldeaController:
         deskribapena= f"Pokemona gehitu da taldera: {pid}."
         self.db.insert(
             "INSERT INTO changelog (bertsioa, data, deskribapena, egilea) VALUES (?, ?, ?, ?)",
-            ["OKEMON", data_gaur, deskribapena, uid]
+            ["POKEMON", data_gaur, deskribapena, uid]
         )
     def delete(self, tid):
         self.db.delete("DELETE FROM taldea WHERE id = ?", [tid])
