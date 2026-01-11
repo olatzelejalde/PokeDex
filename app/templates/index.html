@@ -9,7 +9,30 @@
     <link rel="stylesheet" href="/static/styles/bot.css">
     <script> 
         var user = JSON.parse('{{ user|tojson }}');
+        console.log(user);
     </script>
+    <style>
+        /* --- CHANGELOG KANPAITXOA --- */
+    .notification-bell {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    margin-right: 15px;
+}
+
+.bell-icon {
+    fill: white; 
+    transition: transform 0.2s, 
+}
+
+.notification-bell:hover .bell-icon {
+    transform: scale(1.1);
+    fill: black; /* Sagua gainetik pasatzean horira aldatuko da pixka bat nabarmentzeko */
+}
+
+
+    </style>
 </head>
 <body>
     <!----------------------------------------------->
@@ -32,7 +55,7 @@
             <ul>
                 <li><a href="#" class="active" data-section="pokemon">POKEMONAK</a></li>
                 <li><a href="#" data-section="taldeak">NIRE TALDEAK</a></li>
-                <li><a href="#" data-section="insignak">NIRE INTSIGNAK</a></li>
+                <li><a href="#" data-section="intsigniak">NIRE INTSIGNIAK</a></li>
                 <li><a href="#" data-section="lagunak">NIRE LAGUNAK</a></li>
                 <li><a href="#" data-section="erabiltzailea">NIRE PROFILA</a></li>
             </ul>
@@ -42,11 +65,23 @@
         <!--            Bilaketa barra                 -->
         <!----------------------------------------------->
         <div class="search-container" id="search-pokemon">
+            <div class="notification-bell" id="changelog-trigger">
+                <svg class="bell-icon" viewBox="0 0 24 24" width="24" height="24">
+                    <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"></path>
+                </svg>
+            </div>
+
             <input type="text" id="pokemon-search" placeholder="Bilatu Pokémon...">
             <select id="type-filter">
                 <option value="">Mota guztiak</option>
             </select>
             <button id="search-button">Bilatu</button>
+
+        
+
+        <div class="search-container" id="search-lagunak" style="display: none;">
+            <input type="text" id="user-search" placeholder="Bilatu erabiltzailea...">
+            <button id="search-users-button">Bilatu</button>
         </div>
 
         <div class="search-container" id="search-lagunak" style="display: none;">
@@ -80,12 +115,15 @@
             </div>
         </article>
         
+          <!----------------------------------------------->
+        <!--          Intsignen menua                   -->
         <!----------------------------------------------->
-        <!--          Insignen menua                   -->
-        <!----------------------------------------------->
-        <article id="insignak-list">
-            <div class="insignak-container">
-                <div id="insignak-zerrenda" class="insignak-grid"></div>
+        <article id="intsigniak-list">
+            <div class="intsigniak-container">
+                <h2 class="intsigniak-title">NIRE INTSIGNIAK</h2>
+                <div id="intsigniak_kont" class="pokedex-status-bar">
+                           Lortutako intsigniak: 0 / 10 </div>  
+                <div id="intsigniak-zerrenda" class="intsigniak-grid"></div>
             </div>
         </article>
 
@@ -118,6 +156,15 @@
             <div class="profile-edit-container">
                 <div id="erabiltzailea-edit-datuak" class="profile-edit-card">
                     <!-- Erabiltzailearen edizio datuak hemen agertuko dira -->
+                </div>
+            </div>
+        <!----------------------------------------------->
+        <!--         Changelog             -->
+        <!----------------------------------------------->
+        <article id="changelog-list">
+            <div class="changelog-container">
+                <h2 style="font-family: 'Press Start 2P'; color: #ffcb05; font-size: 14px;">PROIEKTUAREN ALDAKETAK</h2>
+                <div id="changelog-append-here">
                 </div>
             </div>
         </article>
@@ -177,23 +224,47 @@
         <span>PokeScan</span>
     </button>
     </div>
-<div id="retro-modal" class="retro-modal hidden">
-    <div class="modal-box" id="modal-box-color">
-        <div class="modal-header">
-            <span id="modal-title">IZENBURUA</span>
-            <span class="close-retro">&times;</span>
-        </div>
 
-        <div id="modal-body" class="modal-body">
+    <div id="retro-modal" class="retro-modal hidden">
+        <div class="modal-box" id="modal-box-color">
+            <div class="modal-header">
+                <span id="modal-title">IZENBURUA</span>
+                <span class="close-retro">&times;</span>
             </div>
 
-        <div class="modal-footer">
-            <button class="retro-ok-btn">OK</button>
+            <div id="modal-body" class="modal-body">
+                </div>
+
+            <div class="modal-footer">
+                <button class="retro-ok-btn">OK</button>
+            </div>
         </div>
     </div>
-</div>
 
 </div>
+<script>
+document.getElementById('changelog-trigger').onclick = function() {
+    // 1. Ezkutatu artikulu guztiak eta erakutsi Changelog-arena
+    document.querySelectorAll('main article').forEach(art => art.classList.remove('active'));
+    document.getElementById('changelog-list').classList.add('active');
 
+    // 2. Kendu menuko "active" klasea botoi guztiei
+    document.querySelectorAll('.menua a').forEach(a => a.classList.remove('active'));
+
+    // 3. Kargatu datuak API-tik
+    fetch('/api/changelog')
+        .then(res => res.json())
+        .then(data => {
+            const container = document.getElementById('changelog-append-here');
+            container.innerHTML = data.map(entry => `
+                <div style="background: rgba(0,0,0,0.5); border: 2px solid #e3350d; margin-top:15px; padding:15px; border-radius:8px;">
+                    <div style="color:#ffcb05; font-weight:bold; margin-bottom:5px;">v${entry.bertsioa} - ${entry.data}</div>
+                    <p style="color:white; margin:5px 0;">${entry.deskribapena}</p>
+                    <small style="color:#aaa;">Egilea: ${entry.egilea}</small>
+                </div>
+            `).join('');
+        });
+};
+    </script>
 </body>
 </html>
