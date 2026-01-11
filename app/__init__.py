@@ -2,16 +2,10 @@ import os.path
 import sqlite3
 
 from flask_cors import CORS
-from flask import Flask, render_template, redirect, request, flash, session, url_for  # Añade render_template aquí
+from flask import Flask, render_template, redirect, request, flash, session, url_for
 
-from app.controller.model.erabiltzaile_controller import ErabiltzaileController
-from app.controller.ui.erabiltzaile_routes import erabiltzaile_blueprint
-from app.controller.ui.espezie_routes import especie_blueprint
-from app.controller.ui.mota_routes import mota_blueprint
-from app.controller.ui.mugimendu_routes import mugimendu_blueprint
-from app.controller.ui.pokemon_routes import pokemon_blueprint
-from app.controller.ui.taldea_routes import taldea_blueprint
-from app.controller.ui.intsignia_routes import intsignia_blueprint
+from app.domain.erabiltzaileKatalogoa import ErabiltzaileKatalogoa
+from app.controller.ui.bistaKontroladorea import register_all_routes
 from app.database.connection import Connection
 from config import Config
 
@@ -57,20 +51,28 @@ def create_app():
     # Inicializar base de datos
     init_db()
 
-    # Crear conexión a la base de datos
+    # Crear conexión y catálogo de usuarios
     db = Connection()
-    user_ctrl = ErabiltzaileController(db)
+    users_katalogo = ErabiltzaileKatalogoa(db)
+    users_katalogo.erabiltzaileak_kargatu()
 
     # RUTA PRINCIPAL - Añade esto
     @app.route('/')
     def index():
         if 'user_id' not in session:
             return redirect(url_for('login'))
-        user = user_ctrl.get_by_id(session['user_id'])
+        user = users_katalogo.bilatu_by_id(session['user_id'])
         if not user:
             session.clear()
             return redirect(url_for('login'))
-        return render_template('index.html', user=user) 
+        return render_template('index.html', user={
+            'id': user.id,
+            'izena': user.izena,
+            'abizena': user.abizena,
+            'erabiltzaileIzena': user.erabiltzaileIzena,
+            'telegramKontua': user.telegramKontua or '',
+            'rola': user.rola,
+        })
          
     @app.route('/register')
     def register():
@@ -88,7 +90,7 @@ def create_app():
     @app.route('/auth/register', methods=['POST'])
     def auth_register():
         try:
-            user_ctrl.create(
+            users_katalogo.sortu(
                 request.form['izena'],
                 request.form['abizena'],
                 request.form['erabilIzena'],
@@ -104,13 +106,13 @@ def create_app():
         
     @app.route('/auth/login', methods=['POST'])
     def auth_login():
-        user = user_ctrl.login(
+        user = users_katalogo.login(
             request.form['erabilIzena'],
             request.form['pasahitza']
         )
         if user:
-            session['user_id'] = user['id']
-            session['erabilIzena'] = user['erabilIzena']
+            session['user_id'] = user.id
+            session['erabilIzena'] = user.erabiltzaileIzena
             return redirect(url_for('index'))
         print(">>> EXCEPT ValueError:", 'Kredentzial okerrak')
         return render_template('login.html', error='Kredentzial okerrak')
@@ -122,16 +124,8 @@ def create_app():
         return redirect(url_for('login'))
     
     
-    # Registrar blueprints
-    app.register_blueprint(erabiltzaile_blueprint(db))
-    app.register_blueprint(especie_blueprint(db))
-    app.register_blueprint(mota_blueprint(db))
-    app.register_blueprint(mugimendu_blueprint(db))
-    app.register_blueprint(pokemon_blueprint(db))
-    app.register_blueprint(taldea_blueprint(db))
-    app.register_blueprint(intsignia_blueprint(db))
-
-    
+    # Registrar todas las rutas de la API
+    register_all_routes(app, db, users_katalogo)
     
     # Debug: Mostrar rutas registradas
     with app.app_context():

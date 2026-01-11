@@ -57,6 +57,7 @@ CREATE TABLE IF NOT EXISTS erabiltzailea (
     erabilIzena TEXT UNIQUE NOT NULL,
     pasahitza TEXT NOT NULL,
     telegramKontua TEXT,
+    chat_id INTEGER,
     rola TEXT DEFAULT 'erabiltzailea'
 );
 
@@ -115,8 +116,24 @@ CREATE TABLE IF NOT EXISTS notifikazioa (
     FOREIGN KEY(erabiltzaile_id) REFERENCES erabiltzailea(id)
 );
 
+-- 13. LAGUNAK (AMIGOS)
+CREATE TABLE IF NOT EXISTS lagunak (
+    erabiltzaile1_id INTEGER NOT NULL,
+    erabiltzaile2_id INTEGER NOT NULL,
+    data_ordua TEXT DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (erabiltzaile1_id, erabiltzaile2_id),
+    FOREIGN KEY(erabiltzaile1_id) REFERENCES erabiltzailea(id),
+    FOREIGN KEY(erabiltzaile2_id) REFERENCES erabiltzailea(id),
+    CHECK (erabiltzaile1_id < erabiltzaile2_id)
+);
+
 INSERT INTO erabiltzailea (izena, abizena, erabilIzena, pasahitza, telegramKontua, rola)
-VALUES ('Admin', 'User', 'admin', 'adminpass', NULL, 'admin');
+VALUES ('Admin', 'User', 'admin', 'adminpass', NULL, 'admin'),
+       ('John', 'Doe', 'johndoe', 'johndoe123', 'johndoe', 'erabiltzailea'),
+       ('Jane', 'Smith', 'janesmith', 'janesmith123', 'janesmith', 'erabiltzailea'),
+       ('Ash', 'Ketchum', 'ash', 'pikapika', NULL, 'erabiltzailea'),
+       ('Misty', 'Waterflower', 'misty', 'starmie', NULL, 'erabiltzailea'),
+       ('Brock', 'Harrison', 'brock', 'onixrock', NULL, 'erabiltzailea');
 
 --intsignia guztiak hasieratik gordeta
 INSERT INTO intsignia (izena, deskripzioa, helburua) VALUES
