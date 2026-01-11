@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="eu">
+<head>  
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="/static/styles/auth.css" rel="stylesheet" />
+    <title>Saioa Hasi - PokeDex</title>
+</head>
+<body>
+    <div class="pokeball">
+        <div class="top">
+            <img src="/static/Pokedex.png" id="izenburua" />
+        </div>
+        <div class="bottom"></div>
+        <div class="center"></div>  
+    </div>
+    
+    <form class="login-box" id="login-form" action="/auth/login" method="POST">    
+        <h2>SAIOA HASI</h2>
+        <input type="text" name="erabilIzena" id="username" placeholder="Erabiltzaile izena" value="{{ request.form.get('erabilIzena', '') }}" required/>
+        <input type="password" name="pasahitza" id="password" placeholder="Pasahitza" required/>
+        <button type="submit" id="login-button">SARTU</button>
+        {% if error %}
+            <p style="color:red;background:#fdd;border:1px solid red;padding:5px;">ERROR: {{ error }}</p>
+        {% endif %}
+        
+        <div class="auth-links">
+            <p><i>Kontua ez baduzu</i></p>
+            <a href="/register">Erregistratu</a>
+        </div>
+    </form>
+
+</body>
+</html>
