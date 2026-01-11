@@ -1,9 +1,6 @@
 from flask import Blueprint, jsonify, request, session
 import logging
 import os
-import threading
-import time
-import requests
 from app.domain.erabiltzaileKatalogoa import ErabiltzaileKatalogoa
 from app.domain.taldeKatalogoa import TaldeKatalogoa
 from app.controller.model.mota_controller import MotaController
@@ -51,6 +48,7 @@ def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
             'abizena': u.abizena,
             'erabiltzaileIzena': u.erabiltzaileIzena,
             'telegramKontua': u.telegramKontua or '',
+            'chat_id': u.chat_id,
             'rola': u.rola,
         }
 
@@ -147,56 +145,6 @@ def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
             return jsonify({'error': str(e)}), 400
 
     app.register_blueprint(erabiltzaileak_bp)
-
-    # ============================================
-    # TELEGRAM WEBHOOK
-    # ============================================
-    telegram_bp = Blueprint('telegram', __name__, url_prefix='/telegram')
-
-    @telegram_bp.route('/webhook', methods=['POST'])
-    def telegram_webhook():
-        update = request.get_json(silent=True) or {}
-
-        msg = update.get('message') or update.get('edited_message')
-        if not msg:
-            return jsonify({'ok': True})
-
-        text = (msg.get('text') or '').strip()
-        if not text.startswith('/start'):
-            return jsonify({'ok': True})
-
-        chat = msg.get('chat') or {}
-        from_ = msg.get('from') or {}
-        chat_id = chat.get('id')
-        telegram_username = from_.get('username')  # puede ser None si el usuario no tiene username
-
-        # /start <erabilIzena> (deep-link opcional)
-        parts = text.split(maxsplit=1)
-        erabilIzena = parts[1].strip() if len(parts) > 1 else None
-
-        if not chat_id:
-            return jsonify({'ok': True})
-
-        user = users_katalogo.lotu_telegram_chat_id(
-            chat_id=int(chat_id),
-            telegram_username=telegram_username,
-            erabilIzena=erabilIzena
-        )
-
-        if user:
-            telegram_service.send_message(
-                chat_id=int(chat_id),
-                text="Chat-a lotuta geratu da. Orain zure lagunek taldeak bidali ahal dizkizute."
-            )
-        else:
-            telegram_service.send_message(
-                chat_id=int(chat_id),
-                text="Ezin izan da kontua lotu. Ziurtatu web-aplikazioan zure Telegram erabiltzailea gordeta dagoela, edo erabili: /start <zure_erabilIzena>"
-            )
-
-        return jsonify({'ok': True})
-
-    app.register_blueprint(telegram_bp)
 
     # ============================================
     # MOTAK (Tipos)

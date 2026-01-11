@@ -1,6 +1,19 @@
+async function _refreshUserFromApi() {
+    if (!user || user.id == null) return;
+    try {
+        const res = await fetch(`${API_BASE_URL}/erabiltzaileak/${user.id}`);
+        if (!res.ok) return;
+        const fresh = await res.json();
+        if (fresh && fresh.id != null) Object.assign(user, fresh);
+    } catch (e) {
+        console.error('Error refrescando user:', e);
+    }
+}
 // Erabiltzailea kudeatzeko funtzioak
-function kargatuErabiltzaileProfila() {
+async function kargatuErabiltzaileProfila() {
     // user viene desde Flask → variable global user
+    await _refreshUserFromApi();
+
     if (user.rola === 'admin') {
         document.getElementById('erabiltzailea-list').innerHTML = `
         <div class="profile-container">
@@ -23,6 +36,7 @@ function kargatuErabiltzaileProfila() {
                     <p>Izena: ${user.izena}</p>
                     <p>Abizena: ${user.abizena}</p>
                     <p>Telegram: ${user.telegramKontua || 'Ez dago'}</p>
+                    ${(user.chat_id != null) ? '<p>----Telegram aktibatuta----</p>' : '<p>----Telegram ez aktibatuta----</p>'}
                     <button class="pokedex-button" onclick="aldatuDatuak()">Aldatu nire datuak</button>
                 </div>
             </div>
