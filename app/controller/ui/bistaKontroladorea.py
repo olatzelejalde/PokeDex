@@ -8,6 +8,7 @@ from app.controller.model.intsignia_controller import IntsigniaController
 from app.controller.model.espezie_controller import EspezieController
 from app.controller.model.mugimendu_controller import MugimenduController
 from app.controller.model.taldea_controller import TaldeaController
+from app.controller.model.pokemon_controller import PokemonController
 from app.services.telegram_service import TelegramService
 
 
@@ -181,6 +182,11 @@ def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
     espezieak_bp = Blueprint('espezieak', __name__, url_prefix='/api')
     espezie_ctrl = EspezieController(db)
 
+    # Beste adar bateko JS-ak /espezieak/list deitzen du
+    @espezieak_bp.route('/espezieak/list', methods=['GET'])
+    def listar_espezieak_list_alias():
+        return jsonify(espezie_ctrl.get_all())
+
     @espezieak_bp.route('/espezieak', methods=['GET'])
     def listar_espezieak():
         return jsonify(espezie_ctrl.get_all())
@@ -189,7 +195,31 @@ def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
     def uno_espezie(izena):
         return jsonify(espezie_ctrl.get_by_name(izena) or {})
 
+    @espezieak_bp.route('/espezieak/<string:izena>/info', methods=['GET'])
+    def espezie_info(izena):
+        data = espezie_ctrl.get_type_effectiveness(izena)
+        if data:
+            return jsonify(data)
+        return jsonify({"error": "Ez da aurkitu"}), 404
+
+    @espezieak_bp.route('/espezieak/<string:izena>/ebo', methods=['GET'])
+    def espezie_ebo(izena):
+        data = espezie_ctrl.get_ebo_info(izena)
+        return jsonify(data)
+
+    @espezieak_bp.route('/espezieak/<string:izena>/scan', methods=['GET'])
+    def espezie_scan(izena):
+        data = espezie_ctrl.get_scan_info(izena)
+        if data:
+            return jsonify(data)
+        return jsonify({"error": "Ez da aurkitu"}), 404
+
     app.register_blueprint(espezieak_bp)
+
+    # ============================================
+    # POKETOP (fake teams) - beste adar bateko bot.js-rentzat
+    # ============================================
+    poke_ctrl_model = PokemonController(db)
 
     # ============================================
     # POKEMONAK (Pokémon)
@@ -241,6 +271,31 @@ def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
     # TALDEAK (Equipos)
     # ============================================
     taldeak_bp = Blueprint('taldeak', __name__, url_prefix='/api')
+
+    @taldeak_bp.route('/taldeak/list', methods=['GET'])
+    def api_taldeak_list():
+        data = poke_ctrl_model.get_users_with_pokemon()
+        return jsonify(data)
+
+    @taldeak_bp.route('/taldeak/<int:talde_id>/mvp', methods=['GET'])
+    def api_taldeak_mvp(talde_id):
+        best = poke_ctrl_model.get_best_pokemon_by_group(talde_id)
+        if best:
+            return jsonify(best)
+        return jsonify({
+            "Izena": None,
+            "PokeImage": None,
+            "Estatistikak": {
+                k: 0 for k in [
+                    "Osasuna",
+                    "Atakea",
+                    "Defentsa",
+                    "Atake berezia",
+                    "Defentsa berezia",
+                    "Abiadura",
+                ]
+            },
+        })
 
     def _taldea_to_dict(taldea):
         return {
