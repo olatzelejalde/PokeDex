@@ -360,10 +360,14 @@ def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
         if not lagun.chat_id:
             return jsonify({'error': 'Lagunak ez du /start egin Telegram bot-ean (chat_id falta da)'}), 400
 
+        # Build payload (json) from DB
+        pokemonak = taldeak_katalogo.get_pokemonak(tid)
+
         partekatu = telegram_service.partekatu_taldea(
             lagun.chat_id,
             user.erabiltzaileIzena,
-            taldea.izena
+            taldea.izena,
+            pokemonak
         )
         if not partekatu:
             return jsonify({'error': 'Ezin izan da taldea Telegram bidez bidali'}), 502
