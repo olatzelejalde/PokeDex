@@ -36,7 +36,7 @@ async function kargatuErabiltzaileProfila() {
                     <p>Izena: ${user.izena}</p>
                     <p>Abizena: ${user.abizena}</p>
                     <p>Telegram: ${user.telegramKontua || 'Ez dago'}</p>
-                    ${(user.chat_id != null) ? '<p>----Telegram aktibatuta----</p>' : '<p>----Telegram ez aktibatuta----</p>'}
+                    ${(user.chat_id != null) ? '<p>----Telegram aktibatuta----</p>' : '<p>----Telegram ez aktibatuta (/start egin PokemonParteBot-en)----</p>'}
                     <button class="pokedex-button" onclick="aldatuDatuak()">Aldatu nire datuak</button>
                 </div>
             </div>
