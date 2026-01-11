@@ -6,7 +6,7 @@
     <title>PokeDex</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/styles/styles.css">
-    <link rel="stylesheet" href="/static/styles/bot.css"> ```
+    <link rel="stylesheet" href="/static/styles/bot.css">
     <script> 
         var user = JSON.parse('{{ user|tojson }}');
         console.log(user);
@@ -47,11 +47,7 @@
                 </div>
             </div>
         </div>
-        
         <h1>POKEDEX</h1>
-
-        <!----------------------------------------------->
-        <!--         Pokedex-aren menua                -->
         <!----------------------------------------------->
         <!--         Pokedex-aren menua                -->
         <!----------------------------------------------->
@@ -82,6 +78,11 @@
             <button id="search-button">Bilatu</button>
 
         
+
+        <div class="search-container" id="search-lagunak" style="display: none;">
+            <input type="text" id="user-search" placeholder="Bilatu erabiltzailea...">
+            <button id="search-users-button">Bilatu</button>
+        </div>
 
         <div class="search-container" id="search-lagunak" style="display: none;">
             <input type="text" id="user-search" placeholder="Bilatu erabiltzailea...">
@@ -192,6 +193,7 @@
     </div>
 
     <script src="/static/js/app.js"></script>
+    <script src="/static/js/bot.js"></script>
     <script src="/static/js/pokemon.js"></script>
     <script src="/static/js/taldeak.js"></script>
     <script src="/static/js/intsignia.js"></script>

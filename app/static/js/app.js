@@ -7,7 +7,9 @@ document.addEventListener('DOMContentLoaded', function () {
     kargatuPokemonDatuak();
     kargatuMotak();
     konfiguratuGertaeraEntzuleak();
-    konfiguratuBotLogika(); //ANE
+    if (typeof konfiguratuBotLogika === 'function') {
+        konfiguratuBotLogika();
+    }
 });
 
 function konfiguratuGertaeraEntzuleak() {
@@ -39,10 +41,10 @@ function konfiguratuGertaeraEntzuleak() {
 
     document.getElementById('type-filter').addEventListener('change', bilatuPokemon);
 
-    // Búsqueda de usuarios
-    document.getElementById('search-users-button').addEventListener('click', bilatuErabiltzaileak);
-    document.getElementById('user-search').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') bilatuErabiltzaileak();
+    // Búsqueda de usuarios - en tiempo real como pokemon
+    document.getElementById('user-search').addEventListener('input', function (e) {
+        clearTimeout(this.searchTimeout);
+        this.searchTimeout = setTimeout(() => bilatuErabiltzaileak(), 300);
     });
 
     // Botón cerrar sesión
@@ -72,138 +74,5 @@ function aldatuAtala(atalIzena) {
         kargatuErabiltzaileProfila();
     } else if (atalIzena === 'lagunak') {
         kargatuErabiltzaileLagunak();
-    } else if (atalIzena === 'intsigniak'){ //OLATZ
-        intsigniakKargatu(user.id);
-    }
-}
-
-/* ===========================================================
-   BOT-AREN BOTOIAK ETA PANTAILA GEHIGARRIA
-   =========================================================== */
-const botData = {
-    pokeTop: {
-        title: "PokeTop",
-        color: "#ffcccc",
-        borderColor: "#dc0a2d",
-        content: `
-            <p>🏆 <strong>TOP POKEMON</strong></p>
-            <ul style="list-style:none; padding:0; text-align:left; margin-left: 20px;">
-                <li>1. Mewtwo (CP: 4178)</li>
-                <li>2. Slaking (CP: 4000)</li>
-                <li>3. Machamp (CP: 3500)</li>
-            </ul>
-        `
-    },
-    pokeMota: {
-        title: "PokeMota",
-        color: "#ccffcc",
-        borderColor: "#4dad5b",
-        content: `
-            <p>🍃 <strong>ANALISIS DE TIPOS</strong></p>
-            <div style="background:rgba(255,255,255,0.5); padding:10px; border-radius:5px;">
-                <p>Sua: 15% | Ura: 45%</p>
-                <p>Belarra: 40%</p>
-            </div>
-            <p style="margin-top:10px; font-size:9px;">Gomendioa: Erabili elektrikoak.</p>
-        `
-    },
-    pokeEbo: {
-        title: "PokeEbo",
-        color: "#ffffcc",
-        borderColor: "#eed535",
-        content: `
-            <p>⚡ <strong>EBOLUZIOAK</strong></p>
-            <p>Prest daudenak:</p>
-            <p> ➤ Pikachu ➔ Raichu</p>
-            <p> ➤ Eevee ➔ Jolteon</p>
-        `
-    },
-    pokeScan: {
-        title: "PokeScan",
-        color: "#cce5ff",
-        borderColor: "#2663ac",
-        content: `
-            <p>📡 <strong>ESKANEATZEN...</strong></p>
-            <p>Bip... Bip... Bip...</p>
-            <p style="color:red; font-weight:bold; margin-top:10px;">⚠️ ERROREA</p>
-            <p>Ez da seinalerik aurkitu.</p>
-        `
-    }
-};
-
-function konfiguratuBotLogika() {
-    const modal = document.getElementById('retro-modal');
-    const botPanel = document.getElementById('bot-panel');
-    const modalTitle = document.getElementById('modal-title');
-    const modalBody = document.getElementById('modal-body');
-    const modalBox = document.getElementById('modal-box-color');
-    const modalHeader = document.querySelector('.modal-header');
-    const closeX = document.querySelector('.close-retro');
-    const closeOk = document.querySelector('.retro-ok-btn');
-    const options = document.querySelectorAll('.bot-option');
-
-    if (!modal) return;
-
-    const openModal = (action) => {
-        const data = botData[action];
-        if (!data) return;
-
-        modalTitle.innerHTML = data.title;
-        modalBody.innerHTML = data.content;
-
-        if(modalBox) {
-            modalBox.style.backgroundColor = data.color;
-            modalBox.style.borderColor = data.borderColor;
-        }
-        if(closeOk) {
-            closeOk.classList.remove('pokeTop', 'pokeMota', 'pokeEbo', 'pokeScan');
-            closeOk.classList.add(action);
-        }
-        if(modalHeader) {
-            modalHeader.classList.remove('pokeTop', 'pokeMota', 'pokeEbo', 'pokeScan');
-            modalHeader.classList.add(action);
-        }
-
-        modal.classList.remove('hidden');
-        if(botPanel) botPanel.classList.add('hidden');
-    };
-
-    const closeModal = () => {
-        modal.classList.add('hidden');
-    };
-
-    options.forEach(option => {
-        option.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const action = option.getAttribute('data-action');
-            openModal(action);
-        });
-    });
-
-    if (closeX) closeX.addEventListener('click', closeModal);
-    if (closeOk) closeOk.addEventListener('click', closeModal);
-
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) closeModal();
-    });
-}
-
-// Backend-etik intsignien karga OLATZ
-async function intsigniakKargatu(erabiltzaileId) {
-    try {
-        // Erabiltzailearen intsigniak lortzen ditugu API-tik
-        const res = await fetch(`${API_BASE_URL}/erabiltzaileak/${erabiltzaileId}/intsigniak`);
-        const intsigniak = await res.json();
-
-        // Hemen erabakiko da intsignia lortu den edo ez. jarraipena >= helburua bada, lortua izango da
-        intsigniak.forEach(ins => {
-            ins.lortua = ins.jarraipena >= ins.helburua;
-        });
-
-        // Grid-ean intsigniak renderizatzen ditugu
-        renderIntsigniak(intsigniak);
-    } catch (err) {
-        // Erroreak kontrolatzen ditugu eta kontsolan erakusten dira
-        console.error("Errorea egon da intsigniak kargatzerakoan:", err);
     }
 }
