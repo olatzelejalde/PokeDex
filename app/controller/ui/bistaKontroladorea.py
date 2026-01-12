@@ -275,30 +275,28 @@ def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
     # ============================================
     taldeak_bp = Blueprint('taldeak', __name__, url_prefix='/api')
 
-    @taldeak_bp.route('/taldeak/list', methods=['GET'])
-    def api_taldeak_list():
-        data = poke_ctrl_model.get_users_with_pokemon()
-        return jsonify(data)
-
     @taldeak_bp.route('/taldeak/<int:talde_id>/mvp', methods=['GET'])
     def api_taldeak_mvp(talde_id):
-        best = poke_ctrl_model.get_best_pokemon_by_group(talde_id)
+        pokemonak = taldeak_katalogo.get_pokemonak(talde_id)
+
+        best = poke_ctrl_model.get_best_pokemon_from_list(pokemonak)
+
         if best:
             return jsonify(best)
+
         return jsonify({
             "Izena": None,
             "PokeImage": None,
             "Estatistikak": {
-                k: 0 for k in [
-                    "Osasuna",
-                    "Atakea",
-                    "Defentsa",
-                    "Atake berezia",
-                    "Defentsa berezia",
-                    "Abiadura",
-                ]
+                "Osasuna": 0,
+                "Atakea": 0,
+                "Defentsa": 0,
+                "Atake berezia": 0,
+                "Defentsa berezia": 0,
+                "Abiadura": 0,
             },
         })
+
 
     def _taldea_to_dict(taldea):
         return {

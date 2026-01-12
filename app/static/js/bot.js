@@ -95,12 +95,20 @@ function konfiguratuBotLogika() {
                 pokemonsHtml += '</div>';
 
                 html += `
-                    <div class="poketop-card" style="background: ${bgStyle};" onclick="cargarMVP(${user.id})">
+                    <div class="poketop-card"
+                         style="background: ${bgStyle};"
+                         onclick="cargarMVP(${user.id}, '${user.izena}')">
                         <div class="poketop-card-title">${user.izena}</div>
                         ${pokemonsHtml}
                     </div>
                 `;
             });
+            html += `
+                </div>
+                <div id="mvp-result" style="margin-top:40px; width:100%;"></div>
+            </div>
+            `;
+
                 modalBody.innerHTML = html;
             } catch (error) {
                 modalBody.innerHTML = `<p style="color:red">Errorea: ${error.message}</p>`;
@@ -208,13 +216,19 @@ async function renderPokemonList(containerId, modo) {
     }
 }
 
-async function cargarMVP(taldeId) {
+async function cargarMVP(taldeId, taldeIzena) {
+    console.log('cargarMVP llamada con:', taldeId);
     const divResultado = document.getElementById('mvp-result');
     divResultado.innerHTML = '<p style="text-align:center;">Kalkulatzen...</p>';
 
     try {
         const response = await fetch(`/api/taldeak/${taldeId}/mvp`);
-        const pokemon = await response.json();
+        let pokemon = await response.json();
+
+        if (Array.isArray(pokemon)) {
+            pokemon = pokemon[0];
+        }
+
 
         if (!pokemon || !pokemon.Izena) {
             divResultado.innerHTML = "<p style='text-align:center; color:red;'>Ez da pokemonik aurkitu.</p>";
@@ -243,7 +257,8 @@ async function cargarMVP(taldeId) {
                 box-shadow: 0 4px 10px rgba(0,0,0,0.15);
             ">
                 <div style="text-align: center; margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 10px;">
-                    <h2 style="margin: 0; font-size: 18px; color: #444; text-transform: uppercase;">TALDEA ${taldeId}</h2>
+                    <h2 style="margin: 0; font-size: 18px; color: #444; text-transform: uppercase;"> ${taldeIzena}</h2>
+
                     <h1 style="margin: 0; font-size: 22px; color: #D32F2F; font-weight: 800; letter-spacing: 1px;">POKETOP</h1>
                 </div>
 

@@ -7,10 +7,9 @@
     <list default="true" id="5027c7a4-cde5-4d20-91a5-71c2ee576678" name="Changes" comment="&quot;botia aldaketa&quot;">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/controller/model/pokemon_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/controller/model/pokemon_controller.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controller/model/taldea_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/controller/model/taldea_controller.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controller/ui/bistaKontroladorea.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/controller/ui/bistaKontroladorea.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/static/js/bot.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/js/bot.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/styles/bot.css" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/styles/bot.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/library.sqlite" beforeDir="false" afterPath="$PROJECT_DIR$/library.sqlite" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
