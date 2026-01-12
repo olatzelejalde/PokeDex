@@ -255,6 +255,12 @@ def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
         rows = db.select("SELECT DISTINCT mota1 as mota FROM espeziea WHERE mota1 IS NOT NULL ORDER BY mota1 ASC")
         motak = [row['mota'] for row in rows]
         return jsonify(motak)
+    @pokemonak_bp.route('/pokemon/<int:uid>/kontsultatu', methods=['GET'])
+    def kontsulta(uid):
+        badu = intsignia_ctrl.intsigniaDu(uid, "Espezie informazioa 20 aldiz kontsultatu")
+        if not badu:
+            intsignia_ctrl.intsigniaGehitu(uid, "Espezie informazioa 20 aldiz kontsultatu")
+        return jsonify({'ok': True, 'user_id': uid})
 
     app.register_blueprint(pokemonak_bp)
 
