@@ -84,7 +84,7 @@ class Erabiltzailea:
     def getLagunZerrenda(self, telegram: bool) -> List["Erabiltzailea"]:
         lagunak = []
         for lagun in self.lagunZer:
-            if telegram and (not lagun.telegramKontua or not lagun.chat_id):
+            if telegram and (lagun.telegramKontua and lagun.chat_id):
                 lagunak.append(lagun)
             if not telegram:
                 lagunak.append(lagun)
