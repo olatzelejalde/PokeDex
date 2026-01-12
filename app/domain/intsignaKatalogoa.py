@@ -12,7 +12,7 @@ class IntsignaKatalogoa:
                 i.deskripzioa, 
                 i.helburua,
                 COALESCE(ei.jarraipena, 0) as jarraipena,
-                CASE WHEN ei.intsignia_izena IS NOT NULL THEN 1 ELSE 0 END as lortua
+                CASE WHEN COALESCE(ei.jarraipena, 0) >= i.helburua THEN 1 ELSE 0 END as lortua
             FROM intsignia i
             LEFT JOIN erabiltzaileak_intsigniak ei 
                 ON i.izena = ei.intsignia_izena AND ei.erabiltzaile_id = ?
@@ -53,7 +53,7 @@ class IntsignaKatalogoa:
     
     def jarraipenaEguneratu(self, uid, badge_name) -> None:
         """Erabiltzailearen intsigniaren jarraipena eguneratu"""
-        self.db.insert(
+        self.db.update(
             """
             UPDATE erabiltzaileak_intsigniak
             SET jarraipena = jarraipena + 1

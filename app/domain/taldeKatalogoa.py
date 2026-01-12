@@ -132,6 +132,21 @@ class TaldeKatalogoa:
                 "DELETE FROM ditu WHERE taldea_id = ? AND pokemon_id = ?",
                 [tid, pid]
             )
+        # NOTIFIKAZIOA: Pokemona taldetik kendu dela erregistratu
+        data_gaur= datetime.now().strftime("%Y-%m-%d %H:%M")
+        deskribapena= f"Pokemona kendu da taldetik: {pid}."
+
+        egilea = "unknown"
+        try:
+            owner_rows = self.db.select("SELECT erabiltzaile_id FROM taldea WHERE id = ?", [tid])
+            if owner_rows:
+                egilea = str(owner_rows[0]["erabiltzaile_id"])
+        except Exception:
+            pass
+        self.db.insert(
+            "INSERT INTO changelog (bertsioa, data, deskribapena, egilea) VALUES (?, ?, ?, ?)",
+            ["POKEMON", data_gaur, deskribapena, egilea]
+        )
 
     #def get_pokemonak(self, tid: int):
     #    return self.db.select(
