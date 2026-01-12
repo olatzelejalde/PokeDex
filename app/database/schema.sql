@@ -127,6 +127,15 @@ CREATE TABLE IF NOT EXISTS lagunak (
     CHECK (erabiltzaile1_id < erabiltzaile2_id)
 );
 
+-- 14. CHANGELOG: Plataforma aldaketak erregistratzeko taula
+CREATE TABLE IF NOT EXISTS changelog (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    bertsioa TEXT NOT NULL,
+    data TEXT NOT NULL,
+    deskribapena TEXT NOT NULL,
+    egilea TEXT NOT NULL
+);
+
 INSERT INTO erabiltzailea (izena, abizena, erabilIzena, pasahitza, telegramKontua, rola)
 VALUES ('Admin', 'User', 'admin', 'adminpass', NULL, 'admin'),
        ('John', 'Doe', 'johndoe', 'johndoe123', 'johndoe', 'erabiltzailea'),
