@@ -367,7 +367,7 @@ def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
         # Build payload (json) from DB
         pokemonak = taldeak_katalogo.get_pokemonak(tid)
 
-        partekatu = telegram_service.partekatu_taldea(
+        partekatu = telegram_service.taldeaPartekatu(
             lagun.chat_id,
             user.erabiltzaileIzena,
             taldea.izena,
