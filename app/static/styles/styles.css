@@ -645,3 +645,73 @@ body {
     .menua ul { flex-direction: column; align-items: center; }
     .menua li { margin: 5px 0; }
 }
+
+/* =========================================================
+   Estilos específicos para la página de changelog
+   ========================================================= */
+           /* --- CHANGELOG KANPAITXOA --- */
+.notification-bell {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    margin-right: 15px;
+}
+
+.bell-icon {
+    fill: white; 
+    transition: transform 0.2s, 
+}
+
+.notification-bell:hover .bell-icon {
+    transform: scale(1.1);
+    fill: black; /* Sagua gainetik pasatzean horira aldatuko da pixka bat nabarmentzeko */
+}
+main article {
+    display: none;
+}
+
+main article.active {
+    display: block !important;
+}
+
+/* Notifikazioen diseinu berria */
+/* Notifikazioen diseinu berria */
+.notif-txartela {
+    background: white; /* Fondo blanco para que resalte */
+    border: 3px solid #000000; /* Amarillo Pokémon */
+    border-radius: 8px;
+    margin-bottom: 10px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    color: #333; /* Texto oscuro para leer bien */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.notif-ikonoa {
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.notif-ikonoa svg {
+    fill: #e3350d; /* Rojo Pokémon para el icono */
+}
+
+.notif-testua {
+    display: flex;
+    flex-direction: column; /* Texto en vertical para mejor lectura */
+    gap: 5px;
+    font-family: 'Roboto', sans-serif;
+}
+
+.notif-data {
+    color: #666;
+    font-size: 0.85em;
+    font-weight: bold;
+}
+
+.notif-desk {
+    font-size: 1em;
+    line-height: 1.4;
+}

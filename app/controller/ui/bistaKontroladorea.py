@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, session
+from flask import Blueprint, jsonify, request, session, render_template
 import logging
 import os
 from app.domain.erabiltzaileKatalogoa import ErabiltzaileKatalogoa
@@ -10,6 +10,7 @@ from app.controller.model.mugimendu_controller import MugimenduController
 from app.controller.model.taldea_controller import TaldeaController
 from app.controller.model.pokemon_controller import PokemonController
 from app.services.telegram_service import TelegramService
+from app.controller.model.changelog_controller import ChangelogController
 
 
 def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
@@ -379,4 +380,41 @@ def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
 
     app.register_blueprint(taldeak_bp)
 
+    # ============================================
+    # CHANGELOG
+    # ============================================
+    changelog_bp = Blueprint('changelog', __name__, url_prefix='/api')
+    changelog_ctrl = ChangelogController(db)
 
+    @changelog_bp.route('/changelog', methods=['GET'])
+    def zerrendatu_changelog():
+        return jsonify(changelog_ctrl.lortu_aldaketa_guztiak())
+    
+    @changelog_bp.route('/changelog', methods=['POST'])
+    def sortu_changelog():
+        data = request.get_json(silent=True) or {}
+
+        bertsioa = data.get('bertsioa')
+        data_str = data.get('data')
+        deskribapena = data.get('deskribapena')
+        egilea = data.get('egilea')
+        if egilea is None:
+            egilea = str(session.get('user_id') or session.get('uid') or 'system')
+
+        if not bertsioa or not data_str or not deskribapena:
+            return jsonify({'error': 'bertsioa, data eta deskribapena beharrezkoak dira'}), 400
+
+        changelog_ctrl.gehitu_aldaketa(
+            bertsioa,
+            data_str,
+            deskribapena,
+            egilea,
+        )
+        return jsonify({'message': 'Changelog sarrera sortua'}), 201
+
+    @app.route('/changelog')
+    def erakutsi_changelog():
+        aldaketak = changelog_ctrl.lortu_aldaketa_guztiak()
+        return render_template('changelog.html', aldaketak=aldaketak)
+    
+    app.register_blueprint(changelog_bp)
