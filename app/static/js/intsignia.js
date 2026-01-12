@@ -1,5 +1,6 @@
-async function renderIntsigniak(intsigniak) {
+async function renderIntsigniak() {
     // Intsigniak erakusteko grid-a eta kontadorea lortu
+    const intsigniak = await fetch(`${API_BASE_URL}/erabiltzaileak/${user.id}/intsigniak`).then(res => res.json());
     const grid = document.getElementById('intsigniak-zerrenda');
     const kont = document.getElementById('intsigniak_kont');
     if (!grid || !kont) return; // Grid edo kontadorea ez badago, irten
