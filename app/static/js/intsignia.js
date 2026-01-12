@@ -34,8 +34,10 @@ async function renderIntsigniak() {
         // Lortutako intsignien kopurua eguneratu
         if (ins.lortua) lortutakoIntsigniak++;
 
-        // Lehen aldiz lortutako intsignia notifikatzeko
-        if (ins.lortua && !ins.mezua) {
+        // Lehen aldiz lortutako intsignia notifikatzeko (behin bakarrik, lokalean gordeta)
+        const notifKey = `intsignia_notif_${user.id}_${ins.izena}`;
+        const alreadyNotified = localStorage.getItem(notifKey) === '1';
+        if (ins.lortua && !alreadyNotified) {
             const mezua = document.createElement('div');
             mezua.className = 'intsignia-mezua';
              mezua.innerHTML = `
@@ -48,7 +50,7 @@ async function renderIntsigniak() {
         mezua.querySelector('button').addEventListener('click', () => mezua.remove());
 
         // Markatu jada notifikatu dela, ez ager dadin berriro
-        ins.mezua = true;
+        localStorage.setItem(notifKey, '1');
     }
 
         // tooltip-a erakutsi eta ezkutatu
