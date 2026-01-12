@@ -216,7 +216,63 @@ async function ezabatuTaldea(taldeId) {
 }
 
 async function editatuTaldea(taldeId) {
-    alert('Taldearen editatzea oraindik ez dago martxan.');
+    //alert('Taldearen editatzea oraindik ez dago martxan.');
+    try {
+        const res = await fetch(`${API_BASE_URL}/taldeak/${taldeId}`);
+        if (!res.ok) {
+            alert('Errorea taldea kargatzean');
+            return;
+        }
+        const taldea = await res.json();
+
+        // Crear modal si no existe
+        let modal = document.getElementById('taldea-edit-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'taldea-edit-modal';
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content pokedex-modal large">
+                    <span class="close" onclick="itxiTaldeEditModal()">&times;</span>
+                    <h3>Klikatu pokemona ezabatzeko</h3>
+                    <div class="taldea-edit-grid"></div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        const grid = modal.querySelector('.taldea-edit-grid');
+        grid.innerHTML = taldea.pokemonak.map(p => `
+            <div class="pokemon-edit-card" data-id="${p.id}" style="cursor:pointer; display:inline-block; text-align:center; margin:4px;">
+                <img src="/static/sprites/pokemon/${p.id}.png" alt="${p.izena}" style="width:64px; height:64px;">
+                <div>${p.izena}</div>
+            </div>
+        `).join('');
+
+        // Agregar evento click a cada Pokémon
+        grid.querySelectorAll('.pokemon-edit-card').forEach(card => {
+            card.onclick = async () => {
+                const pid = Number(card.dataset.id);
+                if (confirm(`Ziur zaude ${card.querySelector('div').innerText} ezabatu nahi duzula?`)) {
+                    await fetch(`${API_BASE_URL}/taldeak/${taldeId}/pokemon/${pid}`, { method: 'DELETE' });
+                    alert('Pokemona kendua');
+                    itxiTaldeEditModal();
+                    kargatuErabiltzaileTaldeak(); // refrescar lista
+                }
+            };
+        });
+
+        modal.style.display = 'block';
+
+    } catch (error) {
+        console.error(error);
+        alert('Errore orokorra');
+    }
+}
+
+function itxiTaldeEditModal() {
+    const modal = document.getElementById('taldea-edit-modal');
+    if (modal) modal.style.display = 'none';
 }
 
 async function sortuTaldea() {
