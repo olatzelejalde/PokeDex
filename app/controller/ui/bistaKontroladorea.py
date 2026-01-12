@@ -1,9 +1,6 @@
-<<<<<<< HEAD
 from app.domain import taldea
 from flask import Blueprint, jsonify, request, session
-=======
 from flask import Blueprint, jsonify, request, session, render_template
->>>>>>> b8e0240b75be9a43a82e37f1c31a6a89a712937d
 import logging
 import os
 from app.domain.erabiltzaileKatalogoa import ErabiltzaileKatalogoa
