@@ -23,8 +23,10 @@ class TaldeaController:
         return [dict(row) for row in rows]
 
     def create(self, izena, uid):
-        self.db.insert("INSERT INTO taldea (izena, erabiltzaile_id) VALUES (?, ?)", [izena, uid])
-        return self.db.connection.cursor().lastrowid
+        return self.db.insert(
+            "INSERT INTO taldea (izena, erabiltzaile_id) VALUES (?, ?)",
+            [izena, uid]
+        )
 
     def add_pokemon(self, tid, pid):
         self.db.insert("INSERT OR IGNORE INTO ditu (taldea_id, pokemon_id) VALUES (?, ?)", [tid, pid])

@@ -133,6 +133,13 @@ class TaldeKatalogoa:
                 [tid, pid]
             )
 
+    #def get_pokemonak(self, tid: int):
+    #    return self.db.select(
+    #        "SELECT p.id, p.izena FROM pokemon p JOIN ditu d ON d.pokemon_id = p.id WHERE d.taldea_id = ?",
+    #        [tid]
+    #    )
+
+
     @staticmethod
     def _row_to_pokemon_dict(row) -> dict:
         """Convierte una fila de pokemon a diccionario"""

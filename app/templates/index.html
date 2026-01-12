@@ -10,6 +10,7 @@
     <script> 
         var user = JSON.parse('{{ user|tojson }}');
         console.log(user);
+        window.personaId = user.id;
     </script>
     <style>
         /* --- CHANGELOG KANPAITXOA --- */

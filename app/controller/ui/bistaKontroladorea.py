@@ -1,3 +1,5 @@
+from app.domain import taldea
+from flask import Blueprint, jsonify, request, session
 from flask import Blueprint, jsonify, request, session, render_template
 import logging
 import os
@@ -279,30 +281,28 @@ def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
     # ============================================
     taldeak_bp = Blueprint('taldeak', __name__, url_prefix='/api')
 
-    @taldeak_bp.route('/taldeak/list', methods=['GET'])
-    def api_taldeak_list():
-        data = poke_ctrl_model.get_users_with_pokemon()
-        return jsonify(data)
-
     @taldeak_bp.route('/taldeak/<int:talde_id>/mvp', methods=['GET'])
     def api_taldeak_mvp(talde_id):
-        best = poke_ctrl_model.get_best_pokemon_by_group(talde_id)
+        pokemonak = taldeak_katalogo.get_pokemonak(talde_id)
+
+        best = poke_ctrl_model.get_best_pokemon_from_list(pokemonak)
+
         if best:
             return jsonify(best)
+
         return jsonify({
             "Izena": None,
             "PokeImage": None,
             "Estatistikak": {
-                k: 0 for k in [
-                    "Osasuna",
-                    "Atakea",
-                    "Defentsa",
-                    "Atake berezia",
-                    "Defentsa berezia",
-                    "Abiadura",
-                ]
+                "Osasuna": 0,
+                "Atakea": 0,
+                "Defentsa": 0,
+                "Atake berezia": 0,
+                "Defentsa berezia": 0,
+                "Abiadura": 0,
             },
         })
+
 
     def _taldea_to_dict(taldea):
         return {
@@ -346,6 +346,7 @@ def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
     def remove_pokemon_taldea(tid, pid):
         try:
             taldeak_katalogo.kendu_pokemon(tid, pid)
+            #sgbd.intsigniaDu("Talde bat ezabatu", pid)
             return jsonify({'message': 'Pokemon taldetik kendua'})
         except Exception as e:
             return jsonify({'error': str(e)}), 400
@@ -354,11 +355,27 @@ def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
     def borrar_taldea(tid):
         try:
             taldeak_katalogo.ezabatu(tid)
+            #sgbd.intsigniaDu("Talde bat ezabatu", tid)
             return jsonify({'message': 'Taldea ezabauta'})
         except Exception as e:
             return jsonify({'error': str(e)}), 4000
-    
-    
+        
+    @taldeak_bp.route('/taldeak/<int:tid>', methods=['GET'])
+    def get_taldea(tid):
+        taldea = taldeak_katalogo.bilatu_by_id(tid)
+        if not taldea:
+            return jsonify({'error': 'Taldea ez da existitzen'}), 404
+
+        def _taldea_to_dict(taldea):
+            return {
+                'id': taldea.id,
+                'izena': taldea.izena,
+                'erabiltzaile_id': taldea.erabiltzaile_id,
+                'pokemonak': taldeak_katalogo.get_pokemonak(taldea.id)
+            }
+        return jsonify(_taldea_to_dict(taldea))
+
+
     @taldeak_bp.route('/taldeak/<int:tid>/partekatu/<int:user_id>/<int:lagun_id>', methods=['POST'])
     def partekatu_taldea(tid, user_id, lagun_id):
         user = users_katalogo.bilatu_by_id(user_id)
