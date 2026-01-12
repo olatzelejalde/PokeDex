@@ -75,7 +75,7 @@ class TaldeKatalogoa:
             rows = self.db.select(
                 """SELECT p.id, p.izena, e.irudia, e.mota1 as mota, e.mota2,
                           e.osasuna as hp, e.atakea, e.defentsa, 
-                          e.atake_berezia, e.defentsa_berezia, e.abiadura
+                          e.atake_berezia, e.defentsa_berezia, e.abiadura, e.deskribapena
                    FROM pokemon p
                    JOIN ditu d ON p.id = d.pokemon_id
                    JOIN espeziea e ON p.espezie_izena = e.izena
@@ -83,9 +83,6 @@ class TaldeKatalogoa:
                 [tid]
             )
             result = [self._row_to_pokemon_dict(row) for row in rows]
-            print(f"DEBUG: get_pokemonak({tid}) returned {len(result)} pokemon")
-            if result:
-                print(f"DEBUG: First pokemon: {result[0]}")
             return result
         return []
 
@@ -152,7 +149,8 @@ class TaldeKatalogoa:
                 'defentsa': row['defentsa'],
                 'atake_berezia': row['atake_berezia'],
                 'defentsa_berezia': row['defentsa_berezia'],
-                'abiadura': row['abiadura']
+                'abiadura': row['abiadura'],
+                'deskribapena': row['deskribapena']
             }
         except (KeyError, TypeError) as e:
             # Si falla, retornar dict vacío o con valores por defecto
