@@ -77,3 +77,15 @@ class Erabiltzailea:
     def kendu_laguna(self, laguna: "Erabiltzailea") -> None:
         if laguna in self.lagunZer:
             self.lagunZer.remove(laguna)
+
+    def erabiltzaileaDa(self, uid: int) -> bool:
+        return self.id == uid
+    
+    def getLagunZerrenda(self, telegram: bool) -> List["Erabiltzailea"]:
+        lagunak = []
+        for lagun in self.lagunZer:
+            if telegram and (not lagun.telegramKontua or not lagun.chat_id):
+                lagunak.append(lagun)
+            if not telegram:
+                lagunak.append(lagun)
+        return lagunak
