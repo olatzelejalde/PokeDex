@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import List, Optional
+from datetime import datetime
 
 from app.domain.taldea import Taldea
 
@@ -52,6 +53,14 @@ class TaldeKatalogoa:
         """Sortu talde berria"""
         taldea = Taldea.sortu(izena, erabiltzaile_id, self.db)
         self.gehitu(taldea)
+
+        #NOTIFIKAZIOA: Taldea sortu dela erregistratu
+        data_gaur= datetime.now().strftime("%Y-%m-%d %H:%M")
+        deskribapena= f"Talde berria sortu du: {izena}."
+        self.db.insert(
+            "INSERT INTO changelog (bertsioa, data, deskribapena, egilea) VALUES (?, ?, ?, ?)",
+            ["TALDEA", data_gaur, deskribapena, str(erabiltzaile_id)]
+        )
         return taldea
 
     def ezabatu(self, tid: int) -> None:
@@ -101,6 +110,22 @@ class TaldeKatalogoa:
         self.db.insert(
             "INSERT INTO ditu (taldea_id, pokemon_id) VALUES (?, ?)",
             [tid, pid]
+        )
+        # NOTIFIKAZIOA: Pokemona taldera gehitu dela erregistratu
+        data_gaur= datetime.now().strftime("%Y-%m-%d %H:%M")
+        deskribapena= f"Pokemona gehitu da taldera: {pid}."
+
+        egilea = "unknown"
+        try:
+            owner_rows = self.db.select("SELECT erabiltzaile_id FROM taldea WHERE id = ?", [tid])
+            if owner_rows:
+                egilea = str(owner_rows[0]["erabiltzaile_id"])
+        except Exception:
+            pass
+
+        self.db.insert(
+            "INSERT INTO changelog (bertsioa, data, deskribapena, egilea) VALUES (?, ?, ?, ?)",
+            ["POKEMON", data_gaur, deskribapena, egilea]
         )
 
     def kendu_pokemon(self, tid: int, pid: int) -> None:
