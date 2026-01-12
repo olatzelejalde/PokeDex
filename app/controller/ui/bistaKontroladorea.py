@@ -4,7 +4,7 @@ import os
 from app.domain.erabiltzaileKatalogoa import ErabiltzaileKatalogoa
 from app.domain.taldeKatalogoa import TaldeKatalogoa
 from app.controller.model.mota_controller import MotaController
-from app.controller.model.intsignia_controller import IntsigniaController
+from app.domain.intsignaKatalogoa import IntsignaKatalogoa
 from app.controller.model.espezie_controller import EspezieController
 from app.controller.model.mugimendu_controller import MugimenduController
 from app.controller.model.taldea_controller import TaldeaController
@@ -164,7 +164,7 @@ def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
     # INTSIGNIAK (Insignias)
     # ============================================
     intsigniak_bp = Blueprint('intsigniak', __name__, url_prefix='/api')
-    intsignia_ctrl = IntsigniaController(db)
+    intsignia_ctrl = IntsignaKatalogoa(db)
 
     @intsigniak_bp.route('/erabiltzaileak/<int:uid>/intsigniak', methods=['GET'])
     def por_user_intsignia(uid):
@@ -375,6 +375,11 @@ def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
         )
         if not partekatu:
             return jsonify({'error': 'Ezin izan da taldea Telegram bidez bidali'}), 502
+        
+        else:
+            badu = intsignia_ctrl.intsigniaDu(user_id, 'Talde bat partekatu')
+            if not badu:
+                intsignia_ctrl.intsigniaGehitu(user_id, 'Talde bat partekatu')
 
         return jsonify({'message': 'Taldea partekatu da'}), 200
 

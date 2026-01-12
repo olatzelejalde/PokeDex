@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from typing import Optional, List
 
-from app.domain.intsignia import Intsignia
 from app.domain.taldea import Taldea
 from app.domain.notifikazio import Notifikazio
 
@@ -15,7 +14,6 @@ class Erabiltzailea:
     chat_id: Optional[int]
     pasahitza: str
     rola: str
-    intsigniaZer: List["Intsignia"]
     lagunZer: List["Erabiltzailea"]
     taldeZer: List["Taldea"]
     notifZer: List["Notifikazio"]
