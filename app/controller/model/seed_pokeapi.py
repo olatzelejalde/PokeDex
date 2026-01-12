@@ -40,6 +40,9 @@ def seed_gen1(db: Connection):
         species_data = requests.get(s['url']).json()
         pokemon_data = requests.get(f"https://pokeapi.co/api/v2/pokemon/{idx}").json()
 
+        chain_url = species_data['evolution_chain']['url']
+        chain_id = int(chain_url.split('/')[-2])
+
         stats = {st['stat']['name']: st['base_stat'] for st in pokemon_data['stats']}
         tipos = [t['type']['name'] for t in pokemon_data['types']]
 
@@ -52,8 +55,8 @@ def seed_gen1(db: Connection):
 
         db.insert("""
             INSERT OR IGNORE INTO espeziea (id, izena, mota1, mota2, osasuna, atakea, defentsa,
-                                            atake_berezia, defentsa_berezia, abiadura, irudia, deskribapena)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                            atake_berezia, defentsa_berezia, abiadura, irudia, deskribapena, eboluzio_chain_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, [
             pokemon_data['id'],
             pokemon_data['name'].title(),
@@ -62,7 +65,8 @@ def seed_gen1(db: Connection):
             stats['hp'], stats['attack'], stats['defense'],
             stats['special-attack'], stats['special-defense'], stats['speed'],
             local_image,
-            flavor
+            flavor,
+            chain_id
         ])
 
         print(f"✅ {idx:03d} - {pokemon_data['name'].title()} ({local_image})")
