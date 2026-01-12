@@ -354,7 +354,7 @@ class TelegramService:
             logger.warning(f"Render team PNG failed: {e}")
             return None
 
-    def partekatu_taldea(self, chat_id: int, jabea: str, taldea_izena: str, pokemonak: list[dict]) -> bool:
+    def taldeaPartekatu(self, chat_id: int, jabea: str, taldea_izena: str, pokemonak: list[dict]) -> bool:
         """
         Intenta enviar una imagen con el equipo; fallback a texto si no se puede.
         """
