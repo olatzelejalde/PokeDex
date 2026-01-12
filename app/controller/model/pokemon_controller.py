@@ -1,6 +1,3 @@
-import random
-
-
 class PokemonController:
     def __init__(self, db):
         self.db = db
@@ -34,45 +31,8 @@ class PokemonController:
         """, [espezie_izena, izena or espezie_izena])
         return self.get_by_id(self.db.connection.cursor().lastrowid)
 
-    def _generate_new_groups(self):
-        try:
-            rows = self.db.select("SELECT izena, irudia FROM espeziea")
-            all_pokemons = [dict(row) for row in rows] if rows else []
-            if not all_pokemons:
-                raise Exception("Datu-basea hutsik dago")
-        except Exception:
-            # DB-ak huts egiten badu, Pikachu lehenetsi moduan erabili
-            all_pokemons = [{"izena": "Pikachu", "irudia": ""}]
-
-        fake_data = []
-        entrenadoreZerrenda = ["Ash", "Misty", "Brock", "Gary"]
-
-        for i, nombre in enumerate(entrenadoreZerrenda):
-            team_size = random.randint(3, 6)  # 3 eta 6 Pokémon arteko taldea
-            real_size = min(len(all_pokemons), team_size)
-            selected_pokemons = random.sample(all_pokemons, real_size)  # Ausaz aukeratu
-
-            pokemons_talde = []
-            for p in selected_pokemons:
-                pokemons_talde.append({
-                    "Pokemon_Izena": p['izena'],
-                    "Irudia": p['irudia'],
-                })
-
-            talde = {
-                "ErabiltzaileIzena": nombre,
-                "TaldeId": i + 1,
-                "Izena": f"{nombre}-(r)en taldea",
-                "Pokemon": pokemons_talde,
-            }
-            fake_data.append(talde)
-        return fake_data
-
     # Erabiltzaileak eta beren Pokémon-ak lortu (edo talde espezifiko bat)
     def get_users_with_pokemon(self, talde_id=None):
-        if self.cached_groups is None:
-            self.cached_groups = self._generate_new_groups()
-
         data = self.cached_groups
         if talde_id is not None:
             for g in data:

@@ -55,7 +55,7 @@ function konfiguratuBotLogika() {
             modalBody.innerHTML = '<p>Kargatzen...</p>';
 
             try {
-                const response = await fetch('/api/taldeak/list');
+                const response = await fetch(`/api/taldeak/erabiltzailea/${personaId}`);
                 const usuarios = await response.json();
 
                 const fixImg = (url) => {
@@ -64,40 +64,43 @@ function konfiguratuBotLogika() {
                 };
 
                 let html = `
-                <div class="selection-container">
-                    <h2 class="title-text">Aukeratu talde bat:</h2>
-                    <div class="trainers-grid">
+                <div class="poketop-container">
+                    <h2 class="poketop-title">Aukeratu talde bat:</h2>
+                    <div class="poketop-grid">
                 `;
 
                 usuarios.forEach((user, index) => {
-                    const backgrounds = [
-                        'linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%)',
-                        'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)',
-                        'linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)',
-                        'linear-gradient(135deg, #fccb90 0%, #d57eeb 100%)'
-                    ];
-                    const bgStyle = backgrounds[index % backgrounds.length];
 
-                    let pokemonsHtml = '<div class="mini-poke-grid">';
-                    if (user.Pokemon && user.Pokemon.length > 0) {
-                        user.Pokemon.forEach(p => {
-                            pokemonsHtml += `<img src="${fixImg(p.Irudia)}" class="mini-poke-img" alt="${p.Pokemon_Izena}">`;
-                        });
-                    }
-                    pokemonsHtml += '</div>';
+                const backgrounds = [
+                    'linear-gradient(135deg, #ffb3b3, #ffd6d6)',
+                    'linear-gradient(135deg, #c4b5fd, #e9d5ff)',
+                    'linear-gradient(135deg, #99f6e4, #cffafe)',
+                    'linear-gradient(135deg, #fdba74, #fed7aa)'
+                ];
 
-                    html += `
-                    <div class="trainer-card" style="background: ${bgStyle};" onclick="cargarMVP(${user.TaldeId})">
-                        <div class="team-name">TALDEA ${user.TaldeId}</div>
-                        ${pokemonsHtml}
-                    </div>`;
-                });
+                const bgStyle = backgrounds[index % backgrounds.length];
+
+                let pokemonsHtml = '<div class="poketop-pokemon-grid">';
+
+                if (user.pokemonak && user.pokemonak.length > 0) {
+                    user.pokemonak.forEach(p => {
+                        pokemonsHtml += `
+                            <div class="poketop-pokemon-circle">
+                                <img src="${fixImg(p.irudia)}" alt="${p.izena}">
+                            </div>
+                        `;
+                    });
+                }
+
+                pokemonsHtml += '</div>';
 
                 html += `
+                    <div class="poketop-card" style="background: ${bgStyle};" onclick="cargarMVP(${user.id})">
+                        <div class="poketop-card-title">${user.izena}</div>
+                        ${pokemonsHtml}
                     </div>
-                    <div id="mvp-result" style="margin-top:30px; width:100%;"></div>
-                </div>`;
-
+                `;
+            });
                 modalBody.innerHTML = html;
             } catch (error) {
                 modalBody.innerHTML = `<p style="color:red">Errorea: ${error.message}</p>`;
