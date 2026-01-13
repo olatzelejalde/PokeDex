@@ -351,7 +351,9 @@ def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
     def borrar_taldea(tid):
         try:
             taldeak_katalogo.ezabatu(tid)
-            #sgbd.intsigniaDu("Talde bat ezabatu", tid)
+            badu = intsignia_ctrl.intsigniaDu(session.get('user_id'), 'Talde bat ezabatu')
+            if not badu:
+                intsignia_ctrl.intsigniaGehitu(session.get('uid'), 'Talde bat')
             return jsonify({'message': 'Taldea ezabauta'})
         except Exception as e:
             return jsonify({'error': str(e)}), 4000
