@@ -9,7 +9,6 @@ from app.controller.model.mota_controller import MotaController
 from app.domain.intsignaKatalogoa import IntsignaKatalogoa
 from app.controller.model.espezie_controller import EspezieController
 from app.controller.model.mugimendu_controller import MugimenduController
-from app.controller.model.taldea_controller import TaldeaController
 from app.controller.model.pokemon_controller import PokemonController
 from app.services.telegram_service import TelegramService
 from app.controller.model.changelog_controller import ChangelogController

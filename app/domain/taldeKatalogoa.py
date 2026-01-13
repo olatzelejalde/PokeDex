@@ -6,14 +6,14 @@ from app.domain.taldea import Taldea
 
 @dataclass
 class TaldeKatalogoa:
-    taldeak: List[Taldea]
-    nireTalde: "TaldeKatalogoa"
-    db: object  # Conexión a BD
-
     def __init__(self, db=None):
-        self.taldeak = []
-        self.nireTalde = self
         self.db = db
+        self.taldeak: List[Taldea] = []
+        self.nireTalde = self
+
+    # ========================
+    # KATALOGOA METODOAK
+    # ========================
 
     def bilatu_by_id(self, tid: int) -> Optional[Taldea]:
         """Bilatu taldea IDren arabera"""
@@ -34,7 +34,9 @@ class TaldeKatalogoa:
         """Itzuli guztiak taldeak"""
         return self.taldeak
 
-    # ---- Métodos de negocio ----
+    # ========================
+    # kargatu from BD
+    # ========================
 
     def kargatu_from_bd(self) -> None:
         """Kargatu guztiak taldeak BDtik"""
@@ -49,14 +51,17 @@ class TaldeKatalogoa:
             )
             self.gehitu(taldea)
 
+    # ========================
+    # SORTU / EZABATU
+    # ========================
+
     def sortu(self, izena: str, erabiltzaile_id: int) -> Taldea:
         """Sortu talde berria"""
         taldea = Taldea.sortu(izena, erabiltzaile_id, self.db)
         self.gehitu(taldea)
 
-        #NOTIFIKAZIOA: Taldea sortu dela erregistratu
-        data_gaur= datetime.now().strftime("%Y-%m-%d %H:%M")
-        deskribapena= f"Talde berria sortu du: {izena}."
+        data_gaur = datetime.now().strftime("%Y-%m-%d %H:%M")
+        deskribapena = f"Talde berria sortu du: {izena}."
         self.db.insert(
             "INSERT INTO changelog (bertsioa, data, deskribapena, egilea) VALUES (?, ?, ?, ?)",
             ["TALDEA", data_gaur, deskribapena, str(erabiltzaile_id)]
@@ -68,6 +73,10 @@ class TaldeKatalogoa:
         if self.db:
             self.db.delete("DELETE FROM taldea WHERE id = ?", [tid])
         self.taldeak = [t for t in self.taldeak if t.id != tid]
+
+    # ========================
+    # POKEMON (TALDEAREN KONTROLA)
+    # ========================
 
     def get_pokemonak(self, tid: int) -> List[dict]:
         """Lortu taldearen pokemonak"""
@@ -82,8 +91,7 @@ class TaldeKatalogoa:
                    WHERE d.taldea_id = ?""",
                 [tid]
             )
-            result = [self._row_to_pokemon_dict(row) for row in rows]
-            return result
+            return [self._row_to_pokemon_dict(row) for row in rows]
         return []
 
     def gehitu_pokemon(self, tid: int, pid: int) -> None:
@@ -91,14 +99,12 @@ class TaldeKatalogoa:
         if not self.db:
             return
 
-        # Asegurar que el pokemon existe; si no, crearlo a partir de espeziea
         exists = self.db.select("SELECT id FROM pokemon WHERE id = ?", [pid])
         if not exists:
             espezie = self.db.select("SELECT id, izena FROM espeziea WHERE id = ?", [pid])
             if not espezie:
                 raise ValueError("Espeziea ez da existitzen")
             esp = espezie[0]
-            # Crear entrada mínima en pokemon con mismo id
             self.db.insert(
                 "INSERT INTO pokemon (id, espezie_izena, izena) VALUES (?, ?, ?)",
                 [esp['id'], esp['izena'], esp['izena']]
@@ -108,13 +114,15 @@ class TaldeKatalogoa:
             "INSERT INTO ditu (taldea_id, pokemon_id) VALUES (?, ?)",
             [tid, pid]
         )
-        # NOTIFIKAZIOA: Pokemona taldera gehitu dela erregistratu
-        data_gaur= datetime.now().strftime("%Y-%m-%d %H:%M")
-        deskribapena= f"Pokemona gehitu da taldera: {pid}."
+
+        data_gaur = datetime.now().strftime("%Y-%m-%d %H:%M")
+        deskribapena = f"Pokemona gehitu da taldera: {pid}."
 
         egilea = "unknown"
         try:
-            owner_rows = self.db.select("SELECT erabiltzaile_id FROM taldea WHERE id = ?", [tid])
+            owner_rows = self.db.select(
+                "SELECT erabiltzaile_id FROM taldea WHERE id = ?", [tid]
+            )
             if owner_rows:
                 egilea = str(owner_rows[0]["erabiltzaile_id"])
         except Exception:
@@ -132,33 +140,76 @@ class TaldeKatalogoa:
                 "DELETE FROM ditu WHERE taldea_id = ? AND pokemon_id = ?",
                 [tid, pid]
             )
-        # NOTIFIKAZIOA: Pokemona taldetik kendu dela erregistratu
-        data_gaur= datetime.now().strftime("%Y-%m-%d %H:%M")
-        deskribapena= f"Pokemona kendu da taldetik: {pid}."
+
+        data_gaur = datetime.now().strftime("%Y-%m-%d %H:%M")
+        deskribapena = f"Pokemona kendu da taldetik: {pid}."
 
         egilea = "unknown"
         try:
-            owner_rows = self.db.select("SELECT erabiltzaile_id FROM taldea WHERE id = ?", [tid])
+            owner_rows = self.db.select(
+                "SELECT erabiltzaile_id FROM taldea WHERE id = ?", [tid]
+            )
             if owner_rows:
                 egilea = str(owner_rows[0]["erabiltzaile_id"])
         except Exception:
             pass
+
         self.db.insert(
             "INSERT INTO changelog (bertsioa, data, deskribapena, egilea) VALUES (?, ?, ?, ?)",
             ["POKEMON", data_gaur, deskribapena, egilea]
         )
 
-    #def get_pokemonak(self, tid: int):
-    #    return self.db.select(
-    #        "SELECT p.id, p.izena FROM pokemon p JOIN ditu d ON d.pokemon_id = p.id WHERE d.taldea_id = ?",
-    #        [tid]
-    #    )
+    # ========================
+    # KONTROL METODOAK
+    # ========================
 
+    def get_by_user(self, uid):
+        rows = self.db.select("""
+            SELECT t.*, COUNT(tp.pokemon_id) as pokemon_kop
+            FROM taldea t
+            LEFT JOIN ditu tp ON t.id = tp.taldea_id
+            WHERE t.erabiltzaile_id = ?
+            GROUP BY t.id
+        """, [uid])
+        return [dict(row) for row in rows]
+
+    def get_pokemonak_controller(self, tid):
+        rows = self.db.select("""
+            SELECT p.*, e.mota1, e.mota2, e.irudia
+            FROM ditu tp
+            JOIN pokemon p ON tp.pokemon_id = p.id
+            JOIN espeziea e ON p.espezie_izena = e.izena
+            WHERE tp.taldea_id = ?
+        """, [tid])
+        return [dict(row) for row in rows]
+
+    def create(self, izena, uid):
+        return self.db.insert(
+            "INSERT INTO taldea (izena, erabiltzaile_id) VALUES (?, ?)",
+            [izena, uid]
+        )
+
+    def add_pokemon(self, tid, pid):
+        self.db.insert(
+            "INSERT OR IGNORE INTO ditu (taldea_id, pokemon_id) VALUES (?, ?)",
+            [tid, pid]
+        )
+
+    def delete(self, tid):
+        self.db.delete("DELETE FROM taldea WHERE id = ?", [tid])
+
+    def remove_pokemon(self, tid, pid):
+        self.db.delete(
+            "DELETE FROM ditu WHERE taldea_id = ? AND pokemon_id = ?",
+            [tid, pid]
+        )
+
+    # ========================
+    # LAGUNTZAILEAK
+    # ========================
 
     @staticmethod
     def _row_to_pokemon_dict(row) -> dict:
-        """Convierte una fila de pokemon a diccionario"""
-        # sqlite3.Row es dict-like, acceso directo con []
         try:
             return {
                 'id': row['id'],
@@ -174,8 +225,7 @@ class TaldeKatalogoa:
                 'abiadura': row['abiadura'],
                 'deskribapena': row['deskribapena']
             }
-        except (KeyError, TypeError) as e:
-            # Si falla, retornar dict vacío o con valores por defecto
+        except (KeyError, TypeError):
             return {
                 'id': None,
                 'izena': 'Unknown',
