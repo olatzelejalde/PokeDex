@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional, List
 
-from app.domain.taldea import Taldea
+from app.controller.model.taldea import Taldea
 
 @dataclass
 class Erabiltzailea:

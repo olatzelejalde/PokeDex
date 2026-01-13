@@ -3,6 +3,12 @@ class IntsignaKatalogoa:
         # Datu-basearen konexioa gordetzen du
         self.db = db
 
+    # ========================
+    # Intsignia bilaketa
+    # ========================
+
+    # Erabiltzaile baten intsigniak lortzen ditu,
+    # eta intsigna lortuta dagoen ala ez adierazten du
     def get_by_user(self, uid):
         """
         Erabiltzaile baten intsignia guztiak itzultzen ditu,
@@ -35,6 +41,10 @@ class IntsignaKatalogoa:
             [uid, badge_name, 0]  
         )
     
+    # ========================
+    # Intsignia kudeaketa
+    # ========================
+
     def intsigniaDu(self, uid, badge_name) -> bool:
         """
         Erabiltzaileak intsignia jakin bat lortuta duen ala ez egiaztatzen du.
@@ -46,6 +56,17 @@ class IntsignaKatalogoa:
                 return bool(b.get("lortua", 0))
         return False
     
+    #intsigna ez badu
+    def intsigniaGehitu(self, uid, badge_name) -> None:
+        """
+        Intsignia gehitu edo haren jarraipena eguneratzen du.
+        - Ez badago erregistratuta, sortzen du.
+        - Ondoren, jarraipena handitzen du.
+        """
+        if not self.intsigniaDu(uid, badge_name) and not self.existitzenDa(uid, badge_name):    
+            self.award(uid, badge_name)
+        self.jarraipenaEguneratu(uid, badge_name)
+
     def jarraipenaEguneratu(self, uid, badge_name) -> None:
         """
         Erabiltzailearen intsigniaren jarraipena handitzen du.
@@ -71,13 +92,3 @@ class IntsignaKatalogoa:
             [uid, badge_name]
         )
         return bool(row)
-    
-    def intsigniaGehitu(self, uid, badge_name) -> None:
-        """
-        Intsignia gehitu edo haren jarraipena eguneratzen du.
-        - Ez badago erregistratuta, sortzen du.
-        - Ondoren, jarraipena handitzen du.
-        """
-        if not self.intsigniaDu(uid, badge_name) and not self.existitzenDa(uid, badge_name):    
-            self.award(uid, badge_name)
-        self.jarraipenaEguneratu(uid, badge_name)

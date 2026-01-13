@@ -1,15 +1,15 @@
-from app.domain import taldea
+from app.controller.model import taldea
 from flask import Blueprint, jsonify, request, session
 from flask import Blueprint, jsonify, request, session, render_template
 import logging
 import os
-from app.domain.erabiltzaileKatalogoa import ErabiltzaileKatalogoa
-from app.domain.taldeKatalogoa import TaldeKatalogoa
-from app.domain.motaKatalogoa import MotaKatalogoa
-from app.domain.intsignaKatalogoa import IntsignaKatalogoa
-from app.domain.espezieKatalogoa import EspezieKatalogoa
-from app.domain.mugimenduKatalogoa import MugimenduKatalogoa
-from app.domain.pokemonKatalogoa import PokemonKatalogoa
+from app.controller.model.erabiltzaileKatalogoa import ErabiltzaileKatalogoa
+from app.controller.model.taldeKatalogoa import TaldeKatalogoa
+from app.controller.model.motaKatalogoa import MotaKatalogoa
+from app.controller.model.intsignaKatalogoa import IntsignaKatalogoa
+from app.controller.model.espezieKatalogoa import EspezieKatalogoa
+from app.controller.model.mugimenduKatalogoa import MugimenduKatalogoa
+from app.controller.model.pokemonKatalogoa import PokemonKatalogoa
 from app.services.telegram_service import TelegramService
 from app.controller.model.changelog_controller import ChangelogController
 

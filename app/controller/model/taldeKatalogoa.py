@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import List, Optional
 from datetime import datetime
 
-from app.domain.taldea import Taldea
+from app.controller.model.taldea import Taldea
 
 @dataclass
 class TaldeKatalogoa:

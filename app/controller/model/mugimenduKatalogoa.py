@@ -5,6 +5,11 @@ class MugimenduKatalogoa:
     def __init__(self, db):
         self.db = db
 
+    # ========================
+    # Mugimendu bilaketa
+    # ========================
+
+    # espezie izena bidez mugimenduak lortzen ditu
     def get_by_espezie(self, espezie_izena):
         rows = self.db.select("""
             SELECT m.* FROM mugimendua m

@@ -22,13 +22,22 @@ class EspezieKatalogoa:
     def __init__(self, db):
         self.db = db
 
+    # ========================
+    # Espezie bilaketa
+    # ========================
+
+    # Espezie guztiak lortzen ditu
     def get_all(self):
         return [dict(row) for row in self.db.select("SELECT * FROM espeziea ORDER BY izena")]
 
+    # Izena bidez espezie bat lortzen du
     def get_by_name(self, izena):
         rows = self.db.select("SELECT * FROM espeziea WHERE LOWER(izena) = LOWER(?)", [izena])
         return dict(rows[0]) if rows else None
 
+    # ========================
+    # SORTU
+    # ========================
     def create(self, izena, mota1, mota2, osasuna, atakea, defentsa,
                atake_berezia, defentsa_berezia, abiadura, irudia, deskribapena=None):
         if not izena or not mota1:
@@ -40,6 +49,10 @@ class EspezieKatalogoa:
             [izena, mota1, mota2, osasuna, atakea, defentsa,
              atake_berezia, defentsa_berezia, abiadura, irudia, deskribapena]
         )
+    
+    # ========================
+    # Kontzultak
+    # ========================
 
     # Moten arteko eraginkortasuna kalkulatu (ahuleziak eta indarrak)
     def get_type_effectiveness(self, pokemon_name):

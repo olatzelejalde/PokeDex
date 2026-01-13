@@ -4,7 +4,7 @@ import sqlite3
 from flask_cors import CORS
 from flask import Flask, render_template, redirect, request, flash, session, url_for
 
-from app.domain.erabiltzaileKatalogoa import ErabiltzaileKatalogoa
+from app.controller.model.erabiltzaileKatalogoa import ErabiltzaileKatalogoa
 from app.controller.ui.bistaKontroladorea import register_all_routes
 from app.database.connection import Connection
 from config import Config

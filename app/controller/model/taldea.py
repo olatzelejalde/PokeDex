@@ -11,6 +11,7 @@ class Taldea:
         self.izena = izena
         self.erabiltzaile_id = erabiltzaile_id
 
+    # talde berria sortzen du DBan
     @staticmethod
     def sortu(izena: str, erabiltzaile_id: int, db=None) -> "Taldea":
         """Sortu talde berria DBan"""

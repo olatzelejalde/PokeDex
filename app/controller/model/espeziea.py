@@ -1,8 +1,6 @@
 from dataclasses import dataclass
 from typing import List
 
-from app.domain.mugimendua import Mugimendua
-
 @dataclass
 class Espeziea:
     # Espeziearen oinarrizko informazioa
@@ -12,9 +10,6 @@ class Espeziea:
 
     # Espeziearen motak (sua, belarra...)
     motaZer: List[str]
-
-    # Espezieak erabil ditzakeen mugimenduak
-    mugimenduZer: List["Mugimendua"]
 
     # Oinarrizko estatistikak
     osasuna: int
@@ -28,8 +23,7 @@ class Espeziea:
     eboluzioak: List[str]
 
     def __init__(self, izena: str, irudia: str, deskripzioa: str,
-                 motaZer: List[str], mugimenduZer: List["Mugimendua"],
-                 osasuna: int, erasoa: int, defentsa: int,
+                 motaZer: List[str],osasuna: int, erasoa: int, defentsa: int,
                  erasoBerezia: int, defentsaBerezia: int,
                  abiadura: int, eboluzioak: List[str]):
         #  Oinarrizko informazioa esleitzen du
@@ -39,7 +33,6 @@ class Espeziea:
 
         # Motak eta mugimenduak
         self.motaZer = motaZer
-        self.mugimenduZer = mugimenduZer
 
         # Estatistikak
         self.osasuna = osasuna
