@@ -27,7 +27,7 @@ function erakutsiLagunak() {
     if (miLagunak.length === 0) {
         zona.innerHTML = `
             <div class="no-lagunak" style="grid-column: 1 / -1; text-align: center; padding: 40px;">
-                <h3>Ez duzu lagunrik oraindik</h3>
+                <h3>Ez duzu lagunik oraindik</h3>
                 <p>Bilatu erabiltzaileak eta gehitu lagunak!</p>
             </div>
         `;
@@ -160,3 +160,21 @@ function erakutsiResultadosBusqueda(erabiltzaileak) {
         zona.appendChild(txartela);
     });
 }
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    const searchButton = document.getElementById('search-users-button');
+    const searchInput = document.getElementById('user-search');
+    
+    if (searchButton) {
+        searchButton.addEventListener('click', bilatuErabiltzaileak);
+    }
+    
+    if (searchInput) {
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                bilatuErabiltzaileak();
+            }
+        });
+    }
+});

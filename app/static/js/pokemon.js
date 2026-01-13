@@ -166,6 +166,7 @@ async function erakutsiPokemonXehetasunak(pokemon, pokemonList = null) {
                     <span>${pokemon.abiadura}</span>
                 </div>
             </div>
+            ${gehituBtn}
         </div>
     `;
     modal.style.display = 'block';
