@@ -7,11 +7,14 @@ from app.domain.erabiltzailea import Erabiltzailea
 class ErabiltzaileKatalogoa:
     erabiltzaileak: List[Erabiltzailea]
     nireErabiltzaileak: "ErabiltzaileKatalogoa"
-    db: object  # Conexión a BD
+    db: object  # DB-ra konexioa
 
     def __init__(self, db=None):
+        # Erabiltzaileen zerrenda hasieratzen du
         self.erabiltzaileak = []
+        # Bere burua erreferentziatzat gordetzen du
         self.nireErabiltzaileak = self
+        # Datu-basearen erreferentzia
         self.db = db
 
     def bilatu_by_id(self, uid: int) -> Optional[Erabiltzailea]:
@@ -33,10 +36,10 @@ class ErabiltzaileKatalogoa:
         self.erabiltzaileak.append(erabiltzailea)
 
     def guztiak(self) -> List[Erabiltzailea]:
-        """Itzuli guztiak erabiltzaileak"""
+        """Erabiltzaile guztiak itzultzen ditu"""
         return self.erabiltzaileak
     
-    # ---- Métodos de negocio ----
+    # ---- Negozio-logikako metodoak ----
     
     def erabiltzaileak_kargatu(self) -> None:
         """Erabiltzaile guztiak kargatu BDtik"""
@@ -47,6 +50,7 @@ class ErabiltzaileKatalogoa:
             user = self._row_to_user(row)
             self.gehitu(user)
 
+        #lagunen erlazioak kargatzen ditu
         lagunak_rows = self.db.select("SELECT * FROM lagunak")
         for row in lagunak_rows:
             user1 = self.bilatu_by_id(row['erabiltzaile1_id'])
@@ -57,7 +61,10 @@ class ErabiltzaileKatalogoa:
     
     def sortu(self, izena: str, abizena: str, erabilIzena: str, 
               pasahitza: str, pasahitza2: str, telegramKontua: str = None) -> Erabiltzailea:
-        """Crea un nuevo usuario usando el método del dominio"""
+        """
+        Erabiltzaile berri bat sortzen du
+        domeinuko metodoa erabiliz
+        """
         user = Erabiltzailea.sortu(
             izena, abizena, erabilIzena, pasahitza, pasahitza2, 
             telegramKontua, self.db
@@ -66,7 +73,7 @@ class ErabiltzaileKatalogoa:
         return user
     
     def actualizar(self, uid: int, data: dict) -> Erabiltzailea:
-        """Actualiza un usuario"""
+        """Erabiltzaile baten datuak eguneratzen ditu"""
         user = self.bilatu_by_id(uid)
         if not user:
             raise ValueError("Erabiltzailea ez da existitzen")
@@ -74,6 +81,7 @@ class ErabiltzaileKatalogoa:
         updates = []
         params = []
         
+        # Aldaketak prestatzen ditu
         if 'izena' in data:
             updates.append('izena = ?')
             params.append(data['izena'])
@@ -97,7 +105,8 @@ class ErabiltzaileKatalogoa:
         
         if not updates:
             raise ValueError("Ez dago aldaketarik gordetzeko")
-        
+
+        # Datu-basean eguneratzen du
         if self.db:
             params.append(uid)
             query = f"UPDATE erabiltzailea SET {', '.join(updates)} WHERE id = ?"
@@ -106,13 +115,13 @@ class ErabiltzaileKatalogoa:
         return user
     
     def login(self, erabilIzena: str, pasahitza: str) -> Optional[Erabiltzailea]:
-        """Autentica un usuario"""
+        """Erabiltzailea autentifikatzen du"""
         user = self.bilatu_by_erabilIzena(erabilIzena)
         if user and user.pasahitza == pasahitza:
             return user
         return None
     
-    # ---- Métodos de amigos ----
+    # ---- Lagunen metodoak ----
     def lortu_lagunak(self, uid: int, telegram_du: bool) -> List[Erabiltzailea]:
         user = self.bilatu_by_id(uid)
         if not user:
@@ -122,10 +131,11 @@ class ErabiltzaileKatalogoa:
         return lagunak
     
     def gehitu_laguna(self, uid1: int, uid2: int) -> None:
-        """Añade una amistad entre dos usuarios"""
+        """Bi erabiltzaileen arteko adiskidetasuna sortzen du"""
         if uid1 == uid2:
             raise ValueError("Ezin duzu zeure buruari laguna egin")
-        
+
+        # Ordena normalizatzen du
         if uid1 > uid2:
             uid1, uid2 = uid2, uid1
         
@@ -136,7 +146,8 @@ class ErabiltzaileKatalogoa:
 
         user.gehitu_laguna(lagun)
         lagun.gehitu_laguna(user)
-
+        
+        # Datu-basean gordetzen du
         if self.db:
             rows = self.db.select(
                 "SELECT 1 FROM lagunak WHERE erabiltzaile1_id = ? AND erabiltzaile2_id = ?",
@@ -151,7 +162,7 @@ class ErabiltzaileKatalogoa:
             )
     
     def kendu_laguna(self, uid1: int, uid2: int) -> None:
-        """Elimina una amistad entre dos usuarios"""
+        """Bi erabiltzaileen arteko adiskidetasuna ezabatzen du"""
         if uid1 > uid2:
             uid1, uid2 = uid2, uid1
         
@@ -170,7 +181,10 @@ class ErabiltzaileKatalogoa:
             )
     
     def bilatu_erabiltzaileak_by_nombre(self, izena: str) -> List[Erabiltzailea]:
-        """Busca usuarios por nombre de usuario o nombre"""
+        """
+        Erabiltzaileak bilatzen ditu
+        erabiltzaile-izenaren edo izenaren arabera
+        """
         return [
             u for u in self.erabiltzaileak
             if izena.lower() in u.erabiltzaileIzena.lower() or
@@ -179,9 +193,9 @@ class ErabiltzaileKatalogoa:
     
     def lotu_telegram_chat_id(self, chat_id: int, telegram_username: Optional[str] = None, erabilIzena: Optional[str] = None) -> Optional[Erabiltzailea]:
         """
-        Vincula chat_id cuando el usuario hace /start en el bot.
-        - Si viene /start <erabilIzena>, vincula por erabilIzena (recomendado).
-        - Si no, intenta vincular por telegram_username contra telegramKontua.
+        Telegram bot-ean /start egitean chat_id-a lotzen du.
+        - /start <erabilIzena> badator, erabiltzaile-izenaren bidez lotzen du.
+        - Bestela, telegram erabiltzaile-izenaren bidez saiatzen da.
         """
         if not self.db:
             return None
@@ -215,7 +229,7 @@ class ErabiltzaileKatalogoa:
 
         updated = self._row_to_user(row)
 
-        # sincroniza memoria (si ya estaba cargado)
+        # Memoria sinkronizatzen du (lehendik kargatuta bazegoen)
         existing = self.bilatu_by_id(updated.id)
         if existing:
             existing.telegramKontua = updated.telegramKontua
@@ -227,7 +241,7 @@ class ErabiltzaileKatalogoa:
 
     @staticmethod
     def _row_to_user(row) -> Erabiltzailea:
-        """Convierte una fila de BD a objeto Erabiltzailea"""
+        """Datu-baseko errenkada bat Erabiltzailea objektu bihurtzen du"""
         return Erabiltzailea(
             id=row['id'],
             izena=row['izena'],
