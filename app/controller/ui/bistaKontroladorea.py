@@ -321,8 +321,11 @@ def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
     def pokemon_de_taldea(tid):
         return jsonify(taldeak_katalogo.get_pokemonak(tid))
 
-    @taldeak_bp.route('/taldeak', methods=['POST'])
-    def crear_taldea():
+    @taldeak_bp.route('/taldeak/<int:uid>', methods=['POST'])
+    def crear_taldea(uid):
+        badu = intsignia_ctrl.intsigniaDu(uid, "5 talde sortu")
+        if not badu:
+            intsignia_ctrl.intsigniaGehitu(uid, "5 talde sortu")
         data = request.get_json()
         try:
             taldea = taldeak_katalogo.sortu(data['izena'], data['erabiltzaile_id'])
@@ -351,11 +354,13 @@ def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
         except Exception as e:
             return jsonify({'error': str(e)}), 400
 
-    @taldeak_bp.route('/taldeak/<int:tid>', methods=['DELETE'])
-    def borrar_taldea(tid):
+    @taldeak_bp.route('/taldeak/<int:tid>/<int:uid>', methods=['DELETE'])
+    def borrar_taldea(tid, uid):
         try:
             taldeak_katalogo.ezabatu(tid)
-            #sgbd.intsigniaDu("Talde bat ezabatu", tid)
+            badu = intsignia_ctrl.intsigniaDu(uid, "Talde bat ezabatu")
+            if not badu:
+                intsignia_ctrl.intsigniaGehitu(uid, "Talde bat ezabatu")
             return jsonify({'message': 'Taldea ezabauta'})
         except Exception as e:
             return jsonify({'error': str(e)}), 4000
@@ -375,6 +380,23 @@ def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
             }
         return jsonify(_taldea_to_dict(taldea))
 
+    @taldeak_bp.route('/taldeak/edit/<int:tid>/<int:uid>', methods=['GET'])
+    def editatu_taldea(tid, uid):
+        badu = intsignia_ctrl.intsigniaDu(uid, "Talde bat editatu")
+        if not badu:
+            intsignia_ctrl.intsigniaGehitu(uid, "Talde bat editatu")
+        taldea = taldeak_katalogo.bilatu_by_id(tid)
+        if not taldea:
+            return jsonify({'error': 'Taldea ez da existitzen'}), 404
+
+        def _taldea_to_dict(taldea):
+            return {
+                'id': taldea.id,
+                'izena': taldea.izena,
+                'erabiltzaile_id': taldea.erabiltzaile_id,
+                'pokemonak': taldeak_katalogo.get_pokemonak(taldea.id)
+            }
+        return jsonify(_taldea_to_dict(taldea))
 
     @taldeak_bp.route('/taldeak/<int:tid>/partekatu/<int:user_id>/<int:lagun_id>', methods=['POST'])
     def partekatu_taldea(tid, user_id, lagun_id):

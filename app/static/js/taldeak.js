@@ -201,7 +201,7 @@ async function ezabatuTaldea(taldeId) {
         return;
     }
     try {
-        const res = await fetch(`${API_BASE_URL}/taldeak/${taldeId}`, {
+        const res = await fetch(`${API_BASE_URL}/taldeak/${taldeId}/${user.id}`, {
             method: 'DELETE'
         });
         if (res.ok) {
@@ -218,7 +218,7 @@ async function ezabatuTaldea(taldeId) {
 async function editatuTaldea(taldeId) {
     //alert('Taldearen editatzea oraindik ez dago martxan.');
     try {
-        const res = await fetch(`${API_BASE_URL}/taldeak/${taldeId}`);
+        const res = await fetch(`${API_BASE_URL}/taldeak/edit/${taldeId}/${user.id}`);
         if (!res.ok) {
             alert('Errorea taldea kargatzean');
             return;
@@ -286,7 +286,7 @@ async function sortuTaldea() {
         return;
     }
     try {
-        const res = await fetch(`${API_BASE_URL}/taldeak`, {
+        const res = await fetch(`${API_BASE_URL}/taldeak/${user.id}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ izena: izena, erabiltzaile_id: user.id })
