@@ -95,7 +95,8 @@ function bilatuPokemon() {
     erakutsiPokemon(iragazitakoPokemon);
 }
 
-function erakutsiPokemonXehetasunak(pokemon) {
+async function erakutsiPokemonXehetasunak(pokemon) {
+    const response = await fetch (`${API_BASE_URL}/pokemon/${user.id}/kontsultatu`)
     const modal = document.getElementById('pokemon-modal');
     const xehetasunak = document.getElementById('pokemon-xehetasunak');
     const motaKlasea1 = lortuMotaKlasea(pokemon.mota);

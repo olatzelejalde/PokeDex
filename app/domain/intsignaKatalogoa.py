@@ -12,7 +12,7 @@ class IntsignaKatalogoa:
                 i.deskripzioa, 
                 i.helburua,
                 COALESCE(ei.jarraipena, 0) as jarraipena,
-                CASE WHEN ei.intsignia_izena IS NOT NULL THEN 1 ELSE 0 END as lortua
+                CASE WHEN COALESCE(ei.jarraipena, 0) >= i.helburua THEN 1 ELSE 0 END as lortua
             FROM intsignia i
             LEFT JOIN erabiltzaileak_intsigniak ei 
                 ON i.izena = ei.intsignia_izena AND ei.erabiltzaile_id = ?
@@ -33,23 +33,47 @@ class IntsignaKatalogoa:
         )
     
     def intsigniaDu(self, uid, badge_name) -> bool:
-        """Erabiltzailek intsignia duen konprobatu"""
-        rows = self.db.select(
+        helburua = self.db.select(
             """
-            SELECT 1 FROM erabiltzaileak_intsigniak 
+            SELECT helburua FROM intsignia
+            WHERE izena = ?
+            """,
+            [badge_name]
+        )
+        jarraipena = self.db.select(
+            """
+            SELECT jarraipena FROM erabiltzaileak_intsigniak
+            WHERE intsignia_izena = ? AND erabiltzaile_id = ?
+            """,
+            [badge_name, uid]
+        )
+        if helburua == jarraipena:
+            return True
+        return False
+    
+    def jarraipenaEguneratu(self, uid, badge_name) -> None:
+        """Erabiltzailearen intsigniaren jarraipena eguneratu"""
+        self.db.update(
+            """
+            UPDATE erabiltzaileak_intsigniak
+            SET jarraipena = jarraipena + 1
             WHERE erabiltzaile_id = ? AND intsignia_izena = ?
             """,
             [uid, badge_name]
         )
-        return len(rows) > 0
+    
+    def existitzenDa(self, uid, badge_name) -> bool:
+        """Egiaztatu erabiltzaileak intsignia bat duen"""
+        row = self.db.select(
+            """
+            SELECT 1 FROM erabiltzaileak_intsigniak
+            WHERE erabiltzaile_id = ? AND intsignia_izena = ?
+            """,
+            [uid, badge_name]
+        )
+        return bool(row)
     
     def intsigniaGehitu(self, uid, badge_name) -> None:
-        """Erabiltzaileari intsignia gehitu"""
-        if not self.intsigniaDu(uid, badge_name):
-            self.db.insert(
-                """
-                INSERT INTO erabiltzaileak_intsigniak (erabiltzaile_id, intsignia_izena, jarraipena)
-                VALUES (?, ?, ?)
-                """,
-                [uid, badge_name, 1]
-            )
+        if not self.intsigniaDu(uid, badge_name) and not self.existitzenDa(uid, badge_name):    
+            self.award(uid, badge_name)
+        self.jarraipenaEguneratu(uid, badge_name)

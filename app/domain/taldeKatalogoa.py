@@ -75,7 +75,7 @@ class TaldeKatalogoa:
             rows = self.db.select(
                 """SELECT p.id, p.izena, e.irudia, e.mota1 as mota, e.mota2,
                           e.osasuna as hp, e.atakea, e.defentsa, 
-                          e.atake_berezia, e.defentsa_berezia, e.abiadura
+                          e.atake_berezia, e.defentsa_berezia, e.abiadura, e.deskribapena
                    FROM pokemon p
                    JOIN ditu d ON p.id = d.pokemon_id
                    JOIN espeziea e ON p.espezie_izena = e.izena
@@ -83,9 +83,6 @@ class TaldeKatalogoa:
                 [tid]
             )
             result = [self._row_to_pokemon_dict(row) for row in rows]
-            print(f"DEBUG: get_pokemonak({tid}) returned {len(result)} pokemon")
-            if result:
-                print(f"DEBUG: First pokemon: {result[0]}")
             return result
         return []
 
@@ -135,6 +132,21 @@ class TaldeKatalogoa:
                 "DELETE FROM ditu WHERE taldea_id = ? AND pokemon_id = ?",
                 [tid, pid]
             )
+        # NOTIFIKAZIOA: Pokemona taldetik kendu dela erregistratu
+        data_gaur= datetime.now().strftime("%Y-%m-%d %H:%M")
+        deskribapena= f"Pokemona kendu da taldetik: {pid}."
+
+        egilea = "unknown"
+        try:
+            owner_rows = self.db.select("SELECT erabiltzaile_id FROM taldea WHERE id = ?", [tid])
+            if owner_rows:
+                egilea = str(owner_rows[0]["erabiltzaile_id"])
+        except Exception:
+            pass
+        self.db.insert(
+            "INSERT INTO changelog (bertsioa, data, deskribapena, egilea) VALUES (?, ?, ?, ?)",
+            ["POKEMON", data_gaur, deskribapena, egilea]
+        )
 
     #def get_pokemonak(self, tid: int):
     #    return self.db.select(
@@ -159,7 +171,8 @@ class TaldeKatalogoa:
                 'defentsa': row['defentsa'],
                 'atake_berezia': row['atake_berezia'],
                 'defentsa_berezia': row['defentsa_berezia'],
-                'abiadura': row['abiadura']
+                'abiadura': row['abiadura'],
+                'deskribapena': row['deskribapena']
             }
         except (KeyError, TypeError) as e:
             # Si falla, retornar dict vacío o con valores por defecto

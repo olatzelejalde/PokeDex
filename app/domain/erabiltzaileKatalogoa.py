@@ -17,7 +17,7 @@ class ErabiltzaileKatalogoa:
     def bilatu_by_id(self, uid: int) -> Optional[Erabiltzailea]:
         """Bilatu erabiltzailea IDren arabera"""
         for erabiltzailea in self.erabiltzaileak:
-            if erabiltzailea.id == uid:
+            if erabiltzailea.erabiltzaileaDa(uid):
                 return erabiltzailea
         return None
 
@@ -118,9 +118,7 @@ class ErabiltzaileKatalogoa:
         if not user:
             return []
         
-        lagunak = user.lagunZer.copy()
-        if telegram_du:
-            lagunak = [u for u in lagunak if u.telegramKontua and u.chat_id]
+        lagunak = user.getLagunZerrenda(telegram_du)
         return lagunak
     
     def gehitu_laguna(self, uid1: int, uid2: int) -> None:

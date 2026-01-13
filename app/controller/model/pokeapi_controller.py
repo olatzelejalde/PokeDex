@@ -10,6 +10,9 @@ def fetch_pokemon_data(pokemon_name):
     species = requests.get(f"{POKEAPI_BASE_URL}/pokemon-species/{pokemon_name}").json()
     pokemon = requests.get(f"{POKEAPI_BASE_URL}/pokemon/{pokemon_name}").json()
 
+    chain_url = species['evolution_chain']['url']
+    chain_id = int(chain_url.split('/')[-2])
+
     flavor = next(
         (f['flavor_text'] for f in species['flavor_text_entries']
          if f['language']['name'] == 'es'), ""
@@ -32,5 +35,17 @@ def fetch_pokemon_data(pokemon_name):
         'defentsa_berezia': stats.get('special-defense', 0),
         'abiadura': stats.get('speed', 0),
         'irudia': pokemon['sprites']['front_default'],
-        'deskribapena': flavor
+        'deskribapena': flavor,
+        'eboluzio_chain_id': chain_id
+    }
+def fetch_type_effectiveness(type_name):
+    url = f"https://pokeapi.co/api/v2/type/{type_name}"
+    res = requests.get(url).json()
+
+    damage_relations = res['damage_relations']
+
+    return {
+        'double_damage_from': [t['name'] for t in damage_relations['double_damage_from']],
+        'half_damage_from': [t['name'] for t in damage_relations['half_damage_from']],
+        'no_damage_from': [t['name'] for t in damage_relations['no_damage_from']]
     }

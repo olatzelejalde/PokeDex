@@ -55,7 +55,7 @@ function konfiguratuBotLogika() {
             modalBody.innerHTML = '<p>Kargatzen...</p>';
 
             try {
-                const response = await fetch('/api/taldeak/list');
+                const response = await fetch(`/api/taldeak/erabiltzailea/${personaId}`);
                 const usuarios = await response.json();
 
                 const fixImg = (url) => {
@@ -64,39 +64,50 @@ function konfiguratuBotLogika() {
                 };
 
                 let html = `
-                <div class="selection-container">
-                    <h2 class="title-text">Aukeratu talde bat:</h2>
-                    <div class="trainers-grid">
+                <div class="poketop-container">
+                    <h2 class="poketop-title">Aukeratu talde bat:</h2>
+                    <div class="poketop-grid">
                 `;
 
                 usuarios.forEach((user, index) => {
-                    const backgrounds = [
-                        'linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%)',
-                        'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)',
-                        'linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)',
-                        'linear-gradient(135deg, #fccb90 0%, #d57eeb 100%)'
-                    ];
-                    const bgStyle = backgrounds[index % backgrounds.length];
 
-                    let pokemonsHtml = '<div class="mini-poke-grid">';
-                    if (user.Pokemon && user.Pokemon.length > 0) {
-                        user.Pokemon.forEach(p => {
-                            pokemonsHtml += `<img src="${fixImg(p.Irudia)}" class="mini-poke-img" alt="${p.Pokemon_Izena}">`;
-                        });
-                    }
-                    pokemonsHtml += '</div>';
+                const backgrounds = [
+                    'linear-gradient(135deg, #ffb3b3, #ffd6d6)',
+                    'linear-gradient(135deg, #c4b5fd, #e9d5ff)',
+                    'linear-gradient(135deg, #99f6e4, #cffafe)',
+                    'linear-gradient(135deg, #fdba74, #fed7aa)'
+                ];
 
-                    html += `
-                    <div class="trainer-card" style="background: ${bgStyle};" onclick="cargarMVP(${user.TaldeId})">
-                        <div class="team-name">TALDEA ${user.TaldeId}</div>
-                        ${pokemonsHtml}
-                    </div>`;
-                });
+                const bgStyle = backgrounds[index % backgrounds.length];
+
+                let pokemonsHtml = '<div class="poketop-pokemon-grid">';
+
+                if (user.pokemonak && user.pokemonak.length > 0) {
+                    user.pokemonak.forEach(p => {
+                        pokemonsHtml += `
+                            <div class="poketop-pokemon-circle">
+                                <img src="${fixImg(p.irudia)}" alt="${p.izena}">
+                            </div>
+                        `;
+                    });
+                }
+
+                pokemonsHtml += '</div>';
 
                 html += `
+                    <div class="poketop-card"
+                         style="background: ${bgStyle};"
+                         onclick="cargarMVP(${user.id}, '${user.izena}')">
+                        <div class="poketop-card-title">${user.izena}</div>
+                        ${pokemonsHtml}
                     </div>
-                    <div id="mvp-result" style="margin-top:30px; width:100%;"></div>
-                </div>`;
+                `;
+            });
+            html += `
+                </div>
+                <div id="mvp-result" style="margin-top:40px; width:100%;"></div>
+            </div>
+            `;
 
                 modalBody.innerHTML = html;
             } catch (error) {
@@ -205,13 +216,19 @@ async function renderPokemonList(containerId, modo) {
     }
 }
 
-async function cargarMVP(taldeId) {
+async function cargarMVP(taldeId, taldeIzena) {
+    console.log('cargarMVP llamada con:', taldeId);
     const divResultado = document.getElementById('mvp-result');
     divResultado.innerHTML = '<p style="text-align:center;">Kalkulatzen...</p>';
 
     try {
         const response = await fetch(`/api/taldeak/${taldeId}/mvp`);
-        const pokemon = await response.json();
+        let pokemon = await response.json();
+
+        if (Array.isArray(pokemon)) {
+            pokemon = pokemon[0];
+        }
+
 
         if (!pokemon || !pokemon.Izena) {
             divResultado.innerHTML = "<p style='text-align:center; color:red;'>Ez da pokemonik aurkitu.</p>";
@@ -240,7 +257,8 @@ async function cargarMVP(taldeId) {
                 box-shadow: 0 4px 10px rgba(0,0,0,0.15);
             ">
                 <div style="text-align: center; margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 10px;">
-                    <h2 style="margin: 0; font-size: 18px; color: #444; text-transform: uppercase;">TALDEA ${taldeId}</h2>
+                    <h2 style="margin: 0; font-size: 18px; color: #444; text-transform: uppercase;"> ${taldeIzena}</h2>
+
                     <h1 style="margin: 0; font-size: 22px; color: #D32F2F; font-weight: 800; letter-spacing: 1px;">POKETOP</h1>
                 </div>
 
