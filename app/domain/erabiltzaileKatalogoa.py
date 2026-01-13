@@ -1,56 +1,60 @@
-from dataclasses import dataclass
 from typing import List, Optional
+from dataclasses import dataclass
 
 from app.domain.erabiltzailea import Erabiltzailea
 
-@dataclass
+
 class ErabiltzaileKatalogoa:
-    erabiltzaileak: List[Erabiltzailea]
-    nireErabiltzaileak: "ErabiltzaileKatalogoa"
-    db: object  # DB-ra konexioa
 
-    def __init__(self, db=None):
-        # Erabiltzaileen zerrenda hasieratzen du
-        self.erabiltzaileak = []
-        # Bere burua erreferentziatzat gordetzen du
-        self.nireErabiltzaileak = self
-        # Datu-basearen erreferentzia
+    def __init__(self, db):
         self.db = db
+        self.erabiltzaileak: List[Erabiltzailea] = []
+        self.nireErabiltzaileak = self
+        self._load_katalogoa()
 
-    def bilatu_by_id(self, uid: int) -> Optional[Erabiltzailea]:
-        """Bilatu erabiltzailea IDren arabera"""
-        for erabiltzailea in self.erabiltzaileak:
-            if erabiltzailea.erabiltzaileaDa(uid):
-                return erabiltzailea
-        return None
+    # ========================
+    # MAPPERS
+    # ========================
 
-    def bilatu_by_erabilIzena(self, erabilIzena: str) -> Optional[Erabiltzailea]:
-        """Bilatu erabiltzailea erabiltzaile izenaren arabera"""
-        for erabiltzailea in self.erabiltzaileak:
-            if erabiltzailea.erabiltzaileIzena == erabilIzena:
-                return erabiltzailea
-        return None
+    def _row_to_user(self, row) -> Erabiltzailea:
+        return Erabiltzailea(
+            id=row['id'],
+            izena=row['izena'],
+            abizena=row['abizena'],
+            erabiltzaileIzena=row['erabilIzena'],
+            pasahitza=row['pasahitza'],
+            rola=row['rola'],
+            telegramKontua=row['telegramKontua'],
+            chat_id=row['chat_id']
+        )
 
-    def gehitu(self, erabiltzailea: Erabiltzailea) -> None:
-        """Gehitu erabiltzailea katalogoan"""
-        self.erabiltzaileak.append(erabiltzailea)
+    def _user_to_dict(self, u: Erabiltzailea) -> dict:
+        return {
+            'id': u.id,
+            'izena': u.izena,
+            'abizena': u.abizena,
+            'erabiltzaileIzena': u.erabiltzaileIzena,
+            'telegramKontua': u.telegramKontua or '',
+            'rola': u.rola,
+        }
 
-    def guztiak(self) -> List[Erabiltzailea]:
-        """Erabiltzaile guztiak itzultzen ditu"""
-        return self.erabiltzaileak
-    
-    # ---- Negozio-logikako metodoak ----
-    
-    def erabiltzaileak_kargatu(self) -> None:
-        """Erabiltzaile guztiak kargatu BDtik"""
-        if not self.db:
-            return
+    # ========================
+    # kargatu from BD
+    # ========================
+
+    def _load_katalogoa(self):
         rows = self.db.select("SELECT * FROM erabiltzailea")
         for row in rows:
-            user = self._row_to_user(row)
-            self.gehitu(user)
+            self.gehitu(self._row_to_user(row))
 
-        #lagunen erlazioak kargatzen ditu
+    def erabiltzaileak_kargatu(self) -> None:
+        if not self.db:
+            return
+
+        rows = self.db.select("SELECT * FROM erabiltzailea")
+        for row in rows:
+            self.gehitu(self._row_to_user(row))
+
         lagunak_rows = self.db.select("SELECT * FROM lagunak")
         for row in lagunak_rows:
             user1 = self.bilatu_by_id(row['erabiltzaile1_id'])
@@ -58,30 +62,96 @@ class ErabiltzaileKatalogoa:
             if user1 and user2:
                 user1.gehitu_laguna(user2)
                 user2.gehitu_laguna(user1)
-    
-    def sortu(self, izena: str, abizena: str, erabilIzena: str, 
-              pasahitza: str, pasahitza2: str, telegramKontua: str = None) -> Erabiltzailea:
-        """
-        Erabiltzaile berri bat sortzen du
-        domeinuko metodoa erabiliz
-        """
+
+    # ========================
+    # Listak / Bilaketak
+    # ========================
+
+    def guztiak(self) -> List[Erabiltzailea]:
+        return self.erabiltzaileak
+
+    def get_all(self):
+        return self.guztiak()
+
+    def bilatu_by_id(self, uid: int) -> Optional[Erabiltzailea]:
+        for erabiltzailea in self.erabiltzaileak:
+            if erabiltzailea.erabiltzaileaDa(uid):
+                return erabiltzailea
+        return None
+
+    def get_by_id(self, uid):
+        user = self.bilatu_by_id(uid)
+        if user is None:
+            rows = self.db.select("SELECT * FROM erabiltzailea WHERE id = ?", [uid])
+            if rows:
+                user = self._row_to_user(rows[0])
+                self.gehitu(user)
+        return user
+
+    def bilatu_by_erabilIzena(self, erabilIzena: str) -> Optional[Erabiltzailea]:
+        for erabiltzailea in self.erabiltzaileak:
+            if erabiltzailea.erabiltzaileIzena == erabilIzena:
+                return erabiltzailea
+        return None
+
+    def get_by_erabilIzena(self, erabilIzena):
+        user = self.bilatu_by_erabilIzena(erabilIzena)
+        if user is None:
+            rows = self.db.select(
+                "SELECT * FROM erabiltzailea WHERE erabilIzena = ?", [erabilIzena]
+            )
+            if rows:
+                user = self._row_to_user(rows[0])
+                self.gehitu(user)
+        return user
+
+    def to_dict(self, user: Erabiltzailea) -> dict:
+        return self._user_to_dict(user)
+
+    # ========================
+    # Sortu / eguneratu
+    # ========================
+
+    def create(self, izena, abizena, erabilIzena, pasahitza, pasahitza2, telegramKontua=None):
+        if not erabilIzena or len(pasahitza) < 4 or pasahitza != pasahitza2:
+            raise ValueError("Datuak ez dira baliozkoak")
+
+        badago = self.db.select(
+            "SELECT 1 FROM erabiltzailea WHERE erabilIzena = ?", [erabilIzena]
+        )
+        if badago:
+            raise ValueError("Erabiltzaile izena jada erregistratuta dago")
+
+        self.db.insert(
+            """INSERT INTO erabiltzailea
+               (izena, abizena, erabilIzena, pasahitza, telegramKontua)
+               VALUES (?, ?, ?, ?, ?)""",
+            [izena, abizena, erabilIzena, pasahitza, telegramKontua]
+        )
+
+        user = self.get_by_erabilIzena(erabilIzena)
+        if user and not self.bilatu_by_id(user.id):
+            self.gehitu(user)
+
+    def sortu(self, izena: str, abizena: str, erabilIzena: str,
+              pasahitza: str, pasahitza2: str,
+              telegramKontua: str = None) -> Erabiltzailea:
         user = Erabiltzailea.sortu(
-            izena, abizena, erabilIzena, pasahitza, pasahitza2, 
+            izena, abizena, erabilIzena,
+            pasahitza, pasahitza2,
             telegramKontua, self.db
         )
         self.gehitu(user)
         return user
-    
-    def actualizar(self, uid: int, data: dict) -> Erabiltzailea:
-        """Erabiltzaile baten datuak eguneratzen ditu"""
+
+    def eguneratu(self, uid: int, data: dict) -> Erabiltzailea:
         user = self.bilatu_by_id(uid)
         if not user:
             raise ValueError("Erabiltzailea ez da existitzen")
-        
+
         updates = []
         params = []
-        
-        # Aldaketak prestatzen ditu
+
         if 'izena' in data:
             updates.append('izena = ?')
             params.append(data['izena'])
@@ -102,43 +172,45 @@ class ErabiltzaileKatalogoa:
             updates.append('chat_id = ?')
             params.append(data['chat_id'])
             user.chat_id = data['chat_id']
-        
+
         if not updates:
             raise ValueError("Ez dago aldaketarik gordetzeko")
 
-        # Datu-basean eguneratzen du
         if self.db:
             params.append(uid)
             query = f"UPDATE erabiltzailea SET {', '.join(updates)} WHERE id = ?"
             self.db.update(query, params)
-        
+
         return user
-    
-    def login(self, erabilIzena: str, pasahitza: str) -> Optional[Erabiltzailea]:
-        """Erabiltzailea autentifikatzen du"""
-        user = self.bilatu_by_erabilIzena(erabilIzena)
-        if user and user.pasahitza == pasahitza:
-            return user
-        return None
-    
-    # ---- Lagunen metodoak ----
+
+    # ========================
+    # Autentikazioa
+    # ========================
+
+    def login(self, erabilIzena, pasahitza):
+        rows = self.db.select(
+            "SELECT * FROM erabiltzailea WHERE erabilIzena = ? AND pasahitza = ?",
+            [erabilIzena, pasahitza]
+        )
+        return self._row_to_user(rows[0]) if rows else None
+
+    # ========================
+    # Lagunak
+    # ========================
+
     def lortu_lagunak(self, uid: int, telegram_du: bool) -> List[Erabiltzailea]:
         user = self.bilatu_by_id(uid)
         if not user:
             return []
-        
-        lagunak = user.getLagunZerrenda(telegram_du)
-        return lagunak
-    
+        return user.getLagunZerrenda(telegram_du)
+
     def gehitu_laguna(self, uid1: int, uid2: int) -> None:
-        """Bi erabiltzaileen arteko adiskidetasuna sortzen du"""
         if uid1 == uid2:
             raise ValueError("Ezin duzu zeure buruari laguna egin")
 
-        # Ordena normalizatzen du
         if uid1 > uid2:
             uid1, uid2 = uid2, uid1
-        
+
         user = self.bilatu_by_id(uid1)
         lagun = self.bilatu_by_id(uid2)
         if not user or not lagun:
@@ -146,8 +218,7 @@ class ErabiltzaileKatalogoa:
 
         user.gehitu_laguna(lagun)
         lagun.gehitu_laguna(user)
-        
-        # Datu-basean gordetzen du
+
         if self.db:
             rows = self.db.select(
                 "SELECT 1 FROM lagunak WHERE erabiltzaile1_id = ? AND erabiltzaile2_id = ?",
@@ -155,17 +226,16 @@ class ErabiltzaileKatalogoa:
             )
             if rows:
                 raise ValueError("Jadanik lagunak zarete")
-            
+
             self.db.insert(
                 "INSERT INTO lagunak (erabiltzaile1_id, erabiltzaile2_id) VALUES (?, ?)",
                 [uid1, uid2]
             )
-    
+
     def kendu_laguna(self, uid1: int, uid2: int) -> None:
-        """Bi erabiltzaileen arteko adiskidetasuna ezabatzen du"""
         if uid1 > uid2:
             uid1, uid2 = uid2, uid1
-        
+
         user = self.bilatu_by_id(uid1)
         lagun = self.bilatu_by_id(uid2)
         if not user or not lagun:
@@ -179,24 +249,25 @@ class ErabiltzaileKatalogoa:
                 "DELETE FROM lagunak WHERE erabiltzaile1_id = ? AND erabiltzaile2_id = ?",
                 [uid1, uid2]
             )
-    
+
+    # ========================
+    # Bilaketak Telegram
+    # ========================
+
     def bilatu_erabiltzaileak_by_nombre(self, izena: str) -> List[Erabiltzailea]:
-        """
-        Erabiltzaileak bilatzen ditu
-        erabiltzaile-izenaren edo izenaren arabera
-        """
         return [
             u for u in self.erabiltzaileak
-            if izena.lower() in u.erabiltzaileIzena.lower() or
-               izena.lower() in u.izena.lower()
+            if izena.lower() in u.erabiltzaileIzena.lower()
+            or izena.lower() in u.izena.lower()
         ]
-    
-    def lotu_telegram_chat_id(self, chat_id: int, telegram_username: Optional[str] = None, erabilIzena: Optional[str] = None) -> Optional[Erabiltzailea]:
-        """
-        Telegram bot-ean /start egitean chat_id-a lotzen du.
-        - /start <erabilIzena> badator, erabiltzaile-izenaren bidez lotzen du.
-        - Bestela, telegram erabiltzaile-izenaren bidez saiatzen da.
-        """
+
+    def lotu_telegram_chat_id(
+        self,
+        chat_id: int,
+        telegram_username: Optional[str] = None,
+        erabilIzena: Optional[str] = None
+    ) -> Optional[Erabiltzailea]:
+
         if not self.db:
             return None
 
@@ -213,7 +284,9 @@ class ErabiltzaileKatalogoa:
                     "UPDATE erabiltzailea SET chat_id = ? WHERE erabilIzena = ?",
                     [chat_id, erabilIzena],
                 )
-            rows = self.db.select("SELECT * FROM erabiltzailea WHERE erabilIzena = ?", [erabilIzena])
+            rows = self.db.select(
+                "SELECT * FROM erabiltzailea WHERE erabilIzena = ?", [erabilIzena]
+            )
             row = rows[0] if rows else None
 
         elif telegram_username:
@@ -221,7 +294,9 @@ class ErabiltzaileKatalogoa:
                 "UPDATE erabiltzailea SET chat_id = ? WHERE telegramKontua = ?",
                 [chat_id, telegram_username],
             )
-            rows = self.db.select("SELECT * FROM erabiltzailea WHERE telegramKontua = ?", [telegram_username])
+            rows = self.db.select(
+                "SELECT * FROM erabiltzailea WHERE telegramKontua = ?", [telegram_username]
+            )
             row = rows[0] if rows else None
 
         if not row:
@@ -229,7 +304,6 @@ class ErabiltzaileKatalogoa:
 
         updated = self._row_to_user(row)
 
-        # Memoria sinkronizatzen du (lehendik kargatuta bazegoen)
         existing = self.bilatu_by_id(updated.id)
         if existing:
             existing.telegramKontua = updated.telegramKontua
@@ -239,17 +313,9 @@ class ErabiltzaileKatalogoa:
         self.gehitu(updated)
         return updated
 
-    @staticmethod
-    def _row_to_user(row) -> Erabiltzailea:
-        """Datu-baseko errenkada bat Erabiltzailea objektu bihurtzen du"""
-        return Erabiltzailea(
-            id=row['id'],
-            izena=row['izena'],
-            abizena=row['abizena'],
-            erabiltzaileIzena=row['erabilIzena'],
-            pasahitza=row['pasahitza'],
-            rola=row['rola'],
-            telegramKontua=row['telegramKontua'],
-            chat_id=row['chat_id']
-        )
+    # ========================
+    # Memoria
+    # ========================
 
+    def gehitu(self, erabiltzailea: Erabiltzailea) -> None:
+        self.erabiltzaileak.append(erabiltzailea)

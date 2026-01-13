@@ -92,7 +92,7 @@ def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
     def eguneratu(uid):
         data = request.get_json()
         try:
-            user = users_katalogo.actualizar(uid, data)
+            user = users_katalogo.eguneratu(uid, data)
             return jsonify(_user_to_dict(user))
         except ValueError as e:
             return jsonify({'error': str(e)}), 400
