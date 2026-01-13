@@ -11,12 +11,6 @@ window.addEventListener('load', function() {
                     art.classList.remove('active');
                 });
 
-                // 2) Bilatzaileak ezkutatu
-                const bilatzaileaPokemon = document.getElementById('search-pokemon');
-                const bilatzaileaLagunak = document.getElementById('search-lagunak');
-                if (bilatzaileaPokemon) bilatzaileaPokemon.style.display = 'none';
-                if (bilatzaileaLagunak) bilatzaileaLagunak.style.display = 'none';
-
                 // 3) Erakutsi changelog atala
                 const atala = document.getElementById('changelog-list');
                 if (atala) atala.classList.add('active');

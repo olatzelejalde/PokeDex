@@ -854,29 +854,22 @@ body {
    Estilos específicos para la página de changelog
    ========================================================= */
            /* --- CHANGELOG KANPAITXOA --- */
-.notification-bell {
+/* --- CHANGELOG KANPAITXOA --- */
+    .notification-bell {
     display: flex;
     align-items: center;
+    justify-content: center;
     cursor: pointer;
-    position: relative;
-    margin-right: 15px;
 }
 
 .bell-icon {
     fill: white; 
-    transition: transform 0.2s, 
+    transition: transform 0.2s, fill 0.2s;
 }
 
 .notification-bell:hover .bell-icon {
-    transform: scale(1.1);
-    fill: black; /* Sagua gainetik pasatzean horira aldatuko da pixka bat nabarmentzeko */
-}
-main article {
-    display: none;
-}
-
-main article.active {
-    display: block !important;
+    transform: scale(1.2);
+    fill: var(--pokedex-yellow);
 }
 
 /* Notifikazioen diseinu berria */

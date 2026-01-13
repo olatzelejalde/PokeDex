@@ -12,27 +12,6 @@
         console.log(user);
         window.personaId = user.id;
     </script>
-    <style>
-        /* --- CHANGELOG KANPAITXOA --- */
-    .notification-bell {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-}
-
-.bell-icon {
-    fill: white; 
-    transition: transform 0.2s, fill 0.2s;
-}
-
-.notification-bell:hover .bell-icon {
-    transform: scale(1.2);
-    fill: var(--pokedex-yellow);
-}
-
-
-    </style>
 </head>
 <body>
     <!----------------------------------------------->
@@ -66,8 +45,9 @@
         <!----------------------------------------------->
         <!--          Pokeemon katalogoa               -->
         <!----------------------------------------------->
-        <article id="pokemon-list" class="active">            <!--------------------------------------------->
-            <!--            Bilaketa barra                 -->
+        <article id="pokemon-list" class="active">            
+            <!--------------------------------------------->
+            <!--            Bilaketa barra               -->
             <!--------------------------------------------->
             <div class="search-container" id="search-pokemon">
                 <input type="text" id="pokemon-search" placeholder="Bilatu Espezie...">
@@ -108,10 +88,12 @@
         <!----------------------------------------------->
         <!--           Lagunen menua                   -->
         <!----------------------------------------------->
-        <article id="lagunak-list">            <div class="search-container" id="search-lagunak">
+        <article id="lagunak-list">            
+            <div class="search-container" id="search-lagunak">
                 <input type="text" id="user-search" placeholder="Bilatu erabiltzailea...">
                 <button id="search-users-button">Bilatu</button>
-            </div>            <div class="lagunak-container">
+            </div>            
+            <div class="lagunak-container">
                 <div id="lagunak-zerrenda" class="lagunak-grid">
                     <!-- Lagunak hemen agertuko dira -->
                 </div>
@@ -141,9 +123,9 @@
 
         </article>
 
-        <!----------------------------------------------->
+        <!----------------------------------->
         <!--         Changelog             -->
-        <!----------------------------------------------->
+        <!----------------------------------->
         <article id="changelog-list" style="width: 100%; max-width: 800px; margin: 0 auto; padding: 20px;">
             <div class="changelog-container">
                 <h2 style="font-family: 'Press Start 2P'; color: black; font-size: 14px;">NOTIFIKAZIOAK</h2>
