@@ -1,18 +1,15 @@
 from dataclasses import dataclass
 from typing import List
 
-from app.domain.pokemon import Pokemon
 
 @dataclass
 class Taldea:
     izena: str
-    pokemonZer: List[Pokemon]
 
-    def __init__(self, id: int, izena: str, erabiltzaile_id: int, pokemonZer: List[Pokemon] = None):
+    def __init__(self, id: int, izena: str, erabiltzaile_id: int):
         self.id = id
         self.izena = izena
         self.erabiltzaile_id = erabiltzaile_id
-        self.pokemonZer = pokemonZer if pokemonZer else []
 
     @staticmethod
     def sortu(izena: str, erabiltzaile_id: int, db=None) -> "Taldea":

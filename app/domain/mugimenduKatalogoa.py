@@ -1,17 +1,14 @@
 from dataclasses import dataclass
-from typing import List
-
-from app.domain.mugimendua import Mugimendua
 
 @dataclass
 class MugimenduKatalogoa:
-    # Mugimendu guztien zerrenda
-    mugimenduak: List[Mugimendua]
-    # Bere burua katalogo nagusi gisa
-    nireMotal: "MugimenduKatalogoa"
+    def __init__(self, db):
+        self.db = db
 
-    def __init__(self):
-        # Mugimendu zerrenda hutsa hasieratzen du
-        self.mugimenduak = []
-        # Bere burua erreferentzia nagusi gisa ezartzen du
-        self.nireMotal = self
+    def get_by_espezie(self, espezie_izena):
+        rows = self.db.select("""
+            SELECT m.* FROM mugimendua m
+            JOIN jakin_dezake em ON m.izena = em.mugimendu_izena
+            WHERE em.espezie_izena = ?
+        """, [espezie_izena])
+        return [dict(row) for row in rows]

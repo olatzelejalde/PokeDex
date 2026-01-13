@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from typing import Optional, List
 
 from app.domain.taldea import Taldea
-from app.domain.notifikazio import Notifikazio
 
 @dataclass
 class Erabiltzailea:
@@ -18,7 +17,6 @@ class Erabiltzailea:
     # Erlazioak
     lagunZer: List["Erabiltzailea"]
     taldeZer: List["Taldea"]
-    notifZer: List["Notifikazio"]
 
     def __init__(self, id: int, izena: str, abizena: str, erabiltzaileIzena: str,
                  pasahitza: str, rola: str, telegramKontua: str = "", chat_id: Optional[int] = None):
@@ -36,7 +34,6 @@ class Erabiltzailea:
         self.intsigniaZer = []
         self.lagunZer = []
         self.taldeZer = []
-        self.notifZer = []
 
     @staticmethod
     def sortu( izena: str, abizena: str, erabilIzena: str, 

@@ -1,8 +1,6 @@
 from dataclasses import dataclass
 from typing import List
 
-from app.domain.pokemon import Pokemon
-
 @dataclass
 class PokemonKatalogoa:
     def __init__(self, db):

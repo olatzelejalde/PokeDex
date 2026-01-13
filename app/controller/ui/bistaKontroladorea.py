@@ -5,10 +5,10 @@ import logging
 import os
 from app.domain.erabiltzaileKatalogoa import ErabiltzaileKatalogoa
 from app.domain.taldeKatalogoa import TaldeKatalogoa
-from app.controller.model.mota_controller import MotaController
+from app.domain.motaKatalogoa import MotaKatalogoa
 from app.domain.intsignaKatalogoa import IntsignaKatalogoa
-from app.controller.model.espezie_controller import EspezieController
-from app.controller.model.mugimendu_controller import MugimenduController
+from app.domain.espezieKatalogoa import EspezieKatalogoa
+from app.domain.mugimenduKatalogoa import MugimenduKatalogoa
 from app.domain.pokemonKatalogoa import PokemonKatalogoa
 from app.services.telegram_service import TelegramService
 from app.controller.model.changelog_controller import ChangelogController
@@ -153,7 +153,7 @@ def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
     # MOTAK (Tipos)
     # ============================================
     motak_bp = Blueprint('motak', __name__, url_prefix='/api')
-    mota_ctrl = MotaController(db)
+    mota_ctrl = MotaKatalogoa(db)
 
     @motak_bp.route('/motak', methods=['GET'])
     def listar_motak():
@@ -182,7 +182,7 @@ def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
     # ESPEZIEAK (Especies)
     # ============================================
     espezieak_bp = Blueprint('espezieak', __name__, url_prefix='/api')
-    espezie_ctrl = EspezieController(db)
+    espezie_ctrl = EspezieKatalogoa(db)
 
     # Beste adar bateko JS-ak /espezieak/list deitzen du
     @espezieak_bp.route('/espezieak/list', methods=['GET'])
@@ -267,7 +267,7 @@ def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
     # MUGIMENDUAK (Movimientos)
     # ============================================
     mugimenduak_bp = Blueprint('mugimenduak', __name__, url_prefix='/api')
-    mugimendu_ctrl = MugimenduController(db)
+    mugimendu_ctrl = MugimenduKatalogoa(db)
 
     @mugimenduak_bp.route('/especieak/<izena>/mugimenduak', methods=['GET'])
     def por_espezie_mugimendu(izena):
