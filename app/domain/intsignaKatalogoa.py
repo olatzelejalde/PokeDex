@@ -33,22 +33,11 @@ class IntsignaKatalogoa:
         )
     
     def intsigniaDu(self, uid, badge_name) -> bool:
-        helburua = self.db.select(
-            """
-            SELECT helburua FROM intsignia
-            WHERE izena = ?
-            """,
-            [badge_name]
-        )
-        jarraipena = self.db.select(
-            """
-            SELECT jarraipena FROM erabiltzaileak_intsigniak
-            WHERE intsignia_izena = ? AND erabiltzaile_id = ?
-            """,
-            [badge_name, uid]
-        )
-        if helburua == jarraipena:
-            return True
+        """Itzuli True bada lortua, bestela False."""
+        badges = self.get_by_user(uid)
+        for b in badges:
+            if b.get("izena") == badge_name:
+                return bool(b.get("lortua", 0))
         return False
     
     def jarraipenaEguneratu(self, uid, badge_name) -> None:
