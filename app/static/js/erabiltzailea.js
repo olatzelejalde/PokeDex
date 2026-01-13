@@ -24,6 +24,7 @@ async function kargatuErabiltzaileProfila() {
                 <p>Abizena: ${user.abizena}</p>
                 <p>Telegram: ${user.telegramKontua || 'Ez dago'}</p>
                 <button class="pokedex-button" onclick="aldatuDatuak()">Aldatu nire datuak</button>
+                <button class="pokedex-button secondary" onclick="window.location.href='/auth/logout'">Saioa itxi</button>
             </div>
         </div>
         `;
@@ -38,6 +39,7 @@ async function kargatuErabiltzaileProfila() {
                     <p>Telegram: ${user.telegramKontua || 'Ez dago'}</p>
                     ${(user.chat_id != null) ? '<p>----Telegram aktibatuta----</p>' : '<p>----Telegram ez aktibatuta (/start egin PokemonParteBot-en)----</p>'}
                     <button class="pokedex-button" onclick="aldatuDatuak()">Aldatu nire datuak</button>
+                    <button class="pokedex-button secondary" onclick="window.location.href='/auth/logout'">Saioa itxi</button>
                 </div>
             </div>
         `;
@@ -59,6 +61,7 @@ async function aldatuDatuak() {
                 <label>Konfirmatu Pasahitza: <input id="konfirmatu-pasahitza-editatu" type="password" placeholder="Konfirmatu pasahitza"></label>
                 <button class="pokedex-button" onclick="irtenEdiziotik()">Utzi aldaketak</button>
                 <button class="pokedex-button" onclick="aldaketakGorde()">Gorde aldaketak</button>
+                <button class="pokedex-button secondary" onclick="window.location.href='/auth/logout'">Saioa itxi</button>
             </div>
         </div>
     `;

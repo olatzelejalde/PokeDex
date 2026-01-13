@@ -6,6 +6,7 @@ from app.domain.notifikazio import Notifikazio
 
 @dataclass
 class Erabiltzailea:
+    # Erabiltzailearen oinarrizko atributuak
     id: int
     izena: str
     abizena: str
@@ -14,12 +15,15 @@ class Erabiltzailea:
     chat_id: Optional[int]
     pasahitza: str
     rola: str
+    # Erlazioak
     lagunZer: List["Erabiltzailea"]
     taldeZer: List["Taldea"]
     notifZer: List["Notifikazio"]
 
     def __init__(self, id: int, izena: str, abizena: str, erabiltzaileIzena: str,
                  pasahitza: str, rola: str, telegramKontua: str = "", chat_id: Optional[int] = None):
+        
+        # Oinarrizko datuak esleitzen ditu
         self.id = id
         self.izena = izena
         self.abizena = abizena
@@ -28,6 +32,7 @@ class Erabiltzailea:
         self.chat_id = chat_id
         self.pasahitza = pasahitza
         self.rola = rola
+        # Erlazio-zerrendak hasieratzen ditu
         self.intsigniaZer = []
         self.lagunZer = []
         self.taldeZer = []
@@ -68,20 +73,28 @@ class Erabiltzailea:
                     telegramKontua=row['telegramKontua'],
                     chat_id=row['chat_id']
                 )  
+        # Huts eginez gero
         raise ValueError("Errorea erabiltzailea sortzean")
     
     def gehitu_laguna(self, laguna: "Erabiltzailea") -> None:
+        """Lagun bat gehitzen dio erabiltzaileari"""
         if laguna not in self.lagunZer:
             self.lagunZer.append(laguna)
 
     def kendu_laguna(self, laguna: "Erabiltzailea") -> None:
+        """Lagun bat erabiltzailearen zerrendatik kentzen du"""
         if laguna in self.lagunZer:
             self.lagunZer.remove(laguna)
 
     def erabiltzaileaDa(self, uid: int) -> bool:
+        """Erabiltzailea ID jakin batekoa den egiaztatzen du"""
         return self.id == uid
     
     def getLagunZerrenda(self, telegram: bool) -> List["Erabiltzailea"]:
+        """
+        Lagunen zerrenda itzultzen du.
+        telegram=True bada, Telegram kontua eta chat_id dutenak soilik.
+        """
         lagunak = []
         for lagun in self.lagunZer:
             if telegram and (lagun.telegramKontua and lagun.chat_id):

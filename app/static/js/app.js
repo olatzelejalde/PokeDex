@@ -47,11 +47,6 @@ function konfiguratuGertaeraEntzuleak() {
         this.searchTimeout = setTimeout(() => bilatuErabiltzaileak(), 300);
     });
 
-    // Botón cerrar sesión
-    document.getElementById('btn-saioa').addEventListener('click', () => {
-        window.location.href = '/auth/logout';
-    });
-
     // Bot
     document.getElementById('bot').addEventListener('click', () =>
         document.getElementById('bot-panel').classList.toggle('hidden')
@@ -63,10 +58,6 @@ function aldatuAtala(atalIzena) {
         atala.classList.remove('active');
     });
     document.getElementById(`${atalIzena}-list`).classList.add('active');
-
-    // Mostrar/esconder barras de búsqueda
-    document.getElementById('search-pokemon').style.display = atalIzena === 'pokemon' ? 'flex' : 'none';
-    document.getElementById('search-lagunak').style.display = atalIzena === 'lagunak' ? 'flex' : 'none';
 
     if (atalIzena === 'taldeak') {
         kargatuErabiltzaileTaldeak();
