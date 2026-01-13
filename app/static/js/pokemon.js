@@ -95,15 +95,42 @@ function bilatuPokemon() {
     erakutsiPokemon(iragazitakoPokemon);
 }
 
-async function erakutsiPokemonXehetasunak(pokemon) {
+let currentPokemonList = [];
+let currentPokemonIndex = 0;
+
+async function erakutsiPokemonXehetasunak(pokemon, pokemonList = null) {
     const response = await fetch (`${API_BASE_URL}/pokemon/${user.id}/kontsultatu`)
     const modal = document.getElementById('pokemon-modal');
     const xehetasunak = document.getElementById('pokemon-xehetasunak');
+    
+    // Store the list for navigation
+    if (pokemonList) {
+        currentPokemonList = pokemonList;
+        currentPokemonIndex = pokemonList.findIndex(p => p.id === pokemon.id);
+    } else {
+        currentPokemonList = pokemonGuztiak;
+        currentPokemonIndex = pokemonGuztiak.findIndex(p => p.id === pokemon.id);
+    }
+    
     const motaKlasea1 = lortuMotaKlasea(pokemon.mota);
     const motaKlasea2 = pokemon.mota2 ? lortuMotaKlasea(pokemon.mota2) : null;
     const taldeaContext = window.taldeaGehituContext;
     const gehituBtn = taldeaContext ? `<button class="pokedex-button" onclick="gehituPokemonXehetasunetatik(${pokemon.id})">GEHITU TALDEAN</button>` : '';
+    
+    const hasPrev = currentPokemonIndex > 0;
+    const hasNext = currentPokemonIndex < currentPokemonList.length - 1;
+    
     xehetasunak.innerHTML = `
+        <button class="nav-arrow nav-arrow-left ${!hasPrev ? 'disabled' : ''}" onclick="aurrekoaPokemon()" ${!hasPrev ? 'disabled' : ''}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </button>
+        <button class="nav-arrow nav-arrow-right ${!hasNext ? 'disabled' : ''}" onclick="hurrengoPokemon()" ${!hasNext ? 'disabled' : ''}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </button>
         <div class="pokemon-detail">
             <div class="pokemon-detail-header">
                 <h2>${pokemon.izena}</h2>
@@ -139,17 +166,41 @@ async function erakutsiPokemonXehetasunak(pokemon) {
                     <span>${pokemon.abiadura}</span>
                 </div>
             </div>
-            <div class="pokemon-detail-actions">
-                ${gehituBtn}
-                <button class="pokedex-button secondary" onclick="itxiPokemonXehetasunak()">ITXI</button>
-            </div>
         </div>
     `;
     modal.style.display = 'block';
+    
+    // Close modal when clicking outside of it
+    modal.onclick = function(event) {
+        if (event.target === modal) {
+            itxiPokemonXehetasunak();
+        }
+    };
+}
+
+function aurrekoaPokemon() {
+    if (currentPokemonIndex > 0) {
+        currentPokemonIndex--;
+        const prevPokemon = currentPokemonList[currentPokemonIndex];
+        erakutsiPokemonXehetasunak(prevPokemon, currentPokemonList);
+    }
+}
+
+function hurrengoPokemon() {
+    if (currentPokemonIndex < currentPokemonList.length - 1) {
+        currentPokemonIndex++;
+        const nextPokemon = currentPokemonList[currentPokemonIndex];
+        erakutsiPokemonXehetasunak(nextPokemon, currentPokemonList);
+    }
 }
 
 function itxiPokemonXehetasunak() {
-    itxiModalak();
+    const modal = document.getElementById('pokemon-modal');
+    modal.classList.add('modal-closing');
+    setTimeout(() => {
+        itxiModalak();
+        modal.classList.remove('modal-closing');
+    }, 300);
     if (window.taldeaGehituContext && window.taldeaGehituReturnList) {
         window.taldeaGehituReturnList = false;
         erakutsiPokemonAukeraketa(window.taldeaGehituContext);

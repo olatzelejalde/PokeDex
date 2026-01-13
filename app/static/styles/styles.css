@@ -75,7 +75,7 @@ body {
 .pokedex-header h1 {
     font-family: 'Press Start 2P', cursive;
     font-size: 2.5em;
-    margin-top: 50px;
+    margin-top: 0;
     -webkit-text-stroke: 2px var(--pokedex-black);
     color: var(--pokedex-yellow);
     letter-spacing: 2px;
@@ -115,10 +115,21 @@ body {
 /* =========================================================
    Buscadores
    ========================================================= */
-.search-container { margin-top: 20px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.search-container { 
+    margin: 20px 0 30px 0; 
+    padding: 15px 0;
+    display: flex; 
+    justify-content: center; 
+    gap: 10px; 
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    background-color: #c5ecffc2;
+    z-index: 100;
+}
 #pokemon-search, #user-search, #type-filter {
     padding: 10px 15px;
-    border: 2px solid var(--pokedex-black);
+    border: 0px solid var(--pokedex-black);
     border-radius: 5px;
     font-size: 1em;
     background-color: var(--pokedex-white);
@@ -168,25 +179,24 @@ body {
 }
 
 /* Colores por tipo (tarjeta y badge) */
-.pokemon-card.fire, .type.fire { background-color: var(--type-fire); }
-.pokemon-card.grass, .type.grass { background-color: var(--type-grass); }
-.pokemon-card.electric, .type.electric { background-color: var(--type-electric); }
-.pokemon-card.water, .type.water { background-color: var(--type-water); }
-.pokemon-card.ground, .type.ground { background-color: var(--type-ground); }
-.pokemon-card.rock, .type.rock { background-color: var(--type-rock); }
-.pokemon-card.fairy, .type.fairy { background-color: var(--type-fairy); }
-.pokemon-card.poison, .type.poison { background-color: var(--type-poison); }
-.pokemon-card.bug, .type.bug { background-color: var(--type-bug); }
-.pokemon-card.dragon, .type.dragon { background-color: var(--type-dragon); }
-.pokemon-card.psychic, .type.psychic { background-color: var(--type-psychic); }
-.pokemon-card.flying, .type.flying { background-color: var(--type-flying); }
-.pokemon-card.fighting, .type.fighting { background-color: var(--type-fighting); }
-.pokemon-card.normal, .type.normal { background-color: var(--type-normal); }
-.pokemon-card.ice, .type.ice { background-color: var(--type-ice); }
-.pokemon-card.ghost, .type.ghost { background-color: var(--type-ghost); }
-.pokemon-card.dark, .type.dark { background-color: var(--type-dark); }
-.pokemon-card.steel, .type.steel { background-color: var(--type-steel); }
-
+.pokemon-card.fire, .type.fire { background-color: var(--type-fire); border-color: #962b2b}
+.pokemon-card.grass, .type.grass { background-color: var(--type-grass); border-color: #317f25}
+.pokemon-card.electric, .type.electric { background-color: var(--type-electric); border-color: #e7ce4e }
+.pokemon-card.water, .type.water { background-color: var(--type-water); border-color: #376073}
+.pokemon-card.ground, .type.ground { background-color: var(--type-ground); border-color: #6b4f33}
+.pokemon-card.rock, .type.rock { background-color: var(--type-rock); border-color: #47472a}
+.pokemon-card.fairy, .type.fairy { background-color: var(--type-fairy); border-color: #955e9f}
+.pokemon-card.poison, .type.poison { background-color: var(--type-poison); border-color: #392e42}
+.pokemon-card.bug, .type.bug { background-color: var(--type-bug); border-color: #4b4f2b }
+.pokemon-card.dragon, .type.dragon { background-color: var(--type-dragon); border-color: #6a3e9a }
+.pokemon-card.psychic, .type.psychic { background-color: var(--type-psychic); border-color: #a23e7a }
+.pokemon-card.flying, .type.flying { background-color: var(--type-flying); border-color: #6a7a9a }
+.pokemon-card.fighting, .type.fighting { background-color: var(--type-fighting); border-color: #7a3e3e }
+.pokemon-card.normal, .type.normal { background-color: var(--type-normal); border-color: #7a7a6a }
+.pokemon-card.ice, .type.ice { background-color: var(--type-ice); border-color: #7a9aa7 }
+.pokemon-card.ghost, .type.ghost { background-color: var(--type-ghost); border-color: #4a3e7a }
+.pokemon-card.dark, .type.dark { background-color: var(--type-dark); border-color: #3a3a3a }
+.pokemon-card.steel, .type.steel { background-color: var(--type-steel); border-color: #7a7a7a }
 /* =========================================================
    Modales genéricos
    ========================================================= */
@@ -196,19 +206,95 @@ body {
     z-index: 1000;
     left: 0; top: 0; width: 100%; height: 100%;
     background-color: rgba(0,0,0,0.5);
+    animation: fadeIn 0.3s ease;
 }
+
+.modal.modal-closing {
+    animation: fadeOut 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@keyframes cardFlipIn {
+    from {
+        opacity: 0;
+        transform: perspective(1000px) rotateY(-20deg) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: perspective(1000px) rotateY(0deg) scale(1);
+    }
+}
+
 .modal-content {
     background-color: var(--pokedex-white);
-    margin: 5% auto;
+    margin: 2% auto;
     padding: 2rem;
     border-radius: 15px;
     width: 90%; max-width: 500px;
     position: relative;
     border: 5px solid var(--pokedex-black);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    animation: cardFlipIn 0.4s ease;
 }
-.close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+.close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; z-index: 10; position: relative; }
 .close:hover { color: black; }
+
+/* Navigation arrows for Pokemon modal */
+.nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: var(--pokedex-yellow);
+    border: 3px solid var(--pokedex-black);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+    color: var(--pokedex-black);
+}
+
+.nav-arrow:hover:not(.disabled) {
+    background-color: var(--pokedex-red);
+    color: white;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.nav-arrow.disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    background-color: #ccc;
+}
+
+.nav-arrow-left {
+    left: -60px;
+}
+
+.nav-arrow-right {
+    right: -60px;
+}
+
+@media (max-width: 768px) {
+    .nav-arrow-left {
+        left: 10px;
+    }
+    .nav-arrow-right {
+        right: 10px;
+    }
+}
 
 /* =========================================================
    Botones e inputs
