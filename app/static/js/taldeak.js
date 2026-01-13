@@ -331,7 +331,7 @@ function erakutsiPartekatuModala(taldeId, lagunak) {
 
     const lista = modal.querySelector('#partekatu-lagunak-lista');
     if (!lagunak || lagunak.length === 0) {
-        lista.innerHTML = `<p style="text-align:center;">Ez duzu Telegram kontua duten lagunik</p>`;
+        lista.innerHTML = `<p style="text-align:center;">Ez dituzu lagunik Telegramen</p>`;
     } else {
         lista.innerHTML = lagunak.map(l => `
             <div class="retro-lagun-card" data-lagun="${l.id}">

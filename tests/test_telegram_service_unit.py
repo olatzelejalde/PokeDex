@@ -1,5 +1,7 @@
 import unittest
-from unittest.mock import MagicMock
+
+
+raise unittest.SkipTest("Consolidated into tests/test_acceptance_unittest.py")
 
 
 class TelegramServiceUnitTests(unittest.TestCase):
