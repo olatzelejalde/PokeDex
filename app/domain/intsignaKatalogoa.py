@@ -1,10 +1,12 @@
 class IntsignaKatalogoa:
     def __init__(self, db):
+        # Datu-basearen konexioa gordetzen du
         self.db = db
 
     def get_by_user(self, uid):
         """
-        Devuelve todas las insignias y, para cada una, su progreso y si ya fue obtenida.
+        Erabiltzaile baten intsignia guztiak itzultzen ditu,
+        bakoitzaren jarraipena eta lortuta dagoen ala ez adieraziz.
         """
         query = """
             SELECT 
@@ -22,7 +24,8 @@ class IntsignaKatalogoa:
 
     def award(self, uid, badge_name):
         """
-        Otorga una insignia al usuario solo si no la tiene ya.
+        Erabiltzaileari intsignia esleitzen dio,
+        baldin eta aurretik ez badu.
         """
         return self.db.insert(
             """
@@ -33,7 +36,10 @@ class IntsignaKatalogoa:
         )
     
     def intsigniaDu(self, uid, badge_name) -> bool:
-        """Itzuli True bada lortua, bestela False."""
+        """
+        Erabiltzaileak intsignia jakin bat lortuta duen ala ez egiaztatzen du.
+        Lortuta badago True itzultzen du, bestela False.
+        """
         badges = self.get_by_user(uid)
         for b in badges:
             if b.get("izena") == badge_name:
@@ -41,7 +47,9 @@ class IntsignaKatalogoa:
         return False
     
     def jarraipenaEguneratu(self, uid, badge_name) -> None:
-        """Erabiltzailearen intsigniaren jarraipena eguneratu"""
+        """
+        Erabiltzailearen intsigniaren jarraipena handitzen du.
+        """
         self.db.update(
             """
             UPDATE erabiltzaileak_intsigniak
@@ -52,7 +60,9 @@ class IntsignaKatalogoa:
         )
     
     def existitzenDa(self, uid, badge_name) -> bool:
-        """Egiaztatu erabiltzaileak intsignia bat duen"""
+        """
+        Erabiltzaileak intsignia hori erregistratuta duen egiaztatzen du.
+        """
         row = self.db.select(
             """
             SELECT 1 FROM erabiltzaileak_intsigniak
@@ -63,6 +73,11 @@ class IntsignaKatalogoa:
         return bool(row)
     
     def intsigniaGehitu(self, uid, badge_name) -> None:
+        """
+        Intsignia gehitu edo haren jarraipena eguneratzen du.
+        - Ez badago erregistratuta, sortzen du.
+        - Ondoren, jarraipena handitzen du.
+        """
         if not self.intsigniaDu(uid, badge_name) and not self.existitzenDa(uid, badge_name):    
             self.award(uid, badge_name)
         self.jarraipenaEguneratu(uid, badge_name)
