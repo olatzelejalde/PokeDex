@@ -7,6 +7,7 @@
 // - /api/espezieak/<izena>/ebo
 // - /api/espezieak/<izena>/scan
 
+// Pokemon irudi bat lortzeko URL, fallback bat pokeball-era
 function lortuIrudiaUrl(irudia) {
     if (!irudia) return '/static/styles/pokeball.webp';
     if (irudia.startsWith('http')) return irudia;

@@ -1,16 +1,19 @@
 // Pokémonak kudeatzeko funtzioak
+
+// API-tik Pokémon guztiak kargatu
 async function kargatuPokemonDatuak() {
     try {
         const response = await fetch(`${API_BASE_URL}/pokemon`);
         pokemonGuztiak = await response.json();
-        console.log("✅ Pokémon recibidos:", pokemonGuztiak.length, pokemonGuztiak[0]);
-        erakutsiPokemon(pokemonGuztiak);
+        console.log("Jasotako pokemonak:", pokemonGuztiak.length, pokemonGuztiak[0]);
+        erakutsiPokemon(pokemonGuztiak); // Grid-a erakutsi
     } catch (error) {
         console.error('Errorea Pokémonak kargatzean:', error);
         erakutsiErrorea('Ezin izan dira Pokémon datuak kargatu');
     }
 }
 
+// API-tik Pokémon guztiak kargatu
 async function kargatuMotak() {
     try {
         const response = await fetch(`${API_BASE_URL}/pokemon/motak`);
@@ -28,11 +31,13 @@ async function kargatuMotak() {
     }
 }
 
+// Pokémon zerrenda erakutsi grid-ean
 function erakutsiPokemon(pokemonZerrenda) {
     console.log("🎯 erakutsiPokemon llamado con", pokemonZerrenda.length, "pokemons");
     const grid = document.getElementById('pokemon-grid');
     console.log("📦 Grid encontrado:", grid);
     if (pokemonZerrenda.length === 0) {
+        // Pokémonik ez badago, mezua erakutsi
         grid.innerHTML = `
             <div class="no-results" style="grid-column: 1 / -1; text-align: center; padding: 40px;">
                 <h3>Ez da Pokémonik aurkitu</h3>
@@ -42,6 +47,7 @@ function erakutsiPokemon(pokemonZerrenda) {
         return;
     }
     grid.innerHTML = '';
+    // IDaren arabera ordenatu
     const ordenatutakoPokemon = pokemonZerrenda.sort((a, b) => a.id - b.id);
     ordenatutakoPokemon.forEach(pokemon => {
         const txartela = sortuPokemonTxartela(pokemon);
@@ -49,6 +55,7 @@ function erakutsiPokemon(pokemonZerrenda) {
     });
 }
 
+// Pokémon baten txartela sortu grid-ean erakusteko
 function sortuPokemonTxartela(pokemon) {
     const txartela = document.createElement('div');
     txartela.className = `pokemon-card ${lortuMotaKlasea(pokemon.mota)}`;
@@ -66,6 +73,7 @@ function sortuPokemonTxartela(pokemon) {
     return txartela;
 }
 
+// Pokémon mota bat CSS klase batera mapeatuta
 function lortuMotaKlasea(mota) {
     const motaMapa = {
         'normala': 'normal', 'sua': 'fire', 'ura': 'water', 'belarra': 'grass',
@@ -77,6 +85,7 @@ function lortuMotaKlasea(mota) {
     return motaMapa[mota.toLowerCase()] || 'normal';
 }
 
+// Pokémon bilatu izena edo IDaren arabera eta iragazi mota bidez
 function bilatuPokemon() {
     const bilaketaTerminoa = document.getElementById('pokemon-search').value.toLowerCase().trim();
     const hautatutakoMota = document.getElementById('type-filter').value;
@@ -95,6 +104,7 @@ function bilatuPokemon() {
     erakutsiPokemon(iragazitakoPokemon);
 }
 
+//  Pokémon xehetasunak
 let currentPokemonList = [];
 let currentPokemonIndex = 0;
 
@@ -103,7 +113,7 @@ async function erakutsiPokemonXehetasunak(pokemon, pokemonList = null) {
     const modal = document.getElementById('pokemon-modal');
     const xehetasunak = document.getElementById('pokemon-xehetasunak');
     
-    // Store the list for navigation
+    // Lista eta index gordetzeko nabigaziorako
     if (pokemonList) {
         currentPokemonList = pokemonList;
         currentPokemonIndex = pokemonList.findIndex(p => p.id === pokemon.id);
@@ -171,7 +181,7 @@ async function erakutsiPokemonXehetasunak(pokemon, pokemonList = null) {
     `;
     modal.style.display = 'block';
     
-    // Close modal when clicking outside of it
+    // Modal ixteko klik kanpoan
     modal.onclick = function(event) {
         if (event.target === modal) {
             itxiPokemonXehetasunak();
@@ -179,6 +189,7 @@ async function erakutsiPokemonXehetasunak(pokemon, pokemonList = null) {
     };
 }
 
+// Aurreko Pokémon erakutsi modal-ean
 function aurrekoaPokemon() {
     if (currentPokemonIndex > 0) {
         currentPokemonIndex--;
@@ -187,6 +198,7 @@ function aurrekoaPokemon() {
     }
 }
 
+// Hurrengo Pokémon erakutsi modal-ean
 function hurrengoPokemon() {
     if (currentPokemonIndex < currentPokemonList.length - 1) {
         currentPokemonIndex++;
@@ -195,6 +207,7 @@ function hurrengoPokemon() {
     }
 }
 
+// Modal irekia itxi
 function itxiPokemonXehetasunak() {
     const modal = document.getElementById('pokemon-modal');
     modal.classList.add('modal-closing');
@@ -202,12 +215,14 @@ function itxiPokemonXehetasunak() {
         itxiModalak();
         modal.classList.remove('modal-closing');
     }, 300);
+    // Taldea gehitzeko testuingurua egon bada, erakutsi aukeraketa berriro
     if (window.taldeaGehituContext && window.taldeaGehituReturnList) {
         window.taldeaGehituReturnList = false;
         erakutsiPokemonAukeraketa(window.taldeaGehituContext);
     }
 }
 
+// Modal guztiak itxi
 function itxiModalak() {
     document.querySelectorAll('.modal').forEach(modal => modal.style.display = 'none');
 }

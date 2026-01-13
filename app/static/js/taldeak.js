@@ -1,6 +1,9 @@
 // Taldeak kudeatzeko funtzioak
+
+// Erabiltzailearen taldeak kargatu
 async function kargatuErabiltzaileTaldeak() {
     if (!user) {
+        // Saioa hasi behar du mezua erakutsi
         document.getElementById('taldeak-zerrenda').innerHTML = `
             <div class="error-message" style="text-align: center; padding: 40px;">
                 <p>Saioa hasi behar duzu zure taldeak ikusteko</p>
@@ -12,12 +15,12 @@ async function kargatuErabiltzaileTaldeak() {
     try {
         const res = await fetch(`${API_BASE_URL}/taldeak/erabiltzailea/${user.id}`);
         const taldeak = await res.json();
-        erakutsiTaldeak(taldeak);
+        erakutsiTaldeak(taldeak); // Grid edo zerrenda erakutsi
     } catch (err) {
         console.error(err);
     }
 }
-
+// Taldeak erakutsi
 function erakutsiTaldeak(taldeak) {
     const zona = document.getElementById('taldeak-zerrenda');
     if (taldeak.length === 0) {
@@ -33,11 +36,13 @@ function erakutsiTaldeak(taldeak) {
     taldeak.forEach(t => zona.appendChild(sortuTaldeTxartela(t)));
 }
 
+// Talde berria sortzeko modal erakutsi
 function erakutsiTaldeaModala() {
     document.getElementById('taldea-izena').value = '';
     document.getElementById('taldea-modal').style.display = 'block';
 }
 
+// DOM kargatzean botoiak lotu
 document.addEventListener('DOMContentLoaded', function() {
     const taldeaGordeBtn = document.getElementById('btn-taldea-gorde');
     if (taldeaGordeBtn) {
@@ -50,6 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// Talde txartel bat sortu
 function sortuTaldeTxartela(taldea) {
     const card = document.createElement('div');
     card.className = 'taldea-card';
@@ -81,11 +87,13 @@ function sortuTaldeTxartela(taldea) {
     return card;
 }
 
+// Pokémon bat ID edo izena bidez bilatu
 function bilatuPokemonSarrera(sarrera) {
     const clean = sarrera.trim().toLowerCase();
     return pokemonGuztiak.find(p => String(p.id) === clean || p.izena.toLowerCase() === clean);
 }
 
+// Pokémon bat taldean gehitzeko modal erakutsi
 async function eskatuPokemonTaldearentzat(taldeId) {
     if (!user) {
         alert('Saioa hasi behar duzu Pokémonak gehitzeko');
@@ -105,6 +113,7 @@ async function eskatuPokemonTaldearentzat(taldeId) {
     erakutsiPokemonAukeraketa(taldeId);
 }
 
+// Aukeraketa modal sortu eta Pokémonak erakutsi
 function erakutsiPokemonAukeraketa(taldeId) {
     let modal = document.getElementById('pokemon-aukeraketa');
     if (!modal) {
@@ -149,11 +158,13 @@ function erakutsiPokemonAukeraketa(taldeId) {
     modal.style.display = 'block';
 }
 
+// Aukeraketa modal itxi
 function itxiPokemonAukeraketa() {
     const modal = document.getElementById('pokemon-aukeraketa');
     if (modal) modal.style.display = 'none';
 }
 
+// Pokémon taldera gehitu API bidez
 async function gehituPokemonTaldean(taldeId, pokemonId) {
     try {
         const res = await fetch(`${API_BASE_URL}/taldeak/${taldeId}/pokemon`, {
@@ -174,6 +185,7 @@ async function gehituPokemonTaldean(taldeId, pokemonId) {
     }
 }
 
+// Pokémon xehetasunetatik gehitu
 async function gehituPokemonXehetasunetatik(pokemonId) {
     const taldeId = window.taldeaGehituContext;
     if (!taldeId) {
@@ -185,6 +197,7 @@ async function gehituPokemonXehetasunetatik(pokemonId) {
     itxiModalak();
 }
 
+// Telegram bidez lagunekin partekatu
 async function lortuLagunak(taldeId) {
     try {
         const res = await fetch(`${API_BASE_URL}/erabiltzaileak/${user.id}/lagunak/telegram`);
@@ -196,6 +209,7 @@ async function lortuLagunak(taldeId) {
     }
 }
 
+// Taldea ezabatu
 async function ezabatuTaldea(taldeId) {
     if (!confirm('Ziur zaude talde hau ezabatu nahi duzula? Ekintza hau ezin da atzera bota.')) {
         return;
@@ -215,6 +229,7 @@ async function ezabatuTaldea(taldeId) {
     }
 }
 
+// Taldea editatzeko modal
 async function editatuTaldea(taldeId) {
     //alert('Taldearen editatzea oraindik ez dago martxan.');
     try {
@@ -249,7 +264,7 @@ async function editatuTaldea(taldeId) {
             </div>
         `).join('');
 
-        // Agregar evento click a cada Pokémon
+        // Pokemon bakoitzari click gertaera gehitu
         grid.querySelectorAll('.pokemon-edit-card').forEach(card => {
             card.onclick = async () => {
                 const pid = Number(card.dataset.id);
@@ -275,6 +290,7 @@ function itxiTaldeEditModal() {
     if (modal) modal.style.display = 'none';
 }
 
+// Talde berria sortu
 async function sortuTaldea() {
     const izena = document.getElementById('taldea-izena').value.trim();
     if (!izena) {
@@ -304,7 +320,7 @@ async function sortuTaldea() {
     }
 }
 
-// Modala
+// Taldea partekatzeko modal
 function erakutsiPartekatuModala(taldeId, lagunak) {
     let modal = document.getElementById('taldea-partekatu-modal');
     if (!modal) {
@@ -381,6 +397,7 @@ async function taldeaPartekatu(taldeId, lagunId) {
     }
 }
 
+// Partekatze botoi nagusia
 async function partekatuTaldea(taldeId) {
     try {
         const res = await fetch(`${API_BASE_URL}/erabiltzaileak/${user.id}/lagunak/telegram`);

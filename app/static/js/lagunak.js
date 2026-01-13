@@ -1,29 +1,33 @@
-// Lagunak (amigos) kudeatzeko funtzioak
+// Lagunak kudeatzeko funtzioak
 
+// Nire lagunen lista gordetzeko aldagaia
 let miLagunak = [];
 
+// Nire lagunak API-tik kargatu
 async function kargatuErabiltzaileLagunak() {
-    if (!user) return;
+    if (!user) return; // Erabiltzailea ez badago, ez egin ezer
     
     try {
-        // Limpiar búsqueda
+        // Bilaketa garbitu
         const searchInput = document.getElementById('user-search');
         if (searchInput) searchInput.value = '';
         
-        // Kargartu nire lagunak
+        // API-tik nire lagunak lortu
         const resLagunak = await fetch(`${API_BASE_URL}/erabiltzaileak/${user.id}/lagunak`);
         miLagunak = await resLagunak.json();
         
-        // Solo mostrar lagunak actuales
+        // Oraingo lagunak erakutsi bakarrik
         erakutsiLagunak();
     } catch (error) {
         console.error('Errorea lagunak kargatzean:', error);
     }
 }
 
+// Nire lagunen zerrenda erakutsi
 function erakutsiLagunak() {
     const zona = document.getElementById('lagunak-zerrenda');
-    
+        
+    // Lagunik ez badago, mezua erakutsi
     if (miLagunak.length === 0) {
         zona.innerHTML = `
             <div class="no-lagunak" style="grid-column: 1 / -1; text-align: center; padding: 40px;">
@@ -41,6 +45,7 @@ function erakutsiLagunak() {
     });
 }
 
+// Lagun baten txartela sortu (nire lagunak erakusteko)
 function sortuLagunaTxartela(erabiltzailea) {
     const txartela = document.createElement('div');
     txartela.className = 'user-card';
@@ -60,8 +65,7 @@ function sortuLagunaTxartela(erabiltzailea) {
     return txartela;
 }
 
-
-
+// Bilaketa emaitzetako erabiltzaile baten txartela sortu (lagun berriak gehitzeko)
 function sortuErabiltzaileTxartela(erabiltzailea) {
     const txartela = document.createElement('div');
     txartela.className = 'user-card';
@@ -81,12 +85,14 @@ function sortuErabiltzaileTxartela(erabiltzailea) {
     return txartela;
 }
 
+// Lagun berri bat gehitu API-tik
 async function gehituLaguna(uid2) {
     try {
         const res = await fetch(`${API_BASE_URL}/erabiltzaileak/${user.id}/gehitu-laguna/${uid2}`, {
             method: 'POST'
         });
         if (res.ok) {
+            // Lagunak berriro kargatu
             kargatuErabiltzaileLagunak();
         } else {
             const error = await res.json();
@@ -97,13 +103,15 @@ async function gehituLaguna(uid2) {
     }
 }
 
+// Lagun bat kendu
 async function kenduLaguna(uid2) {
-    if (!confirm('¿Laguna kendu?')) return;
+    if (!confirm('¿Laguna kendu?')) return; // Konfirmazioa galdetu
     try {
         const res = await fetch(`${API_BASE_URL}/erabiltzaileak/${user.id}/kendu-laguna/${uid2}`, {
             method: 'DELETE'
         });
         if (res.ok) {
+            // Lagunak berriro kargatu
             kargatuErabiltzaileLagunak();
         } else {
             alert('Errorea laguna kenduan');
@@ -113,11 +121,12 @@ async function kenduLaguna(uid2) {
     }
 }
 
+// Erabiltzaileak bilatzeko funtzioa
 async function bilatuErabiltzaileak() {
     const searchTerm = document.getElementById('user-search').value.trim().toLowerCase();
     
     if (!searchTerm) {
-        // Si vacía la búsqueda, volver a mostrar solo lagunak
+        // Bilaketa hutsik badago, berriro nire lagunak erakutsi
         kargatuErabiltzaileLagunak();
         return;
     }
@@ -126,7 +135,7 @@ async function bilatuErabiltzaileak() {
         const res = await fetch(`${API_BASE_URL}/erabiltzaileak`);
         const todos = await res.json();
         
-        // Filtrar: no mostrar al usuario actual ni a los lagunak
+        // Filtratu: ez erakutsi ni ez nire lagunak
         const lagunIds = miLagunak.map(l => l.id);
         const resultados = todos.filter(u => 
             u.id !== user.id && 
@@ -142,6 +151,7 @@ async function bilatuErabiltzaileak() {
     }
 }
 
+// Bilaketa emaitzak erakutsi
 function erakutsiResultadosBusqueda(erabiltzaileak) {
     const zona = document.getElementById('lagunak-zerrenda');
     
@@ -161,15 +171,17 @@ function erakutsiResultadosBusqueda(erabiltzaileak) {
     });
 }
 
-// Event listeners
+// Event listener-ak
 document.addEventListener('DOMContentLoaded', function() {
     const searchButton = document.getElementById('search-users-button');
     const searchInput = document.getElementById('user-search');
     
+    // Bilaketa botoia sakatzean
     if (searchButton) {
         searchButton.addEventListener('click', bilatuErabiltzaileak);
     }
     
+    // Enter sakatzean bilaketa exekutatu
     if (searchInput) {
         searchInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
