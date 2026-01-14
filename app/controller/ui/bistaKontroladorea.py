@@ -460,7 +460,15 @@ def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
             egilea,
         )
         return jsonify({'message': 'Changelog sarrera sortua'}), 201
-
+    @changelog_bp.route('/changelog/garbitu', methods=['DELETE'])
+    def garbitu_dena_api():
+        try:
+            # SQL-a exekutatu
+            db.delete("DELETE FROM changelog")
+            return jsonify({'status': 'success'}), 200
+        except Exception as e:
+            print(f"Errorea ezabatzerakoan: {e}")
+            return jsonify({'error': str(e)}), 500
     @app.route('/changelog')
     def erakutsi_changelog():
         aldaketak = changelog_ctrl.lortu_aldaketa_guztiak()
