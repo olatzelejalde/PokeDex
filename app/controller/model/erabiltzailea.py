@@ -20,6 +20,7 @@ class Erabiltzailea:
 
     def __init__(self, id: int, izena: str, abizena: str, erabiltzaileIzena: str,
                  pasahitza: str, rola: str, telegramKontua: str = "", chat_id: Optional[int] = None):
+        # Erabiltzailearen propietateak hasieratu
         
         # Oinarrizko datuak esleitzen ditu
         self.id = id
@@ -39,7 +40,7 @@ class Erabiltzailea:
     def sortu( izena: str, abizena: str, erabilIzena: str, 
                           pasahitza: str, pasahitza2: str, telegramKontua: str = None,
                           db=None) -> "Erabiltzailea":
-        """Datuak balidatu eta erabiltzailea sortu"""
+        # Erabiltzaile berria DBan sortu balidazioekin
         if not erabilIzena or len(pasahitza) < 4 or pasahitza != pasahitza2:
             raise ValueError("Datuak ez dira baliozkoak")
         
@@ -74,24 +75,21 @@ class Erabiltzailea:
         raise ValueError("Errorea erabiltzailea sortzean")
     
     def gehitu_laguna(self, laguna: "Erabiltzailea") -> None:
-        """Lagun bat gehitzen dio erabiltzaileari"""
+        # Laguna memorian gehitu
         if laguna not in self.lagunZer:
             self.lagunZer.append(laguna)
 
     def kendu_laguna(self, laguna: "Erabiltzailea") -> None:
-        """Lagun bat erabiltzailearen zerrendatik kentzen du"""
+        # Laguna memorian ezabatu
         if laguna in self.lagunZer:
             self.lagunZer.remove(laguna)
 
     def erabiltzaileaDa(self, uid: int) -> bool:
-        """Erabiltzailea ID jakin batekoa den egiaztatzen du"""
+        # Erabiltzailea ID hori duen egiaztatu
         return self.id == uid
     
     def getLagunZerrenda(self, telegram: bool) -> List["Erabiltzailea"]:
-        """
-        Lagunen zerrenda itzultzen du.
-        telegram=True bada, Telegram kontua eta chat_id dutenak soilik.
-        """
+        # Lagunen zerrenda lortu (Telegram iragazkiarekin aukeran)
         lagunak = []
         for lagun in self.lagunZer:
             if telegram and (lagun.telegramKontua and lagun.chat_id):

@@ -14,7 +14,6 @@ class Taldea:
     # talde berria sortzen du DBan
     @staticmethod
     def sortu(izena: str, erabiltzaile_id: int, db=None) -> "Taldea":
-        """Sortu talde berria DBan"""
         if not izena or len(izena.strip()) == 0:
             raise ValueError("Taldearen izena ezin da hutsik egon")
         

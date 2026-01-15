@@ -40,6 +40,7 @@ class EspezieKatalogoa:
     # ========================
     def create(self, izena, mota1, mota2, osasuna, atakea, defentsa,
                atake_berezia, defentsa_berezia, abiadura, irudia, deskribapena=None):
+        # Espezie berria sortu DBan
         if not izena or not mota1:
             raise ValueError("Izena eta mota1 beharrezkoak dira")
         self.db.insert(

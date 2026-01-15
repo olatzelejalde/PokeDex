@@ -10,10 +10,6 @@ class IntsignaKatalogoa:
     # Erabiltzaile baten intsigniak lortzen ditu,
     # eta intsigna lortuta dagoen ala ez adierazten du
     def get_by_user(self, uid):
-        """
-        Erabiltzaile baten intsignia guztiak itzultzen ditu,
-        bakoitzaren jarraipena eta lortuta dagoen ala ez adieraziz.
-        """
         query = """
             SELECT 
                 i.izena, 
@@ -29,10 +25,7 @@ class IntsignaKatalogoa:
         return [dict(row) for row in rows]
 
     def award(self, uid, badge_name):
-        """
-        Erabiltzaileari intsignia esleitzen dio,
-        baldin eta aurretik ez badu.
-        """
+        # Erabiltzaileari intsignia memoriaz esleitzen dio (DBan sortu).
         return self.db.insert(
             """
             INSERT OR IGNORE INTO erabiltzaileak_intsigniak (erabiltzaile_id, intsignia_izena, jarraipena)
@@ -46,10 +39,7 @@ class IntsignaKatalogoa:
     # ========================
 
     def intsigniaDu(self, uid, badge_name) -> bool:
-        """
-        Erabiltzaileak intsignia jakin bat lortuta duen ala ez egiaztatzen du.
-        Lortuta badago True itzultzen du, bestela False.
-        """
+        # Erabiltzaileak intsignia lortuta duen egiaztatzen du.
         badges = self.get_by_user(uid)
         for b in badges:
             if b.get("izena") == badge_name:
@@ -58,19 +48,13 @@ class IntsignaKatalogoa:
     
     #intsigna ez badu
     def intsigniaGehitu(self, uid, badge_name) -> None:
-        """
-        Intsignia gehitu edo haren jarraipena eguneratzen du.
-        - Ez badago erregistratuta, sortzen du.
-        - Ondoren, jarraipena handitzen du.
-        """
+        # Intsigniaren jarraipena handitu eta behar izanez gero sortu.
         if not self.intsigniaDu(uid, badge_name) and not self.existitzenDa(uid, badge_name):    
             self.award(uid, badge_name)
         self.jarraipenaEguneratu(uid, badge_name)
 
     def jarraipenaEguneratu(self, uid, badge_name) -> None:
-        """
-        Erabiltzailearen intsigniaren jarraipena handitzen du.
-        """
+        # Jarraipena +1 handitu DBan.
         self.db.update(
             """
             UPDATE erabiltzaileak_intsigniak
@@ -81,9 +65,7 @@ class IntsignaKatalogoa:
         )
     
     def existitzenDa(self, uid, badge_name) -> bool:
-        """
-        Erabiltzaileak intsignia hori erregistratuta duen egiaztatzen du.
-        """
+        # Erabiltzaileak intsignia erregistroa duen egiaztatu.
         row = self.db.select(
             """
             SELECT 1 FROM erabiltzaileak_intsigniak

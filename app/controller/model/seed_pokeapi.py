@@ -15,7 +15,7 @@ SPRITE_DIR = "app/static/sprites/pokemon"
 os.makedirs(SPRITE_DIR, exist_ok=True)
 
 def download_sprite(pokemon_id: int) -> str:
-    """Descarga el sprite y devuelve la ruta local"""
+    # Spritea deskargatu eta bide lokala itzuli
     url = f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{pokemon_id}.png"
     local_path = os.path.join(SPRITE_DIR, f"{pokemon_id}.png")
     if not os.path.exists(local_path):
@@ -24,16 +24,16 @@ def download_sprite(pokemon_id: int) -> str:
             r.raise_for_status()
             with open(local_path, 'wb') as f:
                 f.write(r.content)
-            print(f"📥 Descargado: {local_path}")
+            print(f"📥 Deskargatuta: {local_path}")
         except Exception as e:
-            print(f"⚠️ Error al descargar sprite {pokemon_id}: {e}")
-            return "/app/static/img/pokeball.webp"  # imagen por defecto
+            print(f"⚠️ Errorea spritea deskargatzerakoan {pokemon_id}: {e}")
+            return "/app/static/img/pokeball.webp"  # irudi lehenetsia
     return f"/app/static/sprites/pokemon/{pokemon_id}.png"
 
 def mota_it(m): return MOTA_MAP.get(m, m.title())
 
 def seed_gen1(db: Connection):
-    print("🔄 Descargando Pokéapi gen 1...")
+    print("🔄 PokeAPI gen 1 deskargatzen...")
     species = requests.get("https://pokeapi.co/api/v2/pokemon-species?limit=151").json()['results']
 
     for idx, s in enumerate(species, 1):
@@ -71,4 +71,4 @@ def seed_gen1(db: Connection):
 
         print(f"✅ {idx:03d} - {pokemon_data['name'].title()} ({local_image})")
 
-    print("✅ Gen 1 kargatuta con imágenes locales!")
+    print("✅ Gen 1 kargatuta irudi lokalekin!")

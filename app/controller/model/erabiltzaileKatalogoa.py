@@ -7,6 +7,7 @@ from app.controller.model.erabiltzailea import Erabiltzailea
 class ErabiltzaileKatalogoa:
 
     def __init__(self, db):
+        # Hasieratu katalogoa
         self.db = db
         self.erabiltzaileak: List[Erabiltzailea] = []
         self.nireErabiltzaileak = self
@@ -16,6 +17,7 @@ class ErabiltzaileKatalogoa:
     # ========================
 
     def _row_to_user(self, row) -> Erabiltzailea:
+        # DB lerroa Erabiltzailea objektu bihurtu
         return Erabiltzailea(
             id=row['id'],
             izena=row['izena'],
@@ -28,6 +30,7 @@ class ErabiltzaileKatalogoa:
         )
 
     def _user_to_dict(self, u: Erabiltzailea) -> dict:
+        # Erabiltzailea hiztegi (dict) bihurtu
         return {
             'id': u.id,
             'izena': u.izena,
@@ -64,10 +67,12 @@ class ErabiltzaileKatalogoa:
 
     # erabiltzaile guztiak itzultzen ditu
     def guztiak(self) -> List[Erabiltzailea]:
+        # Erabiltzaile guztiak lortu
         return self.erabiltzaileak
 
     # id bidez erabiltzailea bilatzen du
     def bilatu_by_id(self, uid: int) -> Optional[Erabiltzailea]:
+        # Erabiltzailea ID bidez bilatu
         for erabiltzailea in self.erabiltzaileak:
             if erabiltzailea.erabiltzaileaDa(uid):
                 return erabiltzailea
@@ -75,6 +80,7 @@ class ErabiltzaileKatalogoa:
 
     # datuak mapeatzen ditu dict formatura
     def to_dict(self, user: Erabiltzailea) -> dict:
+        # Erabiltzailea dict formatura pasatu
         return self._user_to_dict(user)
 
     # ========================
@@ -85,6 +91,7 @@ class ErabiltzaileKatalogoa:
     def sortu(self, izena: str, abizena: str, erabilIzena: str,
               pasahitza: str, pasahitza2: str,
               telegramKontua: str = None) -> Erabiltzailea:
+        # Erabiltzaile berria sortu eta katalogoan gehitu
         user = Erabiltzailea.sortu(
             izena, abizena, erabilIzena,
             pasahitza, pasahitza2,
@@ -95,6 +102,7 @@ class ErabiltzaileKatalogoa:
 
     # erabiltzailea eguneratu
     def eguneratu(self, uid: int, data: dict) -> Erabiltzailea:
+        # Erabiltzailearen datuak eguneratu DBan eta memorian
         user = self.bilatu_by_id(uid)
         if not user:
             raise ValueError("Erabiltzailea ez da existitzen")
@@ -139,6 +147,7 @@ class ErabiltzaileKatalogoa:
 
     # saioa hasteko metodoa
     def login(self, erabilIzena, pasahitza):
+        # Erabiltzailea saioa hasi kredentzialekin
         rows = self.db.select(
             "SELECT * FROM erabiltzailea WHERE erabilIzena = ? AND pasahitza = ?",
             [erabilIzena, pasahitza]
@@ -151,6 +160,7 @@ class ErabiltzaileKatalogoa:
 
     # erabiltzailearen lagunak lortzen ditu
     def lortu_lagunak(self, uid: int, telegram_du: bool) -> List[Erabiltzailea]:
+        # Erabiltzailearen lagunak zerrendatu
         user = self.bilatu_by_id(uid)
         if not user:
             return []
@@ -158,6 +168,7 @@ class ErabiltzaileKatalogoa:
 
     # bi erabiltzaileei lagunak gehitzen dizkie
     def gehitu_laguna(self, uid1: int, uid2: int) -> None:
+        # Bi erabiltzaileren artean laguntasuna sortu
         if uid1 == uid2:
             raise ValueError("Ezin duzu zeure buruari laguna egin")
 
@@ -187,6 +198,7 @@ class ErabiltzaileKatalogoa:
 
     # bi erabiltzaileetatik laguna kentzen die
     def kendu_laguna(self, uid1: int, uid2: int) -> None:
+        # Bi erabiltzaileren artean laguntasuna ezabatu
         if uid1 > uid2:
             uid1, uid2 = uid2, uid1
 
@@ -210,6 +222,7 @@ class ErabiltzaileKatalogoa:
 
     # izena bidez erabiltzaileak bilatzen ditu
     def bilatu_erabiltzaileak_by_nombre(self, izena: str) -> List[Erabiltzailea]:
+        # Izenaren bidez erabiltzaileak bilatu
         return [
             u for u in self.erabiltzaileak
             if izena.lower() in u.erabiltzaileIzena.lower()
@@ -223,6 +236,7 @@ class ErabiltzaileKatalogoa:
         telegram_username: Optional[str] = None,
         erabilIzena: Optional[str] = None
     ) -> Optional[Erabiltzailea]:
+        # Telegram chat ID erabiltzailearekin lotu
 
         if not self.db:
             return None
@@ -275,4 +289,5 @@ class ErabiltzaileKatalogoa:
 
     # erabiltzailea gehitzen du katalogoara
     def gehitu(self, erabiltzailea: Erabiltzailea) -> None:
+        # Memorian erabiltzailea gehitu
         self.erabiltzaileak.append(erabiltzailea)

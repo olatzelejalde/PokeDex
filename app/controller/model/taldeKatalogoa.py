@@ -7,6 +7,7 @@ from app.controller.model.taldea import Taldea
 @dataclass
 class TaldeKatalogoa:
     def __init__(self, db=None):
+        # Katalogoa hasieratu
         self.db = db
         self.taldeak: List[Taldea] = []
         self.nireTalde = self
@@ -16,22 +17,22 @@ class TaldeKatalogoa:
     # ========================
 
     def bilatu_by_id(self, tid: int) -> Optional[Taldea]:
-        """Bilatu taldea IDren arabera"""
+        # Taldea ID bidez bilatu
         for taldea in self.taldeak:
             if taldea.id == tid:
                 return taldea
         return None
 
     def bilatu_by_erabiltzaile(self, uid: int) -> List[Taldea]:
-        """Bilatu erabiltzailearen taldeak"""
+        # Erabiltzaile baten taldeak lortu
         return [t for t in self.taldeak if t.erabiltzaile_id == uid]
 
     def gehitu(self, taldea: Taldea) -> None:
-        """Gehitu taldea katalogoan"""
+        # Taldea memorian gehitu
         self.taldeak.append(taldea)
 
     def guztiak(self) -> List[Taldea]:
-        """Itzuli guztiak taldeak"""
+        # Katalogo osoa lortu
         return self.taldeak
 
     # ========================
@@ -39,7 +40,7 @@ class TaldeKatalogoa:
     # ========================
 
     def kargatu_from_bd(self) -> None:
-        """Kargatu guztiak taldeak BDtik"""
+        # Talde guztiak DBtik kargatu
         if not self.db:
             return
         rows = self.db.select("SELECT * FROM taldea")
@@ -56,7 +57,7 @@ class TaldeKatalogoa:
     # ========================
 
     def sortu(self, izena: str, erabiltzaile_id: int) -> Taldea:
-        """Sortu talde berria"""
+        # Talde berria sortu, gorde eta changelog idatzi
         taldea = Taldea.sortu(izena, erabiltzaile_id, self.db)
         self.gehitu(taldea)
 
@@ -77,7 +78,7 @@ class TaldeKatalogoa:
         return taldea
 
     def ezabatu(self, tid: int) -> None:
-        """Ezabatu taldea eta notifikazioa sortu"""
+        # Taldea ezabatu eta changelog idatzi
         if self.db:
             # 1. Taldearen informazioa lortu (ezabatu aurretik!)
             query_info = """
@@ -114,7 +115,7 @@ class TaldeKatalogoa:
     # ========================
 
     def get_pokemonak(self, tid: int) -> List[dict]:
-        """Lortu taldearen pokemonak"""
+        # Talde baten pokemonak lortu
         if self.db:
             rows = self.db.select(
                 """SELECT p.id, p.izena, e.irudia, e.mota1 as mota, e.mota2,
@@ -130,7 +131,7 @@ class TaldeKatalogoa:
         return []
 
     def gehitu_pokemon(self, tid: int, pid: int) -> None:
-        """Gehitu pokemona taldera"""
+        # Pokemon bat taldera gehitu eta changelog idatzi
         if not self.db:
             return
 
@@ -177,7 +178,7 @@ class TaldeKatalogoa:
             )
 
     def kendu_pokemon(self, tid: int, pid: int) -> None:
-        """Kendu pokemona taldetik"""
+        # Pokemon bat taldetik kendu eta changelog idatzi
         if self.db:
             self.db.delete(
                 "DELETE FROM ditu WHERE taldea_id = ? AND pokemon_id = ?",

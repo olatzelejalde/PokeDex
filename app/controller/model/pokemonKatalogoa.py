@@ -4,6 +4,7 @@ from typing import List
 @dataclass
 class PokemonKatalogoa:
     def __init__(self, db):
+        # Hasieratu
         self.db = db
         self.cached_groups = None  # Taldeen datuak memorian gordetzeko (cache)
 
