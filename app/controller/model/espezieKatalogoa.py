@@ -55,8 +55,8 @@ class EspezieKatalogoa:
     # ========================
 
     # Moten arteko eraginkortasuna kalkulatu (ahuleziak eta indarrak)
-    def get_type_effectiveness(self, pokemon_name):
-        row = self.db.select("SELECT * FROM espeziea WHERE LOWER(izena) = LOWER(?)", [pokemon_name])
+    def get_type_effectiveness(self, espezie_name):
+        row = self.db.select("SELECT * FROM espeziea WHERE LOWER(izena) = LOWER(?)", [espezie_name])
         if not row:
             return None
 
@@ -112,7 +112,7 @@ class EspezieKatalogoa:
         indarrak.sort(key=lambda x: x['Biderkatzailea'])
 
         return {
-            "Izena": poke.get('izena', pokemon_name),
+            "Izena": poke.get('izena', espezie_name),
             "Espezie": poke.get('irudia'),
             "Ahuleziak": ahuleziak,
             "Indarrak": indarrak,
