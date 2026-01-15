@@ -96,19 +96,34 @@ if (btnTaldeaGorde) {
     btnTaldeaGorde.addEventListener('click', function() {
         const izenaEl = document.getElementById('taldea-izena');
         const izena = izenaEl ? izenaEl.value : '';
-        if (izena) {
-            // Enviamos la notificación a TU sistema de changelog
-            const egilea = (typeof user !== 'undefined' && user && user.id) ? String(user.id) : 'system';
-            fetch('/api/changelog', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    bertsioa: 'TALDEA',
-                    deskribapena: `Talde berria sortu da: ${izena}`,
-                    data: new Date().toISOString().split('T')[0],
-                    egilea: egilea,
-                })
-            });
-        }
+        
+        // Ya no hace falta el fetch manual a /api/changelog aquí, 
+        // porque el backend lo hace automáticamente al crear el equipo.
+        console.log("Taldea gordetzen: " + izena);
     });
+}
+function garbituNotifikazioGuztiak() {
+    if (confirm("Ziur zaude denak ezabatu nahi dituzula?")) {
+        // Saiatu helbide honekin (ziurtatu ez dagoela /api/api/...)
+        fetch('/api/changelog/garbitu', { 
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                // Pantaila garbitu
+                document.getElementById("changelog-append-here").innerHTML = "";
+                alert("Dena garbitu da!");
+            } else {
+                console.error("Zerbitzariak errorea itzuli du:", response.status);
+                alert("Errorea: Zerbitzariak ezin izan du ezabatu.");
+            }
+        })
+        .catch(error => {
+            console.error('Fetch errorea:', error);
+            alert("Ezin izan da zerbitzariarekin konektatu.");
+        });
+    }
 }

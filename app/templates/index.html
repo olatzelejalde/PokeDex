@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/styles/styles.css">
     <link rel="stylesheet" href="/static/styles/bot.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script> 
         var user = JSON.parse('{{ user|tojson }}');
         console.log(user);
@@ -142,6 +143,9 @@
 
                     <input type="date" id="filter-date" onchange="filtratuNotifikazioak()" 
                         style="flex: 1; padding: 10px; border-radius: 4px; border: 2px solid black; background: white; color: black;">
+                        <button id="btn-garbitu-denak" onclick="garbituNotifikazioGuztiak()" class="zakarrontzia" title="Garbitu denak">
+                                <i class="fas fa-trash-alt"></i>
+                        </button>
                 </div>
                 <div id="changelog-append-here">
                 </div>

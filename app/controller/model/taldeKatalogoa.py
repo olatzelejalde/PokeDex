@@ -60,18 +60,53 @@ class TaldeKatalogoa:
         taldea = Taldea.sortu(izena, erabiltzaile_id, self.db)
         self.gehitu(taldea)
 
+        # 1. Erabiltzailearen izena lortu datu-basetik
+        erabiltzailea = self.db.select("SELECT izena FROM erabiltzailea WHERE id = ?", [erabiltzaile_id])
+        egile_izena = erabiltzailea[0]['izena'] if erabiltzailea else "Erabiltzaile ezezaguna"
+
+        # 2. Deskribapena prestatu egilearen izenarekin
         data_gaur = datetime.now().strftime("%Y-%m-%d %H:%M")
-        deskribapena = f"Talde berria sortu du: {izena}."
+        deskribapena = f"{egile_izena}-(e)k talde berria sortu du: {izena}."
+    
+        # 3. Txertatu changelog taulan
         self.db.insert(
             "INSERT INTO changelog (bertsioa, data, deskribapena, egilea) VALUES (?, ?, ?, ?)",
             ["TALDEA", data_gaur, deskribapena, str(erabiltzaile_id)]
         )
+    
         return taldea
 
     def ezabatu(self, tid: int) -> None:
-        """Ezabatu taldea"""
+        """Ezabatu taldea eta notifikazioa sortu"""
         if self.db:
-            self.db.delete("DELETE FROM taldea WHERE id = ?", [tid])
+            # 1. Taldearen informazioa lortu (ezabatu aurretik!)
+            query_info = """
+                SELECT t.izena as talde_izena, e.izena as egile_izena, e.id as egile_id
+                FROM taldea t
+                JOIN erabiltzailea e ON t.erabiltzaile_id = e.id
+                WHERE t.id = ?
+            """
+            datuak = self.db.select(query_info, [tid])
+
+            if datuak:
+                info = datuak[0]
+                talde_izena = info['talde_izena']
+                egile_izena = info['egile_izena']
+                egile_id = info['egile_id']
+
+                # 2. Taldea datu-basetik ezabatu
+                self.db.delete("DELETE FROM taldea WHERE id = ?", [tid])
+
+                # 3. Notifikazioa changelog taulan txertatu
+                data_gaur = datetime.now().strftime("%Y-%m-%d %H:%M")
+                deskribapena = f"{egile_izena}-(e)k {talde_izena} taldea ezabatu du."
+                
+                self.db.insert(
+                    "INSERT INTO changelog (bertsioa, data, deskribapena, egilea) VALUES (?, ?, ?, ?)",
+                    ["TALDEA", data_gaur, deskribapena, str(egile_id)]
+                )
+
+        # 4. Lokaleko zerrendatik ezabatu (lehen zenuen bezala)
         self.taldeak = [t for t in self.taldeak if t.id != tid]
 
     # ========================
@@ -114,24 +149,32 @@ class TaldeKatalogoa:
             "INSERT INTO ditu (taldea_id, pokemon_id) VALUES (?, ?)",
             [tid, pid]
         )
+        # 2. Informazioa lortu notifikaziorako: Erabiltzailea, Taldearen izena eta Pokemonaren izena
+        query = """
+            SELECT e.izena as egile_izena, e.id as egile_id, t.izena as talde_izena, p.izena as poke_izena
+            FROM taldea t
+            JOIN erabiltzailea e ON t.erabiltzaile_id = e.id
+            JOIN pokemon p ON p.id = ?
+            WHERE t.id = ?
+        """
+        datuak = self.db.select(query, [pid, tid])
 
-        data_gaur = datetime.now().strftime("%Y-%m-%d %H:%M")
-        deskribapena = f"Pokemona gehitu da taldera: {pid}."
+        if datuak:
+            info = datuak[0]
+            egile_izena = info['egile_izena']
+            egile_id = info['egile_id']
+            talde_izena = info['talde_izena']
+            poke_izena = info['poke_izena']
 
-        egilea = "unknown"
-        try:
-            owner_rows = self.db.select(
-                "SELECT erabiltzaile_id FROM taldea WHERE id = ?", [tid]
+            # 3. Deskribapena osatu
+            data_gaur = datetime.now().strftime("%Y-%m-%d %H:%M")
+            deskribapena = f"{egile_izena}-(e)k {poke_izena} gehitu du {talde_izena} taldera."
+
+            # 4. Changelog-ean txertatu
+            self.db.insert(
+                "INSERT INTO changelog (bertsioa, data, deskribapena, egilea) VALUES (?, ?, ?, ?)",
+                ["POKEMON", data_gaur, deskribapena, str(egile_id)]
             )
-            if owner_rows:
-                egilea = str(owner_rows[0]["erabiltzaile_id"])
-        except Exception:
-            pass
-
-        self.db.insert(
-            "INSERT INTO changelog (bertsioa, data, deskribapena, egilea) VALUES (?, ?, ?, ?)",
-            ["POKEMON", data_gaur, deskribapena, egilea]
-        )
 
     def kendu_pokemon(self, tid: int, pid: int) -> None:
         """Kendu pokemona taldetik"""

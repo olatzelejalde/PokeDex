@@ -1,5 +1,5 @@
 class ChangelogController:
-    def __init__(self,db):
+    def __init__(self, db):
         self.db = db
         self.db.insert("""
             CREATE TABLE IF NOT EXISTS changelog (
@@ -17,13 +17,13 @@ class ChangelogController:
         rows = self.db.select(query) 
         return [dict(row) for row in rows]
     
-    def gehitu_aldaketa(self,bertsioa, data, deskribapena, egilea):
+    def gehitu_aldaketa(self, bertsioa, data, deskribapena, egilea):
         # Aldaketa berri bat gordetzeko
         query = "INSERT INTO changelog (bertsioa, data, deskribapena, egilea) VALUES (?, ?, ?, ?)"
         self.db.insert(query, [bertsioa, data, deskribapena, egilea])
     
     def lortu_lagunen_ekintzak(self, nire_id):
-    # Query honek nire lagunen (jarraitzen ditudanen) ekintzak bakarrik ekartzen ditu
+        # Query honek nire lagunen (jarraitzen ditudanen) ekintzak bakarrik ekartzen ditu
         query = """
             SELECT c.*, e.izena as egile_izena 
             FROM changelog c
@@ -34,3 +34,7 @@ class ChangelogController:
         """
         rows = self.db.select(query, [nire_id])
         return [dict(row) for row in rows]
+    def ezabatu_notifikazioa(self, notif_id):
+        query = "DELETE FROM changelog WHERE id = ?"
+        self.db.delete(query, [notif_id])
+        return True
