@@ -114,6 +114,10 @@ class ErabiltzaileKatalogoa:
             updates.append('telegramKontua = ?')
             params.append(data['telegramKontua'])
             user.telegramKontua = data['telegramKontua']
+            # Telegram kontua aldatu edo ezabatzen denean, chat_id ere NULL jarri
+            updates.append('chat_id = ?')
+            params.append(None)
+            user.chat_id = None
         if 'pasahitza' in data and data['pasahitza']:
             updates.append('pasahitza = ?')
             params.append(data['pasahitza'])

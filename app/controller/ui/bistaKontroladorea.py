@@ -242,18 +242,14 @@ def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
 
     @pokemonak_bp.route('/pokemon', methods=['GET'])
     def list_pokemon():
-        rows = db.select("""
-            SELECT id, izena, mota1 as mota, mota2, osasuna as hp, atakea, defentsa, 
-                   atake_berezia, defentsa_berezia, abiadura, irudia 
-            FROM espeziea ORDER BY id ASC
-        """)
+        rows = poke_ctrl_model.get_all()
         return jsonify([dict(row) for row in rows])
 
     @pokemonak_bp.route('/pokemon/motak', methods=['GET'])
     def list_motak_pokemon():
-        rows = db.select("SELECT DISTINCT mota1 as mota FROM espeziea WHERE mota1 IS NOT NULL ORDER BY mota1 ASC")
-        motak = [row['mota'] for row in rows]
+        motak = poke_ctrl_model.get_motak()
         return jsonify(motak)
+    
     @pokemonak_bp.route('/pokemon/<int:uid>/kontsultatu', methods=['GET'])
     def kontsulta(uid):
         badu = intsignia_ctrl.intsigniaDu(uid, "Espezie informazioa 20 aldiz kontsultatu")

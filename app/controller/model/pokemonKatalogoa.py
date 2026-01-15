@@ -14,19 +14,19 @@ class PokemonKatalogoa:
     #Pokemon guztiak lortzen ditu
     def get_all(self):
         rows = self.db.select("""
-            SELECT p.*, e.mota1, e.mota2, e.irudia
-            FROM pokemon p
-            JOIN espeziea e ON p.espezie_izena = e.izena
+            SELECT id, izena, mota1 as mota, mota2, osasuna as hp, atakea, defentsa, 
+                   atake_berezia, defentsa_berezia, abiadura, irudia, deskribapena 
+            FROM espeziea ORDER BY id ASC
         """)
         return [dict(row) for row in rows]
 
     #Id bidez pokemon bat lortzen du
     def get_by_id(self, pid):
         rows = self.db.select("""
-            SELECT p.*, e.mota1, e.mota2, e.irudia
-            FROM pokemon p
-            JOIN espeziea e ON p.espezie_izena = e.izena
-            WHERE p.id = ?
+            SELECT id, izena, mota1 as mota, mota2, osasuna as hp, atakea, defentsa, 
+                   atake_berezia, defentsa_berezia, abiadura, irudia, deskribapena 
+            FROM espeziea
+            WHERE id = ?
         """, [pid])
         return dict(rows[0]) if rows else None
     
@@ -113,3 +113,10 @@ class PokemonKatalogoa:
                 }
 
         return pokemon_onena
+    
+    # ========================
+    # MOTAK LORTU
+    # ========================
+    def get_motak(self):
+        rows = self.db.select("SELECT DISTINCT mota1 as mota FROM espeziea WHERE mota1 IS NOT NULL ORDER BY mota1 ASC")
+        return [row['mota'] for row in rows]
