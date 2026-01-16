@@ -14,13 +14,13 @@ from app.services.telegram_service import TelegramService
 from app.controller.model.changelog_controller import ChangelogController
 
 
-def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
+def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None, telegram_service_override=None, time_provider=None, concurrency_limiter=None, concurrency_limit: int = 50):
     """Registra todas las rutas de la aplicación"""
     
     # ============================================
     # ERABILTZAILEAK (Usuarios)
     # ============================================
-    telegram_service = TelegramService()
+    telegram_service = telegram_service_override or TelegramService()
     erabiltzaileak_bp = Blueprint('erabiltzaileak', __name__, url_prefix='/api')
 
     if users_katalogo is None:
@@ -304,7 +304,6 @@ def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
             },
         })
 
-
     def _taldea_to_dict(taldea):
         return {
             'id': taldea.id,
@@ -401,6 +400,18 @@ def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
 
     @taldeak_bp.route('/taldeak/<int:tid>/partekatu/<int:user_id>/<int:lagun_id>', methods=['POST'])
     def partekatu_taldea(tid, user_id, lagun_id):
+        # Denbora zerbitzua
+        if time_provider is None:
+            import time as _time
+            _tp = _time
+        else:
+            _tp = time_provider
+
+        # Kontagailua konkorentzia mugatzeko
+        nonlocal concurrency_limiter, concurrency_limit
+        _inflight_counter = getattr(partekatu_taldea, "_inflight_counter", {"count": 0})
+        setattr(partekatu_taldea, "_inflight_counter", _inflight_counter)
+
         user = users_katalogo.bilatu_by_id(user_id)
         lagun = users_katalogo.bilatu_by_id(lagun_id)
         taldea = taldeak_katalogo.bilatu_by_id(tid)
@@ -410,24 +421,55 @@ def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
         if not lagun.chat_id:
             return jsonify({'error': 'Lagunak ez du /start egin Telegram bot-ean (chat_id falta da)'}), 400
 
-        # Build payload (json) from DB
-        pokemonak = taldeak_katalogo.get_pokemonak(tid)
+        # soilik 50 erabiltzaile aldi berean partekatzen
+        acquired = False
+        try:
+            if concurrency_limiter is not None:
+                if not concurrency_limiter.try_acquire():
+                    return jsonify({'error': 'Itxaron mesedez, 50 erabiltzaile baitaude bere taldea partekatzen'}), 429
+                acquired = True
+            else:
+                if _inflight_counter['count'] >= int(concurrency_limit or 50):
+                    return jsonify({'error': 'Itxaron mesedez, 50 erabiltzaile baitaude bere taldea partekatzen'}), 429
+                _inflight_counter['count'] += 1
+                acquired = True
 
-        partekatu = telegram_service.taldeaPartekatu(
-            lagun.chat_id,
-            user.erabiltzaileIzena,
-            taldea.izena,
-            pokemonak
-        )
-        if not partekatu:
-            return jsonify({'error': 'Ezin izan da taldea Telegram bidez bidali'}), 502
-        
-        else:
-            badu = intsignia_ctrl.intsigniaDu(user_id, 'Talde bat partekatu')
-            if not badu:
-                intsignia_ctrl.intsigniaGehitu(user_id, 'Talde bat partekatu')
+            start = _tp.monotonic()
 
-        return jsonify({'message': 'Taldea partekatu da'}), 200
+            # Build payload (json) from DB
+            pokemonak = taldeak_katalogo.get_pokemonak(tid)
+
+            partekatu = telegram_service.taldeaPartekatu(
+                lagun.chat_id,
+                user.erabiltzaileIzena,
+                taldea.izena,
+                pokemonak
+            )
+
+            end = _tp.monotonic()
+
+            # Timeout 2 segundu igaro ondoren
+            if (end - start) > 2.0:
+                return jsonify({'error': '2 segundo pasa dira. Saiatu berriro'}), 408
+
+            if not partekatu:
+                return jsonify({'error': 'Ezin izan da taldea Telegram bidez bidali'}), 502
+            
+            else:
+                badu = intsignia_ctrl.intsigniaDu(user_id, 'Talde bat partekatu')
+                if not badu:
+                    intsignia_ctrl.intsigniaGehitu(user_id, 'Talde bat partekatu')
+
+            return jsonify({'message': 'Taldea partekatu da'}), 200
+        finally:
+            if acquired:
+                if concurrency_limiter is not None:
+                    try:
+                        concurrency_limiter.release()
+                    except Exception:
+                        pass
+                else:
+                    _inflight_counter['count'] = max(0, _inflight_counter['count'] - 1)
 
     app.register_blueprint(taldeak_bp)
 
