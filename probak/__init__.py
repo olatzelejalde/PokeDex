@@ -5,6 +5,11 @@ from app.database.connection import Connection
 
 class BaseTestClass(unittest.TestCase):
     def setUp(self):
+        os.environ["DB_PATH"] = os.path.join(
+        os.path.dirname(__file__),
+        "test_library.sqlite"
+        )
+
         # 1. Test ingurunea konfiguratu
         self.app = app
         self.app.config['TESTING'] = True
