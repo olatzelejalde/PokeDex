@@ -48,15 +48,15 @@ def setup_user_and_badges(db_conn):
 # TESTAK
 # -------------------------------
 
-def test_user_enters_without_any_completed_badges(client, db):
+def test_erabiltzaileak_intsigniak_lortuta_ez_daudela(client, db):
     uid = setup_user_and_badges(db)
     # Erabiltzailearen intsigniak lortu
     data = client.get(f"/api/erabiltzaileak/{uid}/intsigniak").get_json()
-    # Kontrolatu ez dagoela lortutako intsignarik
+    # Kontrolatu ez dagoela lortutako intsigniarik
     assert len(data) == 2
     assert all(b["lortua"] == 0 for b in data)
 
-def test_first_time_single_badge_completed(client, db):
+def test_lehenengo_intsignia_lortu_da(client, db):
     uid = setup_user_and_badges(db)
     badge = "Talde bat editatu" # Helburua = 1
     
@@ -68,29 +68,29 @@ def test_first_time_single_badge_completed(client, db):
     completed = [b for b in data if b["lortua"] == 1]
     assert len(completed) == 1
 
-def test_first_time_multiple_badges_completed(client, db):
+def test_bi_intsignia_lortu_dira(client, db):
     uid = setup_user_and_badges(db)
-    # Bi intsigniak txertatu, helburu 1 dutenak
+    # Bi intsignia txertatu
     client.post(f"/api/erabiltzaileak/{uid}/intsigniak/Talde bat editatu")
     client.post(f"/api/erabiltzaileak/{uid}/intsigniak/Talde bat ezabatu")
 
     data = client.get(f"/api/erabiltzaileak/{uid}/intsigniak").get_json()
     completed = [b for b in data if b["lortua"] == 1]
     
-    # Biak lortutakoak direla kontrolatu
+    # Biak lortutakoak direla konprobatu
     assert len(completed) == 2
 
-def test_enter_without_new_progress_does_not_change_state(client, db):
+def test_intsignia_aldaketarik_gabe(client, db):
     uid = setup_user_and_badges(db)
     badge = "Talde bat editatu"
     client.post(f"/api/erabiltzaileak/{uid}/intsigniak/{badge}")
     
-    # Bi deialdi jarraian egin eta konparatu
+    # Bi dei jarraian egin eta konparatu
     first = client.get(f"/api/erabiltzaileak/{uid}/intsigniak").get_json()
     second = client.get(f"/api/erabiltzaileak/{uid}/intsigniak").get_json()
     assert first == second
 
-def test_reaching_goal_again_does_not_increment_progress(client, db):
+def test_helburua_berriro_lortu_denean_jarraipena_aldatu_gabe(client, db):
     uid = setup_user_and_badges(db)
     badge = "Talde bat editatu"
 
