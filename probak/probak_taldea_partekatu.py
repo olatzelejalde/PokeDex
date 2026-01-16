@@ -121,7 +121,7 @@ class TestTaldeaPartekatu(BaseTestClass):
     # =====================================================
 
     # 1. Talderik ez daudenean → lista hutsa eta ez du partekatu baimentzen.
-    def test_lista_vacia_y_no_permite_compartir(self):
+    def test_zerrenda_hutsa(self):
         # Usuarios y amistad (para que el precheck de amigos pase)
         self._insert_user(201, 'U1', 'A', 'u1', 'p', chat_id=111)
         self._insert_user(202, 'U2', 'B', 'u2', 'p', chat_id=222)
@@ -141,7 +141,7 @@ class TestTaldeaPartekatu(BaseTestClass):
         self.assertEqual('Erabiltzaile edo taldea ez da existitzen', data['error'])
 
     # 2. Erabiltzaileak ez du Telegramen lagunik → “Lagunak ez du /start egin Telegram bot-ean (chat_id falta da)”.
-    def test_sin_amigos_telegram_mensaje(self):
+    def test_lagunik_ez(self):
         self._insert_user(301, 'U1', 'A', 'u1', 'p', chat_id=311)
         self._insert_user(302, 'U2', 'B', 'u2', 'p', chat_id=None)  # laguna chat_id gabe
         self._insert_team(310, 'TaldeX', 301)
@@ -153,7 +153,7 @@ class TestTaldeaPartekatu(BaseTestClass):
         self.assertEqual('Lagunak ez du /start egin Telegram bot-ean (chat_id falta da)', data['error'])
 
     # 3. Erabiltzaileak lagun bakarra duenean → partekatu eta “Taldea partekatu da” erakusten du.
-    def test_un_amigo_compartir_ok(self):
+    def test_lagun_partekatu_ok(self):
         self._insert_user(401, 'U1', 'A', 'u1', 'p', chat_id=411)
         self._insert_user(402, 'U2', 'B', 'u2', 'p', chat_id=422)
         self._insert_team(410, 'TeamA', 401)
@@ -169,7 +169,7 @@ class TestTaldeaPartekatu(BaseTestClass):
         self.assertEqual('Taldea partekatu da', data['message'])
 
     # 4. Telegram ez dago erabilgarri → “Ezin izan da taldea Telegram bidez bidali”.
-    def test_telegram_no_disponible(self):
+    def test_telegram_ez_dago_erabilgarri(self):
         self._insert_user(501, 'U1', 'A', 'u1', 'p', chat_id=511)
         self._insert_user(502, 'U2', 'B', 'u2', 'p', chat_id=522)
         self._insert_team(510, 'TeamB', 501)
@@ -185,7 +185,7 @@ class TestTaldeaPartekatu(BaseTestClass):
         self.assertEqual('Ezin izan da taldea Telegram bidez bidali', data['error'])
 
     # 5. Laguna Telegramen konektatuta ez dagoenean → partekatu aurretik konektatu eskatzea.
-    def test_amigo_sin_telegram_conectado(self):
+    def test_lagun_telegramen_konektatuta_ez(self):
         self._insert_user(601, 'U1', 'A', 'u1', 'p', chat_id=611)
         self._insert_user(602, 'U2', 'B', 'u2', 'p', chat_id=None)  # chat_id falta
         self._insert_team(610, 'TeamC', 601)
@@ -201,7 +201,7 @@ class TestTaldeaPartekatu(BaseTestClass):
         self.assertEqual('Lagunak ez du /start egin Telegram bot-ean (chat_id falta da)', data['error'])
 
     # 6. Prozesua > 2s → uko egin “2 segundo pasa dira. Saiatu berriro” mezuarekin.
-    def test_timeout_mayor_2s(self):
+    def test_prozesua_greater_2s(self):
         self._insert_user(701, 'U1', 'A', 'u1', 'p', chat_id=711)
         self._insert_user(702, 'U2', 'B', 'u2', 'p', chat_id=722)
         self._insert_team(710, 'TeamD', 701)
@@ -217,7 +217,7 @@ class TestTaldeaPartekatu(BaseTestClass):
         self.assertEqual('2 segundo pasa dira. Saiatu berriro', data['error'])
 
     # 7. Prozesua < 2s → ondo partekatu.
-    def test_duracion_menor_2s_ok(self):
+    def test_prozesua_less_2s_ok(self):
         self._insert_user(801, 'U1', 'A', 'u1', 'p', chat_id=811)
         self._insert_user(802, 'U2', 'B', 'u2', 'p', chat_id=822)
         self._insert_team(810, 'TeamE', 801)
@@ -233,7 +233,7 @@ class TestTaldeaPartekatu(BaseTestClass):
         self.assertEqual('Taldea partekatu da', data['message'])
 
     # 8. 50+ erabiltzaile aldi berean partekatzen → blokeatu eta mezua erakutsi.
-    def test_bloqueo_concurrencia_50_usuarios(self):
+    def test_blokeoa_50_erabiltzaile(self):
         self._insert_user(901, 'U1', 'A', 'u1', 'p', chat_id=911)
         self._insert_user(902, 'U2', 'B', 'u2', 'p', chat_id=922)
         self._insert_team(910, 'TeamF', 901)
