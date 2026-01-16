@@ -1,11 +1,12 @@
 import unittest
 import sys
 import os
+#KONFIGURAZIOA
 # Proiektuaren erroko karpeta (PokeDex) Python-en bilaketa-bidera gehitzen dugu
 ruta_raiz = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.insert(0, ruta_raiz)
 # -------------------------------
-
+# --- FLASK APLIKAZIOA INPORTATU ---
 try:
     from app import create_app
     app = create_app() 
@@ -15,6 +16,7 @@ except ImportError:
     except ImportError:
         print("Errorea: Ezin izan da Flask aplikazioaren fitxategia aurkitu.")
 
+#--- TEST KASUAK ---
 class FlaskChangelogTest(unittest.TestCase):
 
     def setUp(self):
