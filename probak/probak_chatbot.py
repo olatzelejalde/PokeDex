@@ -1,3 +1,4 @@
+    # Exekutatzeko: python -m unittest probak.probak_chatbot
 from . import BaseTestClass
 import json
 
