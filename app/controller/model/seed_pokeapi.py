@@ -34,7 +34,7 @@ def mota_it(m): return MOTA_MAP.get(m, m.title())
 
 def seed_gen1(db: Connection):
     print("🔄 PokeAPI gen 1 deskargatzen...")
-    species = requests.get("https://pokeapi.co/api/v2/pokemon-species?limit=151").json()['results']
+    species = requests.get("https://pokeapi.co/api/v2/pokemon-species?limit=1025").json()['results']
 
     for idx, s in enumerate(species, 1):
         species_data = requests.get(s['url']).json()
