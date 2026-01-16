@@ -1,4 +1,4 @@
-    # Exekutatzeko: python -m unittest probak.probak_chatbot
+       # Exekutatzeko (proba karpetatik kanpo): python -m unittest probak.probak_chatbot
 from . import BaseTestClass
 import json
 
@@ -12,12 +12,18 @@ class TestChatBot(BaseTestClass):
     def test_poketop_ez_du_talderik(self):
         """
         KASUA: 'PokeTop' botoia sakatuta ez badu talderik sortuta.
-        ESPERO: Zerrenda hutsik itzultzea (Frontend-ak 'Oraindik ez duzu talderik' erakutsiko du).
+        ESPERO: Zerrenda hutsik itzultzea.
         """
+        # ================================================================
+        # CORRECCIÓN: Borrar datos por defecto del schema antes de probar
+        # ================================================================
+        self.db.connection.execute("DELETE FROM taldea")
+        self.db.connection.commit()  # Asegurar que se guarde el borrado
+
         # 1. Login egin
         self.login('testuser', 'pass123')
 
-        # 2. Eskatu erabiltzailearen taldeak (Botak egiten duen bezala)
+        # 2. Eskatu erabiltzailearen taldeak
         res = self.client.get('/api/taldeak/erabiltzailea/1')
         data = json.loads(res.data)
 
