@@ -14,11 +14,8 @@ class TestChatBot(BaseTestClass):
         KASUA: 'PokeTop' botoia sakatuta ez badu talderik sortuta.
         ESPERO: Zerrenda hutsik itzultzea.
         """
-        # ================================================================
-        # CORRECCIÓN: Borrar datos por defecto del schema antes de probar
-        # ================================================================
         self.db.connection.execute("DELETE FROM taldea")
-        self.db.connection.commit()  # Asegurar que se guarde el borrado
+        self.db.connection.commit()
 
         # 1. Login egin
         self.login('testuser', 'pass123')
