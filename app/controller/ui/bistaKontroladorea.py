@@ -115,6 +115,12 @@ def register_all_routes(app, db, users_katalogo=None, taldeak_katalogo=None):
     def gehitu_laguna(uid1, uid2):
         try:
             users_katalogo.gehitu_laguna(uid1, uid2)
+            if intsignia_ctrl.intsigniaDu(uid1, "Lagun eskaera bidali") is False:
+                intsignia_ctrl.intsigniaGehitu(uid1, "Lagun eskaera bidali")
+            if intsignia_ctrl.intsigniaDu(uid2, "6 lagun lortu") is False:
+                intsignia_ctrl.intsigniaGehitu(uid2, "6 lagun lortu")
+            if intsignia_ctrl.intsigniaDu(uid1, "6 lagun lortu") is False:
+                intsignia_ctrl.intsigniaGehitu(uid1, "6 lagun lortu")
             return jsonify({'message': 'Laguna gehitu da'}), 201
         except ValueError as e:
             return jsonify({'error': str(e)}), 400
