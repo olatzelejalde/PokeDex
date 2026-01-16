@@ -8,7 +8,8 @@
     <link rel="stylesheet" href="/static/styles/styles.css">
     <link rel="stylesheet" href="/static/styles/bot.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script> 
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}?v=2">
+    <script>
         var user = JSON.parse('{{ user|tojson }}');
         console.log(user);
         window.personaId = user.id;
